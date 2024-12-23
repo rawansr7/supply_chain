@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Upload Sales</title>
+  </head>
+  <body>
+    <h1>Upload Sales</h1>
+    <!-- Form to Add a Single Sale -->
+    <h2>Add a Single Sale</h2>
+    <form method="post">
+      {% csrf_token %}
+      {{ sale_form.as_p }}
+      <button type="submit" name="add_single_sale">Add Sale</button>
+    </form>
+    <!-- Form to Upload CSV -->
+    <h2>Upload Sales via CSV</h2>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <label for="file">Upload CSV:</label>
+      <input type="file" name="file" id="file" accept=".csv" required>
+      <button type="submit" name="upload_csv">Upload CSV</button>
+    </form>
+    <!-- List Existing Sales -->
+    <h2>Existing Sales</h2>
+    <ul>
+      {% for sale in sales %}
+        <li>{{ sale.sale_date }}: {{ sale.store.name }} sold {{ sale.quantity }} of {{ sale.product.name }}</li>
+      {% endfor %}
+    </ul>
+    <a href="{% url 'dashboard' %}">
+      <button type="button">Go to Dashboard</button>
+    </a>
+  </body>
+</html>
