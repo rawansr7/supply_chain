@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Add Stores</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWVhO1e-2vEGflWHoyXnpRhZS8CGbz0uY&libraries=places"></script>
+    <script>
+        let map, marker;
+
+        function initMap() {
+            const defaultLocation = { lat: 33.8938, lng: 35.5018 }; // Default to Beirut, Lebanon
+
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: defaultLocation,
+                zoom: 12,
+            });
+
+            marker = new google.maps.Marker({
+                position: defaultLocation,
+                map: map,
+                draggable: true,
+            });
+
+            google.maps.event.addListener(marker, "dragend", function () {
+                const position = marker.getPosition();
+                document.getElementById("geolocation").value =
+                    position.lat() + "," + position.lng();
+            });
+        }
+    </script>
+  </head>
+  <body onload="initMap()">
+    <h1>Add Your Stores</h1>
+    <form method="post">
+      {% csrf_token %}
+      <label for="name">Store Name:</label>
+      <input type="text" name="name" id="name" placeholder="Store Name" required>
+      <br>
+      <label for="geolocation">Store Geolocation:</label>
+      <input type="text" name="geolocation" id="geolocation" readonly>
+      <br>
+      <button type="submit">Add Store</button>
+    </form>
+    <h2>Existing Stores</h2>
+    <ul>
+      {% for store in stores %}<li>{{ store.name }}</li>{% endfor %}
+    </ul>
+    <div id="map" style="height: 400px; width: 100%; margin-top: 20px;"></div>
+    <a href="{% url 'add_products' %}">
+      <button type="button">Add Products</button>
+    </a>
+    <a href="{% url 'dashboard' %}">
+      <button type="button">Go to Dashboard</button>
+    </a>
+  </body>
+</html>

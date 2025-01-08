@@ -5,3 +5,8 @@ website:
     - Install dependencies, remove some folders of no use.
     - https://chatgpt.com/c/67684272-8414-8000-a4d7-876faf46b7b3
     - 
+
+
+
+
+remove unneeded data
