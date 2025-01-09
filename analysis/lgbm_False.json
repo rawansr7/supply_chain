@@ -1,1 +1,72 @@
-[{"num_leaves": 31, "colsample_bytree": 0.6, "mae": 0.8052392563255623, "rmse": 1.5150037138064683, "val_rmse": 1.38148892933998}, {"num_leaves": 31, "colsample_bytree": 1, "mae": 0.7739470177978776, "rmse": 1.4654067440568104, "val_rmse": 1.3474965131776262}, {"num_leaves": 63, "colsample_bytree": 0.6, "mae": 0.7824785982042022, "rmse": 1.4876370769730507, "val_rmse": 1.3663275822857721}, {"num_leaves": 63, "colsample_bytree": 1, "mae": 0.7678682471211025, "rmse": 1.4506223420823072, "val_rmse": 1.344739394256613}, {"num_leaves": 127, "colsample_bytree": 0.6, "mae": 0.7858869113983314, "rmse": 1.4977384857710845, "val_rmse": 1.372392097407415}, {"num_leaves": 127, "colsample_bytree": 1, "mae": 0.7625304923444034, "rmse": 1.4452912117120356, "val_rmse": 1.3394335767753063}, {"num_leaves": 255, "colsample_bytree": 0.6, "mae": 0.7785672785495212, "rmse": 1.486431026481416, "val_rmse": 1.3676746636212735}, {"num_leaves": 255, "colsample_bytree": 1, "mae": 0.7617431583595137, "rmse": 1.4463462156151763, "val_rmse": 1.340993964274452}, {"num_leaves": 511, "colsample_bytree": 0.6, "mae": 0.7748190740513982, "rmse": 1.4817025355292235, "val_rmse": 1.3732776993486226}, {"num_leaves": 511, "colsample_bytree": 1, "mae": 0.7606303746510058, "rmse": 1.455829817700427, "val_rmse": 1.3427147653185956}]
+[
+    {
+        "num_leaves": 31,
+        "colsample_bytree": 0.6,
+        "mae": 0.8052392563255623,
+        "rmse": 1.5150037138064683,
+        "val_rmse": 1.38148892933998
+    },
+    {
+        "num_leaves": 31,
+        "colsample_bytree": 1,
+        "mae": 0.7739470177978776,
+        "rmse": 1.4654067440568104,
+        "val_rmse": 1.3474965131776262
+    },
+    {
+        "num_leaves": 63,
+        "colsample_bytree": 0.6,
+        "mae": 0.7824785982042022,
+        "rmse": 1.4876370769730507,
+        "val_rmse": 1.3663275822857721
+    },
+    {
+        "num_leaves": 63,
+        "colsample_bytree": 1,
+        "mae": 0.7678682471211025,
+        "rmse": 1.4506223420823072,
+        "val_rmse": 1.344739394256613
+    },
+    {
+        "num_leaves": 127,
+        "colsample_bytree": 0.6,
+        "mae": 0.7858869113983314,
+        "rmse": 1.4977384857710845,
+        "val_rmse": 1.372392097407415
+    },
+    {
+        "num_leaves": 127,
+        "colsample_bytree": 1,
+        "mae": 0.7625304923444034,
+        "rmse": 1.4452912117120356,
+        "val_rmse": 1.3394335767753063
+    },
+    {
+        "num_leaves": 255,
+        "colsample_bytree": 0.6,
+        "mae": 0.7785672785495212,
+        "rmse": 1.486431026481416,
+        "val_rmse": 1.3676746636212735
+    },
+    {
+        "num_leaves": 255,
+        "colsample_bytree": 1,
+        "mae": 0.7617431583595137,
+        "rmse": 1.4463462156151763,
+        "val_rmse": 1.340993964274452
+    },
+    {
+        "num_leaves": 511,
+        "colsample_bytree": 0.6,
+        "mae": 0.7748190740513982,
+        "rmse": 1.4817025355292235,
+        "val_rmse": 1.3732776993486226
+    },
+    {
+        "num_leaves": 511,
+        "colsample_bytree": 1,
+        "mae": 0.7606303746510058,
+        "rmse": 1.455829817700427,
+        "val_rmse": 1.3427147653185956
+    }
+]
