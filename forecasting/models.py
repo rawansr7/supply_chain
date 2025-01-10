@@ -11,7 +11,7 @@ class Company(models.Model):
 class Store(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
-    geolocation = GeoLocationField()
+    geolocation = GeoLocationField(default="33.8938,35.5018")
 
 
 class Product(models.Model):
@@ -22,12 +22,13 @@ class Product(models.Model):
 class Sale(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField()
-    sale_date = models.DateField()
+    sold = models.PositiveIntegerField()
+    date = models.DateField()
 
 
 class ForecastResult(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    forecasted_quantity = models.PositiveIntegerField()
-    forecast_date = models.DateField(auto_now_add=True)
+    forecasted_sold = models.PositiveIntegerField()
+    forecasted_date = models.DateField()
+    forecasted_at = models.DateField(auto_now_add=True)

@@ -1,27 +1,15 @@
 import pandas as pd
-from analysis.lstm import downcast, preprocess_data, train, get_predictions
-import numpy as np
-
-# def preprocess_data(data):
-#     df["sale_date"] = pd.to_datetime(df["sale_date"])
-#     df = df.sort_values(by=["sale_date"])
-
-#     # Feature engineering
-#     df["year"] = df["sale_date"].dt.year
-#     df["month"] = df["sale_date"].dt.month
-#     df["week"] = df["sale_date"].dt.isocalendar().week
-#     df["day"] = df["sale_date"].dt.day
-#     df = df.drop(columns=["sale_date"])
-#     return df
+from datetime import timedelta
+from analysis.lstm import downcast, preprocess_data, train, get_predictions_for_unseen_data
 
 
 def forecast_next_month(data):
     df = pd.DataFrame(data)
-    products = df["item_id"].to_list()
-    stores = df["store_id"].to_list()
-
     df = downcast(df)
-    X_train, y_train, X_val, y_val, scaler = preprocess_data(df, False)
+
+    end_date = df["date"].max()
+
+    X_train, y_train, X_val, y_val, scaler, items_and_stores_ids = preprocess_data(df, False)
 
     model = train(  # use best parameters
         X_train,
@@ -31,15 +19,23 @@ def forecast_next_month(data):
         learning_rate=0.01,
         batch_size=50,
     )
-    predictions = get_predictions(y_val, model)
-    predictions = scaler.inverse_transform(predictions).tolist()
-    predictions = predictions.sum(axis=0)
+    predictions = get_predictions_for_unseen_data(y_val, model)
+    predictions = scaler.inverse_transform(predictions)
+    predictions[predictions < 0] = 0
 
     forecast_results = []
-    for i in range(len(predictions)):
-        store = stores[i]
-        product = products[i]
-        forecasted_quantity = round(predictions[i])
-        forecast_results.append({"store": store, "product": product, "forecasted_quantity": forecasted_quantity})
+    for day in range(1, predictions.shape[0] + 1):
+        for i in range(predictions[day]):
+            product, store = items_and_stores_ids[i]
+            forecasted_sold = round(predictions[day][i])
+            forecasted_date = end_date + timedelta(days=day)
+            forecast_results.append(
+                {
+                    "store_id": store,
+                    "item_id": product,
+                    "forecasted_sold": forecasted_sold,
+                    "forecasted_date": forecasted_date,
+                }
+            )
 
     return forecast_results

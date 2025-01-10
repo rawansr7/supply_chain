@@ -15,11 +15,14 @@
     <h2>Existing Sales</h2>
     <ul>
       {% for sale in sales %}
-        <li>{{ sale.sale_date }}: {{ sale.store.name }} sold {{ sale.quantity }} of {{ sale.product.name }}</li>
+        <li>{{ sale.date }}: {{ sale.store.name }} sold {{ sale.sold }} of {{ sale.product.name }}</li>
       {% endfor %}
     </ul>
     <a href="{% url 'dashboard' %}">
       <button type="button">Go to Dashboard</button>
+    </a>
+    <a href="{% url 'locate_stores' %}">
+      <button type="button">Locate your Stores</button>
     </a>
   </body>
 </html>

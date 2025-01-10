@@ -1,67 +1,49 @@
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
-from analysis.forecast import forecast_next_month
-from .utils import export_company_data, save_forecasting_results
+from .utils import export_company_data, save_forecasting_results, aggregate_forecasts
 from django.shortcuts import render, redirect
 from .models import Store, Product, Sale, Company
-import csv
+import pandas as pd
 
 
 @login_required
 def register_company(request):
     if request.method == "POST":
         name = request.POST.get("name")
-        address = request.POST.get("address")
-        company = Company(user=request.user, name=name, address=address)
+        company = Company(user=request.user, name=name)
         company.save()
-        return redirect("add_stores")
+        return redirect("upload_sales")
 
     if request.method == "GET":
         return render(request, "register_company.html")
 
 
 @login_required
-def add_stores(request):
-    if request.method == "POST":
-        name = request.POST.get("name")
-        geolocation = request.POST.get("geolocation")
-        Store.objects.create(company=request.user.company, name=name, geolocation=geolocation)
-    stores = Store.objects.filter(company=request.user.company)
-    return render(request, "add_stores.html", {"stores": stores})
-
-
-@login_required
-def add_products(request):
-    company = request.user.company
-
-    if request.method == "POST":
-        csv_file = request.FILES.get("file")
-        decoded_file = csv_file.read().decode("utf-8").splitlines()
-        reader = csv.DictReader(decoded_file)
-        for row in reader:
-            Product.objects.create(company=request.user.company, name=row["name"])
-        return redirect("upload_sales")
-
-    if request.method == "GET":
-        products = Product.objects.filter(company=company)
-        return render(request, "add_products.html", {"products": products})
-
-
-@login_required
 def upload_sales(request):
     if request.method == "POST":
         csv_file = request.FILES.get("file")
-        decoded_file = csv_file.read().decode("utf-8").splitlines()
-        reader = csv.DictReader(decoded_file)
-        for row in reader:
-            store_object = Store.objects.get(name=row["store"], company=request.user.company)
-            product_object = Product.objects.get(name=row["product"], company=request.user.company)
-            Sale.objects.create(
-                store=store_object,
-                product=product_object,
-                quantity=row["quantity"],
-                sale_date=row["sale_date"],
-            )
+        data = pd.read_csv(csv_file)
+        stores_objects = {}
+        products_objects = {}
+        for product_id in data["item_id"].unique():
+            product_object = Product.objects.create(name=product_id, company=request.user.company)
+            products_objects[product_id] = product_object
+        for store_id in data["store_id"].unique():
+            store_object = Store.objects.create(name=store_id, company=request.user.company)
+            stores_objects[store_id] = store_object
+
+        sales_to_create = data.apply(
+            lambda row: Sale(
+                store=stores_objects[row["store_id"]],
+                product=products_objects[row["item_id"]],
+                sold=row["sold"],
+                date=row["date"],
+            ),
+            axis="columns",
+        ).tolist()
+
+        Sale.objects.bulk_create(sales_to_create)
+
         return redirect("dashboard")
 
     if request.method == "GET":
@@ -74,12 +56,37 @@ def upload_sales(request):
 
 
 @login_required
-def run_forecast(request):
-    company = request.user.company
-    data = export_company_data(company)
-    forecast_results = forecast_next_month(data)
-    save_forecasting_results(forecast_results)
-    return JsonResponse(forecast_results, safe=False)
+def locate_stores(request):
+    if request.method == "POST":
+        for store_id, geolocation in request.POST.items():
+            if store_id == "csrfmiddlewaretoken":
+                continue
+            store = Store.objects.get(name=store_id, company=request.user.company)
+            store.geolocation = geolocation
+            store.save()
+
+        return redirect("dashboard")
+
+    # Pass stores with initial locations to the template
+    stores = Store.objects.filter(company=request.user.company)
+    stores = [
+        {
+            "name": store.name,
+            "geolocation": {
+                "lat": store.geolocation.lat,
+                "lon": store.geolocation.lon,
+            },
+        }
+        for store in stores
+    ]
+
+    return render(
+        request,
+        "locate_stores.html",
+        {
+            "stores": stores,
+        },
+    )
 
 
 @login_required
@@ -89,25 +96,36 @@ def dashboard(request):
     except Company.DoesNotExist:
         return redirect("register_company")
 
-    stores = Store.objects.filter(company=company)
     products = Product.objects.filter(company=company)
-
-    # Prepare store data for Google Maps
-    stores_data = [
+    stores = Store.objects.filter(company=company)
+    stores = [
         {
             "name": store.name,
-            "lat": store.geolocation.lat,
-            "lng": store.geolocation.lon,
+            "geolocation": {
+                "lat": store.geolocation.lat,
+                "lon": store.geolocation.lon,
+            },
         }
         for store in stores
     ]
-
     return render(
         request,
         "dashboard.html",
         {
             "company": company,
             "products": products,
-            "stores": stores_data,
+            "stores": stores,
         },
     )
+
+
+@login_required
+def run_forecast(request):
+    from analysis.forecast import forecast_next_month
+
+    company = request.user.company
+    data = export_company_data(company)
+    forecast_results = forecast_next_month(data)
+    save_forecasting_results(forecast_results, company)
+    forecast_results = aggregate_forecasts(forecast_results)
+    return JsonResponse(forecast_results, safe=False)

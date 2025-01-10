@@ -37,10 +37,33 @@ def downcast(df):
     return df
 
 
-def preprocess_data(sales, get_test_data):
+def preprocess_data(df, get_test_data):
     # Preprocess: remove id, item_id, dept_id, cat_id, store_id, state_id columns
-    sales = sales.T
-    sales = sales[6:]
+    print(df)
+    df["date"] = pd.to_datetime(df["date"])
+
+    # Create a complete date range from the minimum to the maximum date
+    all_dates = pd.date_range(start=df["date"].min(), end=df["date"].max())
+
+    # Pivot the DataFrame using 'item_id' and 'store_id' as the index
+    pivoted_df = df.pivot(index=["item_id", "store_id"], columns="date", values="sold")
+
+    # Reindex the columns to include all dates, filling missing dates with 0
+    pivoted_df = pivoted_df.reindex(columns=all_dates, fill_value=0)
+
+    # Reset the index and remove axis names
+    pivoted_df = pivoted_df.reset_index()
+    pivoted_df.columns.name = None
+
+    # Replace dates by integers (1 as the start date)
+    date_columns = pivoted_df.columns[2:]  # Exclude 'item_id' and 'store_id'
+    date_mapping = {date: i + 1 for i, date in enumerate(date_columns)}
+    pivoted_df = pivoted_df.rename(columns=date_mapping)
+
+    sales = pivoted_df.T
+    items_and_stores_ids = list(zip(sales[0], sales[1]))
+
+    sales = sales[2:]
     total_timesteps = len(sales)
     sc = MinMaxScaler(feature_range=(0, 1))
     train_sales_scaled = sc.fit_transform(sales)
@@ -58,11 +81,11 @@ def preprocess_data(sales, get_test_data):
     if get_test_data:
         X_train, X_val, X_test = X[:-56], X[-56:-28], X[-28:]
         y_train, y_val, y_test = y[:-56], y[-56:-28], y[-28:]
-        return X_train, y_train, X_val, y_val, X_test, y_test, sc
+        return X_train, y_train, X_val, y_val, X_test, y_test, sc, items_and_stores_ids
     else:
         X_train, X_val = X[:-28], X[-28:]
         y_train, y_val = y[:-28], y[-28:]
-        return X_train, y_train, X_val, y_val, sc
+        return X_train, y_train, X_val, y_val, sc, items_and_stores_ids
 
 
 def train(X_train, y_train, X_val, y_val, learning_rate, batch_size):
@@ -148,13 +171,13 @@ def get_predictions_for_unseen_data(y_val, model):
 if __name__ == "__main__":
     sales = pd.read_csv("data/reduced_m5_dataset.csv")
     sales = downcast(sales)
-    X_train, y_train, X_val, y_val, X_test, y_test, sc = preprocess_data(sales, True)
+    X_train, y_train, X_val, y_val, X_test, y_test, sc, items_and_stores_ids = preprocess_data(sales, True)
 
     all_params = []
     best_param = None
     best_score = 9999
-    for learning_rate in [0.001, 0.005, 0.01]:
-        for batch_size in [50, 100, 200]:
+    for learning_rate in [0.001, 0.005, 0.01][-1:]:
+        for batch_size in [50, 100, 200][-1:]:
             model, min_val_rmse = train(
                 X_train,
                 y_train,

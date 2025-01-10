@@ -6,7 +6,10 @@
   <body>
     <h1>Register Your Company</h1>
     <form method="post">
-      {% csrf_token %} {{ form.as_p }}
+      {% csrf_token %}
+      <label for="name">Company Name:</label>
+      <input type="text" name="name" id="name" placeholder="Company Name" required>
+      <br>
       <button type="submit">Register</button>
     </form>
   </body>

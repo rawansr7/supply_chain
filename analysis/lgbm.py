@@ -52,10 +52,10 @@ def add_embeddings(df):
     return df
 
 
-def preprocess_data(sales, with_text):
-    df = pd.melt(sales, id_vars=["id", "item_id", "dept_id", "cat_id", "store_id", "state_id"], var_name="d", value_name="sold").dropna()
-    df.drop(columns=["dept_id", "state_id", "cat_id"], inplace=True)
-    df["d"] = df["d"].apply(lambda x: x.split("_")[1]).astype(np.int16)
+def preprocess_data(df, with_text):
+    start_date = min(df["date"])
+    df["d"] = df["date"].apply(lambda x: (x - start_date).days + 1).astype(np.int16)
+    df.drop(columns=["date"], inplace=True)
 
     if with_text:
         df = add_embeddings(df)
@@ -69,9 +69,9 @@ def preprocess_data(sales, with_text):
     lags = [1, 2, 3, 6, 12, 24, 36]
     max_lag = max(lags)
     for lag in lags:
-        df["sold_lag_" + str(lag)] = df.groupby(["id", "item_id", "store_id"], as_index=False)["sold"].shift(lag).astype(np.float16)
+        df["sold_lag_" + str(lag)] = df.groupby(["item_id", "store_id"], as_index=False)["sold"].shift(lag).astype(np.float16)
 
-    df["rolling_sold_mean"] = df.groupby(["id", "item_id", "store_id"])["sold"].transform(lambda x: x.rolling(window=7).mean()).astype(np.float16)
+    df["rolling_sold_mean"] = df.groupby(["item_id", "store_id"])["sold"].transform(lambda x: x.rolling(window=7).mean()).astype(np.float16)
 
     df = df[df["d"] > max_lag]
     return df
@@ -97,7 +97,7 @@ def train(df, num_leaves, colsample_bytree):
     val_day = 1914
     final_day = 1942
 
-    test = df[(df["d"] >= val_day) & (df["d"] < final_day)][["id", "d", "sold"]]
+    test = df[(df["d"] >= val_day) & (df["d"] < final_day)]
     eval_preds = test["sold"]
     eval_true = test["sold"].copy()
 
@@ -137,10 +137,10 @@ def train(df, num_leaves, colsample_bytree):
 
 
 if __name__ == "__main__":
-    with_text = False
-    sales = pd.read_csv("data/reduced_m5_dataset.csv")
-    sales = downcast(sales)
-    df = preprocess_data(sales, with_text)
+    with_text = True
+    df = pd.read_csv("data/reduced_m5_dataset.csv")
+    df = downcast(df)
+    df = preprocess_data(df, with_text)
 
     num_leaves_list = [31, 63, 127, 255, 511]
     colsample_bytree_list = [0.6, 1]
@@ -164,5 +164,5 @@ if __name__ == "__main__":
                 best_score = val_rmse
                 best_param = all_params[-1]
 
-    json.dump(all_params, open(f"lgbm_{with_text}_2.json", "w"))
+    json.dump(all_params, open(f"lgbm_{with_text}.json", "w"))
     print(best_param)

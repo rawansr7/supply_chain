@@ -2,29 +2,45 @@
 <html lang="en">
     <head>
         <title>Dashboard</title>
+        {{ stores|json_script:"stores-data" }}
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWVhO1e-2vEGflWHoyXnpRhZS8CGbz0uY&libraries=places"></script>
         <script>
-        function initMap() {
-            const map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 10,
-                center: { lat: 33.8886, lng: 35.4955 }, // Lebanon
-            });
-
-            const stores = {{ stores|safe }};
-            stores.forEach(store => {
-                new google.maps.Marker({
-                    position: { lat: parseFloat(store.lat), lng: parseFloat(store.lng) },
-                    map: map,
-                    title: store.name,
+            let map;
+            const markers = {}; // Store markers by store name for reuse
+        
+            function initMap() {
+                const defaultLocation = { lat: 33.8938, lng: 35.5018 }; // Default to Beirut, Lebanon
+                map = new google.maps.Map(document.getElementById("map"), {
+                    zoom: 10,
+                    center: defaultLocation,
+                    gestureHandling: "greedy"
                 });
-            });
-        }
-        </script>
+        
+                const stores = JSON.parse(document.getElementById('stores-data').textContent);
+                stores.forEach(store => {
+                    const marker = new google.maps.Marker({
+                        position: { lat: parseFloat(store.geolocation.lat), lng: parseFloat(store.geolocation.lon) },
+                        map: map,
+                        title: store.name,
+                        label: {
+                            text: store.name, // The store name displayed as a label
+                            fontSize: "12px", // Adjust font size
+                            fontWeight: "bold", // Make text bold
+                        },
+                    });
+        
+                    markers[store.name] = marker; // Store marker by store name
+                });
+            }
+        </script>        
     </head>
     <body onload="initMap()">
         <a href="{% url 'logout' %}">Logout</a>
         <h1>Dashboard</h1>
         <h2>Company: {{ company.name }}</h2>
+        <a href="{% url 'locate_stores' %}">
+            <button type="button">Locate Your Stores</button>
+        </a>
         <h3>Stores</h3>
         <div id="map" style="width: 100%; height: 400px;"></div>
         <h3>Products</h3>
@@ -36,27 +52,28 @@
     <script>
         document.getElementById("forecast-button").addEventListener("click", async () => {
             const response = await fetch("{% url 'run_forecast' %}");
-            const data = await response.json();
-            
-            // Map marker click functionality
-            data.forEach(result => {
-                const storeMarker = new google.maps.Marker({
-                    position: { lat: parseFloat(result.store_lat), lng: parseFloat(result.store_lng) },
-                    map: map,
-                    title: result.store
-                });
+            const forecastData = await response.json();
     
+            // Reuse existing markers from the `markers` object
+            for (const [storeName, products] of Object.entries(forecastData)) {
+                const storeMarker = markers[storeName]; // Retrieve the existing marker
+    
+                // Generate content for the info window
+                let contentString = `<h4>${storeName}</h4><ul>`;
+                for (const [product, quantity] of Object.entries(products)) {
+                    contentString += `<li>${product}: ${quantity}</li>`;
+                }
+                contentString += `</ul>`;
+
                 const infoWindow = new google.maps.InfoWindow({
-                    content: `
-                        <h4>${result.store}</h4>
-                        <p>${result.product}: ${result.forecasted_quantity}</p>
-                    `
+                    content: contentString,
                 });
-    
+
+                // Add click event to open info window
                 storeMarker.addListener("click", () => {
                     infoWindow.open(map, storeMarker);
                 });
-            });
+            }
         });
-    </script>
+    </script>    
 </html>
