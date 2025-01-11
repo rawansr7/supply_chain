@@ -39,7 +39,6 @@ def downcast(df):
 
 def preprocess_data(df, get_test_data):
     # Preprocess: remove id, item_id, dept_id, cat_id, store_id, state_id columns
-    print(df)
     df["date"] = pd.to_datetime(df["date"])
 
     # Create a complete date range from the minimum to the maximum date
@@ -61,8 +60,7 @@ def preprocess_data(df, get_test_data):
     pivoted_df = pivoted_df.rename(columns=date_mapping)
 
     sales = pivoted_df.T
-    items_and_stores_ids = list(zip(sales[0], sales[1]))
-
+    items_and_stores_ids = sales[:2].values.T
     sales = sales[2:]
     total_timesteps = len(sales)
     sc = MinMaxScaler(feature_range=(0, 1))
