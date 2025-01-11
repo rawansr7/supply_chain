@@ -202,5 +202,5 @@ if __name__ == "__main__":
                 best_score = min_val_rmse
                 best_param = all_params[-1]
 
-    json.dump(all_params, open("lstm_ttt.json", "w"))
+    json.dump(all_params, open("lstm.json", "w"))
     print(best_param)
