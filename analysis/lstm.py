@@ -1,5 +1,6 @@
 import numpy as np  # linear algebra
 import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
+import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 import tensorflow as tf
 from sklearn.metrics import mean_absolute_error, root_mean_squared_error
@@ -86,6 +87,20 @@ def preprocess_data(df, get_test_data):
         return X_train, y_train, X_val, y_val, sc, items_and_stores_ids
 
 
+def plot_training_curves(history):
+    train_rmse = history.history["root_mean_squared_error"]
+    val_rmse = history.history["val_root_mean_squared_error"]
+
+    plt.figure(figsize=(12, 6))
+    plt.plot(train_rmse, label="Training RMSE")
+    plt.plot(val_rmse, label="Validation RMSE")
+    plt.xlabel("Epochs")
+    plt.ylabel("RMSE")
+    plt.title("Training and Validation RMSE")
+    plt.legend()
+    plt.savefig("lstm_rmse.png")
+
+
 def train(X_train, y_train, X_val, y_val, learning_rate, batch_size):
     n_timesteps = X_train.shape[1]
     n_products = X_train.shape[2]
@@ -142,6 +157,7 @@ def train(X_train, y_train, X_val, y_val, learning_rate, batch_size):
         batch_size=batch_size,
         callbacks=[early_stopping],
     )
+    plot_training_curves(history)
     min_val_rmse = min(history.history["val_root_mean_squared_error"])
     return model, min_val_rmse
 
@@ -174,8 +190,8 @@ if __name__ == "__main__":
     all_params = []
     best_param = None
     best_score = 9999
-    for learning_rate in [0.001, 0.005, 0.01][-1:]:
-        for batch_size in [50, 100, 200][-1:]:
+    for learning_rate in [0.001, 0.005, 0.01]:
+        for batch_size in [50, 100, 200]:
             model, min_val_rmse = train(
                 X_train,
                 y_train,

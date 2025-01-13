@@ -88,7 +88,7 @@ def plot_training_curve(training_metrics, store):
     plt.title("Training and Validation RMSE")
     plt.legend()
     plt.grid(True)
-    plt.savefig("model_" + str(store) + ".png")
+    plt.savefig("model_for_" + str(store) + ".png")
 
 
 def train(df, num_leaves, colsample_bytree):
