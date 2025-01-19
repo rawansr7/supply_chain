@@ -10,11 +10,9 @@ import pandas as pd
 def register_company(request):
     if request.method == "POST":
         name = request.POST.get("name")
-        company = Company(user=request.user, name=name)
-        company.save()
+        Company.objects.create(user=request.user, name=name)
         return redirect("upload_sales")
-
-    if request.method == "GET":
+    else:
         return render(request, "register_company.html")
 
 
@@ -45,14 +43,8 @@ def upload_sales(request):
         Sale.objects.bulk_create(sales_to_create)
 
         return redirect("dashboard")
-
-    if request.method == "GET":
-        sales = Sale.objects.filter(store__company=request.user.company)
-        return render(
-            request,
-            "upload_sales.html",
-            {"sales": sales},
-        )
+    else:
+        return render(request, "upload_sales.html")
 
 
 @login_required

@@ -9,18 +9,14 @@
       {% csrf_token %}
       <label for="file">Upload CSV:</label>
       <input type="file" name="file" id="file" accept=".csv" required>
-      <button type="submit" name="upload_csv">Upload CSV</button>
+      <button type="submit">Submit</button>
     </form>
-    <!-- List Existing Sales -->
-    <h2>Existing Sales</h2>
-    <ul>
-      {% for sale in sales %}
-        <li>{{ sale.date }}: {{ sale.store.name }} sold {{ sale.sold }} of {{ sale.product.name }}</li>
-      {% endfor %}
-    </ul>
+    <br>
     <a href="{% url 'dashboard' %}">
       <button type="button">Go to Dashboard</button>
     </a>
+    <br>
+    <br>
     <a href="{% url 'locate_stores' %}">
       <button type="button">Locate your Stores</button>
     </a>

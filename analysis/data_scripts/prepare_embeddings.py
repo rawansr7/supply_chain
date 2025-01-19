@@ -3,13 +3,11 @@ import pandas as pd
 import json
 
 # Set your OpenAI API key
-with open("../data/openai_api_key.txt") as f:
-    openai.api_key = f.read().strip()
+openai.api_key = "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"
 
 
 # Function to generate embeddings
 def get_embedding(text, model="text-embedding-3-large"):
-    print("calling")
     response = openai.Embedding.create(input=text, model=model, dimensions=256)
     return response["data"][0]["embedding"]
 
