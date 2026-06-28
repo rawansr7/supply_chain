@@ -1,0 +1,89 @@
+{
+  "config": {
+    "n_test_weeks": 12,
+    "retrain_every": 4,
+    "test_window": [
+      "2011-09-19T00:00:00.000000",
+      "2011-12-05T00:00:00.000000"
+    ],
+    "n_products": 796,
+    "critical_ratio": 0.8
+  },
+  "summary": {
+    "seasonal_naive": {
+      "MAE": 127.64015197753906,
+      "RMSE": 320.5633239746094,
+      "RMSSE": 1.5249924659729004,
+      "inv_avg_cost_per_period": 277.4534233568942,
+      "inv_cost_per_unit_demand": 2.390020547055119,
+      "inv_service_level": 0.6313957168477687,
+      "inv_fill_rate": 0.5698295439571575,
+      "inv_avg_overage_units": 77.70239476738053,
+      "inv_avg_underage_units": 49.93775714737841
+    },
+    "none": {
+      "MAE": 76.47127702299221,
+      "RMSE": 186.46415816342164,
+      "RMSSE": 0.9605340590545639,
+      "inv_avg_cost_per_period": 158.65970091280002,
+      "inv_cost_per_unit_demand": 1.366715683603006,
+      "inv_service_level": 0.823821078172803,
+      "inv_fill_rate": 0.8060107454943276,
+      "inv_avg_overage_units": 68.58016946547588,
+      "inv_avg_underage_units": 22.51988286183104
+    },
+    "name": {
+      "MAE": 74.25028957889296,
+      "RMSE": 181.5594900971624,
+      "RMSSE": 1.0153525021273955,
+      "inv_avg_cost_per_period": 156.5417007300157,
+      "inv_cost_per_unit_demand": 1.3484709494264533,
+      "inv_service_level": 0.8137989239371242,
+      "inv_fill_rate": 0.7993985491906863,
+      "inv_avg_overage_units": 63.39177475806943,
+      "inv_avg_underage_units": 23.287481492986558
+    },
+    "llm": {
+      "MAE": 75.09749810237832,
+      "RMSE": 182.64548614914878,
+      "RMSSE": 0.9676459746403757,
+      "inv_avg_cost_per_period": 158.4012926510484,
+      "inv_cost_per_unit_demand": 1.3644897206012063,
+      "inv_service_level": 0.8154868657031332,
+      "inv_fill_rate": 0.7986541099088801,
+      "inv_avg_overage_units": 64.90568391503898,
+      "inv_avg_underage_units": 23.373902184002365
+    },
+    "llm_struct": {
+      "MAE": 76.39563696534435,
+      "RMSE": 185.75449838717535,
+      "RMSSE": 0.959321910349358,
+      "inv_avg_cost_per_period": 158.34707874362226,
+      "inv_cost_per_unit_demand": 1.3640227148201387,
+      "inv_service_level": 0.8285684143897035,
+      "inv_fill_rate": 0.8090154997531234,
+      "inv_avg_overage_units": 69.66281455703579,
+      "inv_avg_underage_units": 22.171066046646626
+    }
+  },
+  "significance_vs_none": {
+    "name_vs_none": {
+      "mean_diff": -1776.5218184794023,
+      "t_stat": -2.1171051965297063,
+      "p_value": 0.0345609140349506,
+      "n": 796
+    },
+    "llm_vs_none": {
+      "mean_diff": -1382.9684724580104,
+      "t_stat": -1.7276858391996355,
+      "p_value": 0.08443291897849546,
+      "n": 796
+    },
+    "llm_struct_vs_none": {
+      "mean_diff": -218.01014928048647,
+      "t_stat": -0.7272966547698495,
+      "p_value": 0.4672583642818194,
+      "n": 796
+    }
+  }
+}
