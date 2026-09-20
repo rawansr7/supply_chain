@@ -2,3 +2,11 @@ analysis/data/
 **__pycache__**
 static/
 db.sqlite3
+
+# tsfm_inventory: regenerable / downloaded artifacts (not results)
+analysis/tsfm_inventory/raw/
+analysis/tsfm_inventory/cache/
+chronos-2-finetuned/
+lightning_logs/
+external/
+*.ckpt

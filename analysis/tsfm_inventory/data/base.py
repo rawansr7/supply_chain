@@ -17,6 +17,23 @@ from dataclasses import dataclass
 
 import pandas as pd
 
+from .. import config as C
+
+
+def cached_panel(name: str, build_fn):
+    """Build the weekly panel once and cache it as parquet (dtype-safe across envs).
+
+    The real loaders are expensive (Favorita reads ~5 GB); caching lets every model cell
+    reuse the same prepared panel instead of rebuilding it. Delete cache/<name>_panel.parquet
+    to force a rebuild.
+    """
+    cache = C.CACHE_DIR / f"{name}_panel.parquet"
+    if cache.exists():
+        return pd.read_parquet(cache)
+    panel = build_fn()
+    panel.to_parquet(cache, index=False)
+    return panel
+
 
 @dataclass
 class Dataset:

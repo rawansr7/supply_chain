@@ -12,6 +12,7 @@ into one call is a sensible later optimisation.
 from __future__ import annotations
 
 import os
+import time
 
 import numpy as np
 import pandas as pd
@@ -19,6 +20,7 @@ import pandas as pd
 from .base import Forecaster
 
 FINETUNE_STEPS = 10
+RATE_LIMIT_SLEEP = 0.35   # one call per ~0.35s keeps us under the 200/min API limit
 
 
 class TimeGPT(Forecaster):
@@ -46,4 +48,5 @@ class TimeGPT(Forecaster):
         for lvl in self.quantile_levels:
             col = f"TimeGPT-q-{int(round(lvl * 100))}"
             out[lvl] = np.clip(res[col].to_numpy()[:self.horizon], 0, None)
+        time.sleep(RATE_LIMIT_SLEEP)   # stay under the API rate limit
         return out

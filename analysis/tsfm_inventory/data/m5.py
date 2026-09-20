@@ -13,7 +13,7 @@ from __future__ import annotations
 import pandas as pd
 
 from .. import config as C
-from .base import Dataset, filter_short
+from .base import Dataset, cached_panel, filter_short
 from .synthetic import make_smoke
 
 COVARIATES = ["sell_price"]
@@ -23,7 +23,11 @@ SEASONALITY = 52
 def load(smoke: bool = False) -> Dataset:
     if smoke:
         return make_smoke(COVARIATES)
+    panel = cached_panel("m5", _build)
+    return Dataset("m5", panel, seasonality=SEASONALITY, covariate_cols=COVARIATES)
 
+
+def _build():
     path = C.RAW_DIR / "m5"
     f = path / "sales_train_evaluation.csv"
     if not f.exists():
@@ -57,5 +61,4 @@ def load(smoke: bool = False) -> Dataset:
     weekly = weekly[weekly["series_id"].isin(top)]
 
     panel = weekly[["series_id", "t", "y"] + COVARIATES]
-    panel = filter_short(panel, min_len=SEASONALITY + C.HORIZON)
-    return Dataset("m5", panel, seasonality=SEASONALITY, covariate_cols=COVARIATES)
+    return filter_short(panel, min_len=SEASONALITY + C.HORIZON)

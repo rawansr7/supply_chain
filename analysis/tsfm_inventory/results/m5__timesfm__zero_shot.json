@@ -1,0 +1,916 @@
+{
+  "dataset": "m5",
+  "model": "timesfm",
+  "regime": "zero_shot",
+  "smoke": false,
+  "horizon": 4,
+  "summary": {
+    "MASE": 0.6227237011905169,
+    "CRPS": 16.810881251944434,
+    "cost_per_unit": 0.617400154343916,
+    "fill_rate": 0.9722104294516748,
+    "n_series": 300
+  },
+  "per_series": {
+    "FOODS_1_046_TX_2_evaluation": {
+      "cost": 151.2048568725586
+    },
+    "FOODS_1_085_WI_1_evaluation": {
+      "cost": 140.45562744140625
+    },
+    "FOODS_1_085_WI_2_evaluation": {
+      "cost": 257.30777740478516
+    },
+    "FOODS_1_096_WI_2_evaluation": {
+      "cost": 486.9875183105469
+    },
+    "FOODS_1_204_WI_2_evaluation": {
+      "cost": 268.8349914550781
+    },
+    "FOODS_1_218_CA_1_evaluation": {
+      "cost": 144.23723602294922
+    },
+    "FOODS_1_218_CA_2_evaluation": {
+      "cost": 178.4469985961914
+    },
+    "FOODS_1_218_CA_3_evaluation": {
+      "cost": 224.00611114501953
+    },
+    "FOODS_1_218_TX_2_evaluation": {
+      "cost": 251.37376403808594
+    },
+    "FOODS_1_218_TX_3_evaluation": {
+      "cost": 142.36905670166016
+    },
+    "FOODS_1_218_WI_2_evaluation": {
+      "cost": 154.7210235595703
+    },
+    "FOODS_1_218_WI_3_evaluation": {
+      "cost": 295.85101318359375
+    },
+    "FOODS_2_019_CA_1_evaluation": {
+      "cost": 136.65460205078125
+    },
+    "FOODS_2_019_CA_3_evaluation": {
+      "cost": 157.14134979248047
+    },
+    "FOODS_2_021_WI_2_evaluation": {
+      "cost": 229.92977905273438
+    },
+    "FOODS_2_128_TX_2_evaluation": {
+      "cost": 146.67715454101562
+    },
+    "FOODS_2_128_TX_3_evaluation": {
+      "cost": 198.66656494140625
+    },
+    "FOODS_2_128_WI_2_evaluation": {
+      "cost": 676.4566650390625
+    },
+    "FOODS_2_181_TX_1_evaluation": {
+      "cost": 261.94561767578125
+    },
+    "FOODS_2_181_TX_2_evaluation": {
+      "cost": 225.99581146240234
+    },
+    "FOODS_2_197_CA_1_evaluation": {
+      "cost": 265.72357177734375
+    },
+    "FOODS_2_197_CA_3_evaluation": {
+      "cost": 106.58567810058594
+    },
+    "FOODS_2_244_CA_3_evaluation": {
+      "cost": 118.52989196777344
+    },
+    "FOODS_2_276_CA_1_evaluation": {
+      "cost": 158.60971069335938
+    },
+    "FOODS_2_276_CA_3_evaluation": {
+      "cost": 136.385498046875
+    },
+    "FOODS_2_326_WI_2_evaluation": {
+      "cost": 402.3282012939453
+    },
+    "FOODS_2_347_CA_1_evaluation": {
+      "cost": 161.7247772216797
+    },
+    "FOODS_2_347_CA_3_evaluation": {
+      "cost": 149.21241760253906
+    },
+    "FOODS_2_360_CA_1_evaluation": {
+      "cost": 139.9281768798828
+    },
+    "FOODS_2_360_CA_3_evaluation": {
+      "cost": 300.7156524658203
+    },
+    "FOODS_2_360_TX_2_evaluation": {
+      "cost": 138.3539047241211
+    },
+    "FOODS_2_360_TX_3_evaluation": {
+      "cost": 327.6063995361328
+    },
+    "FOODS_2_360_WI_2_evaluation": {
+      "cost": 593.9678039550781
+    },
+    "FOODS_2_360_WI_3_evaluation": {
+      "cost": 162.1260223388672
+    },
+    "FOODS_3_007_CA_3_evaluation": {
+      "cost": 188.59078979492188
+    },
+    "FOODS_3_007_WI_2_evaluation": {
+      "cost": 401.601806640625
+    },
+    "FOODS_3_007_WI_3_evaluation": {
+      "cost": 591.2477416992188
+    },
+    "FOODS_3_030_TX_2_evaluation": {
+      "cost": 213.69259643554688
+    },
+    "FOODS_3_030_TX_3_evaluation": {
+      "cost": 227.94947814941406
+    },
+    "FOODS_3_042_WI_1_evaluation": {
+      "cost": 147.45853424072266
+    },
+    "FOODS_3_064_CA_1_evaluation": {
+      "cost": 204.82810974121094
+    },
+    "FOODS_3_070_WI_2_evaluation": {
+      "cost": 970.4924926757812
+    },
+    "FOODS_3_080_CA_1_evaluation": {
+      "cost": 152.7972869873047
+    },
+    "FOODS_3_080_CA_2_evaluation": {
+      "cost": 145.76006317138672
+    },
+    "FOODS_3_080_CA_3_evaluation": {
+      "cost": 154.96632385253906
+    },
+    "FOODS_3_080_TX_2_evaluation": {
+      "cost": 100.30442810058594
+    },
+    "FOODS_3_080_TX_3_evaluation": {
+      "cost": 93.97074890136719
+    },
+    "FOODS_3_080_WI_1_evaluation": {
+      "cost": 137.90359497070312
+    },
+    "FOODS_3_080_WI_3_evaluation": {
+      "cost": 50.46640396118164
+    },
+    "FOODS_3_086_WI_3_evaluation": {
+      "cost": 460.0617218017578
+    },
+    "FOODS_3_090_CA_1_evaluation": {
+      "cost": 557.3831787109375
+    },
+    "FOODS_3_090_CA_2_evaluation": {
+      "cost": 687.1593627929688
+    },
+    "FOODS_3_090_CA_3_evaluation": {
+      "cost": 1317.3836059570312
+    },
+    "FOODS_3_090_CA_4_evaluation": {
+      "cost": 310.5571594238281
+    },
+    "FOODS_3_090_TX_1_evaluation": {
+      "cost": 523.9107360839844
+    },
+    "FOODS_3_090_TX_2_evaluation": {
+      "cost": 592.7044067382812
+    },
+    "FOODS_3_090_TX_3_evaluation": {
+      "cost": 567.7302856445312
+    },
+    "FOODS_3_090_WI_1_evaluation": {
+      "cost": 335.2801208496094
+    },
+    "FOODS_3_090_WI_2_evaluation": {
+      "cost": 374.58204650878906
+    },
+    "FOODS_3_090_WI_3_evaluation": {
+      "cost": 758.1956176757812
+    },
+    "FOODS_3_099_CA_1_evaluation": {
+      "cost": 183.49325561523438
+    },
+    "FOODS_3_099_CA_3_evaluation": {
+      "cost": 146.67721557617188
+    },
+    "FOODS_3_099_TX_2_evaluation": {
+      "cost": 200.92088317871094
+    },
+    "FOODS_3_109_CA_3_evaluation": {
+      "cost": 73.41925048828125
+    },
+    "FOODS_3_109_WI_2_evaluation": {
+      "cost": 285.6744155883789
+    },
+    "FOODS_3_109_WI_3_evaluation": {
+      "cost": 250.09280395507812
+    },
+    "FOODS_3_120_CA_1_evaluation": {
+      "cost": 434.8202209472656
+    },
+    "FOODS_3_120_CA_3_evaluation": {
+      "cost": 909.3468017578125
+    },
+    "FOODS_3_120_WI_3_evaluation": {
+      "cost": 340.0746765136719
+    },
+    "FOODS_3_134_WI_2_evaluation": {
+      "cost": 273.4015808105469
+    },
+    "FOODS_3_150_CA_3_evaluation": {
+      "cost": 100.72993469238281
+    },
+    "FOODS_3_150_TX_2_evaluation": {
+      "cost": 84.78330993652344
+    },
+    "FOODS_3_154_WI_2_evaluation": {
+      "cost": 222.57489013671875
+    },
+    "FOODS_3_154_WI_3_evaluation": {
+      "cost": 179.21971893310547
+    },
+    "FOODS_3_202_CA_1_evaluation": {
+      "cost": 150.0099334716797
+    },
+    "FOODS_3_202_CA_3_evaluation": {
+      "cost": 283.6031494140625
+    },
+    "FOODS_3_202_TX_1_evaluation": {
+      "cost": 152.08189392089844
+    },
+    "FOODS_3_202_TX_2_evaluation": {
+      "cost": 140.9080810546875
+    },
+    "FOODS_3_202_TX_3_evaluation": {
+      "cost": 232.17417907714844
+    },
+    "FOODS_3_202_WI_3_evaluation": {
+      "cost": 224.3252716064453
+    },
+    "FOODS_3_226_TX_1_evaluation": {
+      "cost": 143.34918212890625
+    },
+    "FOODS_3_226_TX_2_evaluation": {
+      "cost": 115.9551010131836
+    },
+    "FOODS_3_226_WI_1_evaluation": {
+      "cost": 227.133056640625
+    },
+    "FOODS_3_226_WI_2_evaluation": {
+      "cost": 336.88623046875
+    },
+    "FOODS_3_226_WI_3_evaluation": {
+      "cost": 329.0760803222656
+    },
+    "FOODS_3_228_TX_2_evaluation": {
+      "cost": 103.0158462524414
+    },
+    "FOODS_3_234_CA_3_evaluation": {
+      "cost": 489.85675048828125
+    },
+    "FOODS_3_234_TX_1_evaluation": {
+      "cost": 231.45990753173828
+    },
+    "FOODS_3_234_TX_2_evaluation": {
+      "cost": 198.1657257080078
+    },
+    "FOODS_3_234_WI_2_evaluation": {
+      "cost": 1102.449951171875
+    },
+    "FOODS_3_234_WI_3_evaluation": {
+      "cost": 335.0496520996094
+    },
+    "FOODS_3_252_CA_1_evaluation": {
+      "cost": 272.0984191894531
+    },
+    "FOODS_3_252_CA_2_evaluation": {
+      "cost": 335.3460388183594
+    },
+    "FOODS_3_252_CA_3_evaluation": {
+      "cost": 549.3396606445312
+    },
+    "FOODS_3_252_CA_4_evaluation": {
+      "cost": 231.73705291748047
+    },
+    "FOODS_3_252_TX_1_evaluation": {
+      "cost": 339.2619934082031
+    },
+    "FOODS_3_252_TX_2_evaluation": {
+      "cost": 603.3076171875
+    },
+    "FOODS_3_252_TX_3_evaluation": {
+      "cost": 319.1816711425781
+    },
+    "FOODS_3_252_WI_3_evaluation": {
+      "cost": 182.6267547607422
+    },
+    "FOODS_3_281_CA_1_evaluation": {
+      "cost": 112.0563735961914
+    },
+    "FOODS_3_281_CA_3_evaluation": {
+      "cost": 248.05545043945312
+    },
+    "FOODS_3_281_WI_3_evaluation": {
+      "cost": 87.23595428466797
+    },
+    "FOODS_3_282_CA_1_evaluation": {
+      "cost": 261.1678771972656
+    },
+    "FOODS_3_282_CA_3_evaluation": {
+      "cost": 714.8489074707031
+    },
+    "FOODS_3_282_WI_3_evaluation": {
+      "cost": 265.89808654785156
+    },
+    "FOODS_3_288_CA_2_evaluation": {
+      "cost": 289.9046325683594
+    },
+    "FOODS_3_288_CA_3_evaluation": {
+      "cost": 359.3598937988281
+    },
+    "FOODS_3_295_CA_1_evaluation": {
+      "cost": 218.33364868164062
+    },
+    "FOODS_3_295_CA_3_evaluation": {
+      "cost": 242.86122131347656
+    },
+    "FOODS_3_295_TX_2_evaluation": {
+      "cost": 191.7301025390625
+    },
+    "FOODS_3_313_CA_3_evaluation": {
+      "cost": 133.74436950683594
+    },
+    "FOODS_3_318_CA_1_evaluation": {
+      "cost": 153.7184066772461
+    },
+    "FOODS_3_318_CA_3_evaluation": {
+      "cost": 234.96282958984375
+    },
+    "FOODS_3_318_WI_2_evaluation": {
+      "cost": 272.4889373779297
+    },
+    "FOODS_3_318_WI_3_evaluation": {
+      "cost": 269.44093322753906
+    },
+    "FOODS_3_319_CA_1_evaluation": {
+      "cost": 168.87352752685547
+    },
+    "FOODS_3_319_CA_2_evaluation": {
+      "cost": 206.57991409301758
+    },
+    "FOODS_3_319_CA_3_evaluation": {
+      "cost": 252.6235809326172
+    },
+    "FOODS_3_329_CA_3_evaluation": {
+      "cost": 436.6517639160156
+    },
+    "FOODS_3_348_CA_3_evaluation": {
+      "cost": 140.26458740234375
+    },
+    "FOODS_3_362_CA_1_evaluation": {
+      "cost": 401.0819778442383
+    },
+    "FOODS_3_362_CA_3_evaluation": {
+      "cost": 725.3884887695312
+    },
+    "FOODS_3_376_CA_3_evaluation": {
+      "cost": 149.14105987548828
+    },
+    "FOODS_3_376_TX_2_evaluation": {
+      "cost": 153.3977508544922
+    },
+    "FOODS_3_376_TX_3_evaluation": {
+      "cost": 264.3494567871094
+    },
+    "FOODS_3_376_WI_2_evaluation": {
+      "cost": 595.5738220214844
+    },
+    "FOODS_3_376_WI_3_evaluation": {
+      "cost": 450.96018981933594
+    },
+    "FOODS_3_377_CA_3_evaluation": {
+      "cost": 133.52689361572266
+    },
+    "FOODS_3_377_TX_1_evaluation": {
+      "cost": 171.48426055908203
+    },
+    "FOODS_3_377_TX_2_evaluation": {
+      "cost": 291.70249938964844
+    },
+    "FOODS_3_377_TX_3_evaluation": {
+      "cost": 439.388671875
+    },
+    "FOODS_3_389_CA_3_evaluation": {
+      "cost": 138.744873046875
+    },
+    "FOODS_3_389_TX_2_evaluation": {
+      "cost": 171.9042205810547
+    },
+    "FOODS_3_389_WI_3_evaluation": {
+      "cost": 92.88129425048828
+    },
+    "FOODS_3_404_CA_3_evaluation": {
+      "cost": 252.5339241027832
+    },
+    "FOODS_3_406_CA_3_evaluation": {
+      "cost": 215.31851196289062
+    },
+    "FOODS_3_412_CA_3_evaluation": {
+      "cost": 211.8611831665039
+    },
+    "FOODS_3_412_WI_2_evaluation": {
+      "cost": 357.52410888671875
+    },
+    "FOODS_3_412_WI_3_evaluation": {
+      "cost": 183.20986938476562
+    },
+    "FOODS_3_435_WI_3_evaluation": {
+      "cost": 141.6693572998047
+    },
+    "FOODS_3_454_WI_2_evaluation": {
+      "cost": 550.5338134765625
+    },
+    "FOODS_3_455_CA_3_evaluation": {
+      "cost": 66.33912658691406
+    },
+    "FOODS_3_455_TX_1_evaluation": {
+      "cost": 165.69597625732422
+    },
+    "FOODS_3_458_CA_3_evaluation": {
+      "cost": 186.1082000732422
+    },
+    "FOODS_3_458_WI_3_evaluation": {
+      "cost": 92.01463317871094
+    },
+    "FOODS_3_462_CA_3_evaluation": {
+      "cost": 157.62263870239258
+    },
+    "FOODS_3_462_TX_2_evaluation": {
+      "cost": 127.90870666503906
+    },
+    "FOODS_3_462_WI_2_evaluation": {
+      "cost": 331.7495880126953
+    },
+    "FOODS_3_491_CA_1_evaluation": {
+      "cost": 121.17662811279297
+    },
+    "FOODS_3_491_CA_3_evaluation": {
+      "cost": 192.57709503173828
+    },
+    "FOODS_3_491_WI_1_evaluation": {
+      "cost": 236.05889892578125
+    },
+    "FOODS_3_491_WI_3_evaluation": {
+      "cost": 103.02203369140625
+    },
+    "FOODS_3_498_CA_3_evaluation": {
+      "cost": 244.56797790527344
+    },
+    "FOODS_3_498_WI_2_evaluation": {
+      "cost": 1387.681137084961
+    },
+    "FOODS_3_498_WI_3_evaluation": {
+      "cost": 415.90980529785156
+    },
+    "FOODS_3_499_CA_3_evaluation": {
+      "cost": 422.4109191894531
+    },
+    "FOODS_3_501_CA_1_evaluation": {
+      "cost": 154.61428833007812
+    },
+    "FOODS_3_501_CA_3_evaluation": {
+      "cost": 155.0463104248047
+    },
+    "FOODS_3_501_TX_2_evaluation": {
+      "cost": 103.71839141845703
+    },
+    "FOODS_3_524_CA_3_evaluation": {
+      "cost": 176.93527221679688
+    },
+    "FOODS_3_541_CA_1_evaluation": {
+      "cost": 142.31710052490234
+    },
+    "FOODS_3_541_CA_2_evaluation": {
+      "cost": 237.4695110321045
+    },
+    "FOODS_3_541_CA_3_evaluation": {
+      "cost": 457.03778076171875
+    },
+    "FOODS_3_541_TX_1_evaluation": {
+      "cost": 110.85720825195312
+    },
+    "FOODS_3_541_TX_2_evaluation": {
+      "cost": 97.76587677001953
+    },
+    "FOODS_3_541_TX_3_evaluation": {
+      "cost": 91.45081329345703
+    },
+    "FOODS_3_541_WI_3_evaluation": {
+      "cost": 44.00334167480469
+    },
+    "FOODS_3_547_CA_3_evaluation": {
+      "cost": 248.99729919433594
+    },
+    "FOODS_3_547_WI_2_evaluation": {
+      "cost": 826.8627624511719
+    },
+    "FOODS_3_547_WI_3_evaluation": {
+      "cost": 356.0900115966797
+    },
+    "FOODS_3_555_CA_1_evaluation": {
+      "cost": 146.45787048339844
+    },
+    "FOODS_3_555_CA_2_evaluation": {
+      "cost": 190.19186401367188
+    },
+    "FOODS_3_555_CA_3_evaluation": {
+      "cost": 213.0264129638672
+    },
+    "FOODS_3_555_TX_1_evaluation": {
+      "cost": 286.6056671142578
+    },
+    "FOODS_3_555_TX_2_evaluation": {
+      "cost": 443.8849182128906
+    },
+    "FOODS_3_555_TX_3_evaluation": {
+      "cost": 428.54547119140625
+    },
+    "FOODS_3_555_WI_2_evaluation": {
+      "cost": 246.3387908935547
+    },
+    "FOODS_3_555_WI_3_evaluation": {
+      "cost": 220.3639678955078
+    },
+    "FOODS_3_580_CA_3_evaluation": {
+      "cost": 192.50668334960938
+    },
+    "FOODS_3_580_WI_2_evaluation": {
+      "cost": 671.4360961914062
+    },
+    "FOODS_3_580_WI_3_evaluation": {
+      "cost": 133.20257568359375
+    },
+    "FOODS_3_586_CA_1_evaluation": {
+      "cost": 356.7764587402344
+    },
+    "FOODS_3_586_CA_2_evaluation": {
+      "cost": 211.28656005859375
+    },
+    "FOODS_3_586_CA_3_evaluation": {
+      "cost": 572.8231201171875
+    },
+    "FOODS_3_586_CA_4_evaluation": {
+      "cost": 126.41000366210938
+    },
+    "FOODS_3_586_TX_1_evaluation": {
+      "cost": 442.5682067871094
+    },
+    "FOODS_3_586_TX_2_evaluation": {
+      "cost": 696.2575073242188
+    },
+    "FOODS_3_586_TX_3_evaluation": {
+      "cost": 523.5829467773438
+    },
+    "FOODS_3_586_WI_1_evaluation": {
+      "cost": 142.45303344726562
+    },
+    "FOODS_3_586_WI_2_evaluation": {
+      "cost": 112.09568786621094
+    },
+    "FOODS_3_586_WI_3_evaluation": {
+      "cost": 422.03350830078125
+    },
+    "FOODS_3_587_CA_1_evaluation": {
+      "cost": 226.9506378173828
+    },
+    "FOODS_3_587_CA_3_evaluation": {
+      "cost": 247.53111267089844
+    },
+    "FOODS_3_587_CA_4_evaluation": {
+      "cost": 218.52094268798828
+    },
+    "FOODS_3_587_TX_1_evaluation": {
+      "cost": 287.8184356689453
+    },
+    "FOODS_3_587_TX_2_evaluation": {
+      "cost": 319.8042449951172
+    },
+    "FOODS_3_587_TX_3_evaluation": {
+      "cost": 510.2705078125
+    },
+    "FOODS_3_587_WI_2_evaluation": {
+      "cost": 431.8330841064453
+    },
+    "FOODS_3_587_WI_3_evaluation": {
+      "cost": 395.0016784667969
+    },
+    "FOODS_3_607_CA_1_evaluation": {
+      "cost": 382.7421417236328
+    },
+    "FOODS_3_607_CA_3_evaluation": {
+      "cost": 163.8818359375
+    },
+    "FOODS_3_607_TX_1_evaluation": {
+      "cost": 247.12660217285156
+    },
+    "FOODS_3_607_TX_2_evaluation": {
+      "cost": 345.1909637451172
+    },
+    "FOODS_3_607_TX_3_evaluation": {
+      "cost": 146.16224670410156
+    },
+    "FOODS_3_635_CA_1_evaluation": {
+      "cost": 102.07007598876953
+    },
+    "FOODS_3_635_CA_2_evaluation": {
+      "cost": 260.0245704650879
+    },
+    "FOODS_3_635_CA_3_evaluation": {
+      "cost": 471.19207763671875
+    },
+    "FOODS_3_635_TX_2_evaluation": {
+      "cost": 204.6363067626953
+    },
+    "FOODS_3_635_TX_3_evaluation": {
+      "cost": 100.32351303100586
+    },
+    "FOODS_3_635_WI_3_evaluation": {
+      "cost": 94.12052917480469
+    },
+    "FOODS_3_668_WI_1_evaluation": {
+      "cost": 195.5602264404297
+    },
+    "FOODS_3_668_WI_3_evaluation": {
+      "cost": 92.57282257080078
+    },
+    "FOODS_3_681_CA_1_evaluation": {
+      "cost": 204.69374084472656
+    },
+    "FOODS_3_681_CA_3_evaluation": {
+      "cost": 610.8189086914062
+    },
+    "FOODS_3_681_TX_1_evaluation": {
+      "cost": 421.0623474121094
+    },
+    "FOODS_3_681_TX_2_evaluation": {
+      "cost": 290.9704895019531
+    },
+    "FOODS_3_681_TX_3_evaluation": {
+      "cost": 228.4601593017578
+    },
+    "FOODS_3_681_WI_3_evaluation": {
+      "cost": 509.6914978027344
+    },
+    "FOODS_3_694_CA_1_evaluation": {
+      "cost": 106.64614868164062
+    },
+    "FOODS_3_694_CA_3_evaluation": {
+      "cost": 143.68365478515625
+    },
+    "FOODS_3_694_TX_1_evaluation": {
+      "cost": 240.79476928710938
+    },
+    "FOODS_3_694_TX_2_evaluation": {
+      "cost": 159.36097717285156
+    },
+    "FOODS_3_694_TX_3_evaluation": {
+      "cost": 239.08824157714844
+    },
+    "FOODS_3_694_WI_1_evaluation": {
+      "cost": 117.43246459960938
+    },
+    "FOODS_3_694_WI_2_evaluation": {
+      "cost": 303.7306213378906
+    },
+    "FOODS_3_694_WI_3_evaluation": {
+      "cost": 316.5167541503906
+    },
+    "FOODS_3_702_CA_1_evaluation": {
+      "cost": 153.45552825927734
+    },
+    "FOODS_3_702_CA_3_evaluation": {
+      "cost": 790.2675094604492
+    },
+    "FOODS_3_711_CA_3_evaluation": {
+      "cost": 306.02154541015625
+    },
+    "FOODS_3_711_WI_2_evaluation": {
+      "cost": 524.9694061279297
+    },
+    "FOODS_3_711_WI_3_evaluation": {
+      "cost": 331.3703384399414
+    },
+    "FOODS_3_714_CA_1_evaluation": {
+      "cost": 252.6964874267578
+    },
+    "FOODS_3_714_CA_3_evaluation": {
+      "cost": 373.87498474121094
+    },
+    "FOODS_3_714_TX_1_evaluation": {
+      "cost": 192.448486328125
+    },
+    "FOODS_3_714_TX_2_evaluation": {
+      "cost": 223.54652404785156
+    },
+    "FOODS_3_714_TX_3_evaluation": {
+      "cost": 217.22862243652344
+    },
+    "FOODS_3_714_WI_1_evaluation": {
+      "cost": 158.9374542236328
+    },
+    "FOODS_3_714_WI_2_evaluation": {
+      "cost": 118.40805053710938
+    },
+    "FOODS_3_714_WI_3_evaluation": {
+      "cost": 239.06419372558594
+    },
+    "FOODS_3_723_CA_1_evaluation": {
+      "cost": 162.18230438232422
+    },
+    "FOODS_3_723_CA_3_evaluation": {
+      "cost": 447.2220458984375
+    },
+    "FOODS_3_723_TX_1_evaluation": {
+      "cost": 246.8090362548828
+    },
+    "FOODS_3_723_TX_2_evaluation": {
+      "cost": 213.9302215576172
+    },
+    "FOODS_3_723_TX_3_evaluation": {
+      "cost": 196.99359130859375
+    },
+    "FOODS_3_723_WI_2_evaluation": {
+      "cost": 300.0165100097656
+    },
+    "FOODS_3_723_WI_3_evaluation": {
+      "cost": 275.01220703125
+    },
+    "FOODS_3_739_CA_1_evaluation": {
+      "cost": 153.878662109375
+    },
+    "FOODS_3_739_CA_3_evaluation": {
+      "cost": 406.91552734375
+    },
+    "FOODS_3_741_CA_1_evaluation": {
+      "cost": 244.96440887451172
+    },
+    "FOODS_3_741_CA_3_evaluation": {
+      "cost": 250.10102081298828
+    },
+    "FOODS_3_744_CA_1_evaluation": {
+      "cost": 153.0695037841797
+    },
+    "FOODS_3_752_CA_3_evaluation": {
+      "cost": 380.20567321777344
+    },
+    "FOODS_3_752_WI_2_evaluation": {
+      "cost": 320.179931640625
+    },
+    "FOODS_3_752_WI_3_evaluation": {
+      "cost": 215.35104370117188
+    },
+    "FOODS_3_755_CA_1_evaluation": {
+      "cost": 143.26342010498047
+    },
+    "FOODS_3_764_CA_3_evaluation": {
+      "cost": 320.48596954345703
+    },
+    "FOODS_3_767_CA_3_evaluation": {
+      "cost": 186.40322875976562
+    },
+    "FOODS_3_785_CA_1_evaluation": {
+      "cost": 160.77915954589844
+    },
+    "FOODS_3_785_CA_3_evaluation": {
+      "cost": 195.85826110839844
+    },
+    "FOODS_3_804_CA_2_evaluation": {
+      "cost": 350.1127471923828
+    },
+    "FOODS_3_804_CA_3_evaluation": {
+      "cost": 129.42337036132812
+    },
+    "FOODS_3_804_TX_2_evaluation": {
+      "cost": 355.5542297363281
+    },
+    "FOODS_3_804_TX_3_evaluation": {
+      "cost": 958.0400543212891
+    },
+    "FOODS_3_804_WI_2_evaluation": {
+      "cost": 304.1773376464844
+    },
+    "FOODS_3_808_CA_1_evaluation": {
+      "cost": 222.9231719970703
+    },
+    "FOODS_3_808_CA_2_evaluation": {
+      "cost": 205.45770263671875
+    },
+    "FOODS_3_808_CA_3_evaluation": {
+      "cost": 445.68162536621094
+    },
+    "FOODS_3_808_TX_1_evaluation": {
+      "cost": 114.65131759643555
+    },
+    "FOODS_3_808_TX_2_evaluation": {
+      "cost": 148.4878044128418
+    },
+    "FOODS_3_808_TX_3_evaluation": {
+      "cost": 119.9759407043457
+    },
+    "FOODS_3_808_WI_3_evaluation": {
+      "cost": 136.46212005615234
+    },
+    "FOODS_3_811_CA_3_evaluation": {
+      "cost": 207.69886016845703
+    },
+    "FOODS_3_811_TX_2_evaluation": {
+      "cost": 590.9098510742188
+    },
+    "FOODS_3_811_TX_3_evaluation": {
+      "cost": 213.7101593017578
+    },
+    "FOODS_3_811_WI_2_evaluation": {
+      "cost": 867.3922424316406
+    },
+    "FOODS_3_816_WI_2_evaluation": {
+      "cost": 383.08079528808594
+    },
+    "HOBBIES_1_234_CA_3_evaluation": {
+      "cost": 413.2238006591797
+    },
+    "HOBBIES_1_348_CA_1_evaluation": {
+      "cost": 83.56729125976562
+    },
+    "HOBBIES_1_371_CA_1_evaluation": {
+      "cost": 135.9363021850586
+    },
+    "HOUSEHOLD_1_019_CA_3_evaluation": {
+      "cost": 282.4642639160156
+    },
+    "HOUSEHOLD_1_083_CA_3_evaluation": {
+      "cost": 91.82246398925781
+    },
+    "HOUSEHOLD_1_110_CA_3_evaluation": {
+      "cost": 106.54644012451172
+    },
+    "HOUSEHOLD_1_110_WI_2_evaluation": {
+      "cost": 276.4533233642578
+    },
+    "HOUSEHOLD_1_118_CA_3_evaluation": {
+      "cost": 292.4905090332031
+    },
+    "HOUSEHOLD_1_179_CA_3_evaluation": {
+      "cost": 181.15243530273438
+    },
+    "HOUSEHOLD_1_234_CA_3_evaluation": {
+      "cost": 65.14833450317383
+    },
+    "HOUSEHOLD_1_277_CA_3_evaluation": {
+      "cost": 169.22605895996094
+    },
+    "HOUSEHOLD_1_303_CA_3_evaluation": {
+      "cost": 157.84868621826172
+    },
+    "HOUSEHOLD_1_334_CA_3_evaluation": {
+      "cost": 356.5311584472656
+    },
+    "HOUSEHOLD_1_334_WI_2_evaluation": {
+      "cost": 222.24583435058594
+    },
+    "HOUSEHOLD_1_339_CA_3_evaluation": {
+      "cost": 206.8542709350586
+    },
+    "HOUSEHOLD_1_351_CA_3_evaluation": {
+      "cost": 167.90769958496094
+    },
+    "HOUSEHOLD_1_418_CA_3_evaluation": {
+      "cost": 363.49461364746094
+    },
+    "HOUSEHOLD_1_447_CA_3_evaluation": {
+      "cost": 323.3422088623047
+    },
+    "HOUSEHOLD_1_459_CA_3_evaluation": {
+      "cost": 402.3737487792969
+    },
+    "HOUSEHOLD_1_459_WI_2_evaluation": {
+      "cost": 340.96649169921875
+    },
+    "HOUSEHOLD_1_465_CA_3_evaluation": {
+      "cost": 323.7261199951172
+    },
+    "HOUSEHOLD_1_521_CA_3_evaluation": {
+      "cost": 232.51284790039062
+    },
+    "HOUSEHOLD_1_521_TX_3_evaluation": {
+      "cost": 97.90827941894531
+    },
+    "HOUSEHOLD_1_535_CA_3_evaluation": {
+      "cost": 210.70028686523438
+    }
+  }
+}

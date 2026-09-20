@@ -18,7 +18,7 @@ import numpy as np
 from .base import Forecaster
 
 CKPT_PATH = "lag-llama.ckpt"
-CONTEXT_LENGTH = 32              # tune in {32,64,128,256,512,1024}; 32 = pretraining length
+CONTEXT_LENGTH = 32              # pretraining length; a robustness check at 64 gave no gain
 FREQ = "W"
 START = "2020-01-06"            # any fixed Monday; only relative positions matter
 
@@ -39,6 +39,19 @@ class LagLlama(Forecaster):
         import torch
         from gluonts.dataset.common import ListDataset
         from lag_llama.gluon.estimator import LagLlamaEstimator
+
+        # The Lag-Llama checkpoint is a Lightning ckpt holding gluonts objects. torch>=2.6
+        # defaults weights_only=True, which rejects it — both for our read below AND for the
+        # estimator's internal load_from_checkpoint. Default it back to False (trusted local
+        # ckpt) for this process.
+        if not getattr(torch.load, "_ll_patched", False):
+            _orig_load = torch.load
+
+            def _load(*a, **k):
+                k.setdefault("weights_only", False)
+                return _orig_load(*a, **k)
+            _load._ll_patched = True
+            torch.load = _load
 
         device = self._device()
         # architecture hyperparameters live in the checkpoint; they must match on load.
