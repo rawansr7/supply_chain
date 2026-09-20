@@ -3,7 +3,7 @@
     <head>
         <title>Dashboard</title>
         {{ stores|json_script:"stores-data" }}
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWVhO1e-2vEGflWHoyXnpRhZS8CGbz0uY&libraries=places"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=places"></script>
         <script>
             let map;
             const markers = {}; // Store markers by store name for reuse
@@ -57,7 +57,8 @@
             // Reuse existing markers from the `markers` object
             for (const [storeName, products] of Object.entries(forecastData)) {
                 const storeMarker = markers[storeName]; // Retrieve the existing marker
-    
+                if (!storeMarker) continue; // no marker for this store: skip, don't kill the loop
+
                 // Generate content for the info window
                 let contentString = `<h4>${storeName}</h4><ul>`;
                 for (const [product, quantity] of Object.entries(products)) {

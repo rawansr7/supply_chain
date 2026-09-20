@@ -8,9 +8,11 @@ import pandas as pd
 
 @login_required
 def register_company(request):
+    # One company per user, so registering again renames the existing one rather than
+    # hitting the unique constraint on Company.user.
     if request.method == "POST":
         name = request.POST.get("name")
-        Company.objects.create(user=request.user, name=name)
+        Company.objects.update_or_create(user=request.user, defaults={"name": name})
         return redirect("upload_sales")
     else:
         return render(request, "register_company.html")
@@ -23,11 +25,14 @@ def upload_sales(request):
         data = pd.read_csv(csv_file)
         stores_objects = {}
         products_objects = {}
+        # get_or_create, not create: uploading a second file must reuse the products and
+        # stores already on record. Duplicates here make the later .get() lookups in
+        # save_forecasting_results ambiguous and break forecasting for the whole company.
         for product_id in data["item_id"].unique():
-            product_object = Product.objects.create(name=product_id, company=request.user.company)
+            product_object, _ = Product.objects.get_or_create(name=product_id, company=request.user.company)
             products_objects[product_id] = product_object
         for store_id in data["store_id"].unique():
-            store_object = Store.objects.create(name=store_id, company=request.user.company)
+            store_object, _ = Store.objects.get_or_create(name=store_id, company=request.user.company)
             stores_objects[store_id] = store_object
 
         sales_to_create = data.apply(

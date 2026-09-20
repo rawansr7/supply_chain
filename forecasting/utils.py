@@ -33,7 +33,7 @@ def save_forecasting_results(forecasted_data, company):
 
 
 def aggregate_forecasts(forecasted_data):
-    forecasted_data.drop(columns=["forecasted_date"], inplace=True)
+    forecasted_data = forecasted_data.drop(columns=["forecasted_date"])
     forecasted_data = forecasted_data.groupby(["item_id", "store_id"], as_index=False).agg({"forecasted_sold": "sum"})
     forecasted_data = forecasted_data.query("forecasted_sold != 0")
 

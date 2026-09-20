@@ -3,7 +3,7 @@
   <head>
     <title>Locate Your Stores</title>
     {{ stores|json_script:"stores-data" }}
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWVhO1e-2vEGflWHoyXnpRhZS8CGbz0uY&libraries=places"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=places"></script>
     <script>
       let map;
       let markers = [];

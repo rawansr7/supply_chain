@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,6 +27,11 @@ SECRET_KEY = "django-insecure-tw8puvsbjr&638ws$nh-(j%mz1e@!w=$j=4g+!jo7i5p0q1hmr
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+# Never hard-code this in a template: the key is a credential and the templates are
+# committed. Supply it from the environment, e.g.
+#     export GOOGLE_MAPS_API_KEY=$(cat ~/rawan/maps.key)
+GOOGLE_MAPS_API_KEY = os.environ.get("GOOGLE_MAPS_API_KEY", "")
 
 
 # Application definition
@@ -65,6 +71,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "forecasting.context_processors.google_maps_api_key",
             ],
         },
     },
