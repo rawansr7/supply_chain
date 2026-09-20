@@ -1,13 +1,3 @@
-"""Run one (dataset, model, regime) cell: forecast -> stocking decision -> metrics.
-
-Pipeline per cell:
-  1. load dataset, split off the last `horizon` weeks of each series as the test
-  2. fit the model on the history (no-op for zero-shot)
-  3. for each series: forecast quantiles -> newsvendor order -> the four kept metrics
-  4. save one results json (summary + per-series cost, for significance testing)
-
-The four metrics: MASE, CRPS (accuracy) and cost-per-unit, fill-rate (inventory).
-"""
 from __future__ import annotations
 
 import json
@@ -16,53 +6,49 @@ import numpy as np
 
 from . import config as C
 from .data import load_dataset, train_test_split
-from .metrics import accuracy as acc
-from .metrics import inventory as inv
+from .metrics import accuracy, inventory
 from .models import get_model
 
 
-def run_cell(dataset_name: str, model_name: str, regime: str, smoke: bool = False):
+def run_cell(dataset_name, model_name, regime, smoke=False):
     ds = load_dataset(dataset_name, smoke=smoke)
     horizon = C.SMOKE_HORIZON if smoke else C.HORIZON
     train, test = train_test_split(ds.panel, horizon)
 
-    model = get_model(model_name)(
-        regime=regime, horizon=horizon,
-        quantile_levels=C.QUANTILE_LEVELS, seasonality=ds.seasonality, smoke=smoke)
-    model.fit(train, ds)
+    model = get_model(model_name)(regime=regime, horizon=horizon,
+                                  quantile_levels=C.QUANTILE_LEVELS,
+                                  seasonality=ds.seasonality, smoke=smoke)
+    model.fit(train)
 
-    test_groups = {sid: g.sort_values("t") for sid, g in test.groupby("series_id")}
-    orders, demands = [], []
-    per_series, mases, crpss = {}, [], []
+    truths = {sid: g["y"].to_numpy(dtype=float) for sid, g in test.groupby("series_id")}
+    per_series, mases, crpss, orders, demands = {}, [], [], [], []
 
     for sid, g in train.groupby("series_id"):
-        if sid not in test_groups:
+        if sid not in truths:
             continue
-        g = g.sort_values("t")
-        history = g["y"].to_numpy(dtype=float)
-        truth = test_groups[sid]["y"].to_numpy(dtype=float)
+        history, truth = g["y"].to_numpy(dtype=float), truths[sid]
+        quantiles = model.predict_quantiles(history)
+        order = inventory.order_from_quantiles(quantiles)
 
-        qf = model.predict_quantiles(history)
-        point = qf[0.5]                                 # median, for MASE
-        order = inv.order_from_quantiles(qf)
-        cost, _, _ = inv.costs(order, truth)
+        per_series[sid] = {"cost": float(inventory.cost(order, truth).sum())}
+        mases.append(accuracy.mase(truth, quantiles[0.5], history, ds.seasonality))
+        crpss.append(accuracy.crps(truth, quantiles))
+        orders.append(order)
+        demands.append(truth)
 
-        per_series[sid] = {"cost": float(cost.sum())}   # headline loss for significance
-        mases.append(acc.mase(truth, point, history, ds.seasonality))
-        crpss.append(acc.crps(truth, qf))
-        orders.append(order); demands.append(truth)
-
-    order = np.concatenate(orders); demand = np.concatenate(demands)
-    cost, _, _ = inv.costs(order, demand)
-    summary = {
-        "MASE": float(np.nanmean(mases)),
-        "CRPS": float(np.mean(crpss)),
-        "cost_per_unit": float(cost.sum() / demand.sum()) if demand.sum() > 0 else float("nan"),
-        "fill_rate": inv.fill_rate(order, demand),
-        "n_series": len(per_series),
+    order, demand = np.concatenate(orders), np.concatenate(demands)
+    result = {
+        "dataset": dataset_name, "model": model_name, "regime": regime,
+        "smoke": smoke, "horizon": horizon,
+        "summary": {
+            "MASE": float(np.nanmean(mases)),
+            "CRPS": float(np.mean(crpss)),
+            "cost_per_unit": float(inventory.cost(order, demand).sum() / demand.sum()),
+            "fill_rate": inventory.fill_rate(order, demand),
+            "n_series": len(per_series),
+        },
+        "per_series": per_series,
     }
-    result = {"dataset": dataset_name, "model": model_name, "regime": regime,
-              "smoke": smoke, "horizon": horizon, "summary": summary, "per_series": per_series}
 
     tag = f"{dataset_name}__{model_name}__{regime}" + ("__smoke" if smoke else "")
     path = C.RESULTS_DIR / f"{tag}.json"

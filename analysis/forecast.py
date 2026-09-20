@@ -1,39 +1,53 @@
+"""Next-month stocking forecast for the web app.
+
+Reuses the thesis benchmark (`analysis.tsfm_inventory`): Chronos-2 zero-shot for the
+predictive distribution, then the newsvendor rule to turn it into an order quantity.
+"""
+
 from datetime import timedelta
-from analysis.lstm import downcast, preprocess_data, train, get_predictions_for_unseen_data
+
 import pandas as pd
+
+from analysis.tsfm_inventory import config as C
+from analysis.tsfm_inventory.metrics import inventory as inv
+from analysis.tsfm_inventory.models.chronos2 import Chronos2
+
+HORIZON = 28  # days ahead
+SEASONALITY = 7  # daily data, weekly season
+
+
+def _daily_panel(df):
+    """One dense daily series per (item, store); days without sales count as zero."""
+    df = df.copy()
+    df["date"] = pd.to_datetime(df["date"])
+    all_dates = pd.date_range(df["date"].min(), df["date"].max())
+    panel = df.pivot_table(index=["item_id", "store_id"], columns="date", values="sold", aggfunc="sum")
+    return panel.reindex(columns=all_dates).fillna(0)
 
 
 def forecast_next_month(df):
-    df = downcast(df)
+    panel = _daily_panel(df)
+    end_date = panel.columns.max()
 
-    end_date = df["date"].max()
-
-    X_train, y_train, X_val, y_val, scaler, items_and_stores_ids = preprocess_data(df, False)
-    model, min_val_rmse = train(  # use best parameters
-        X_train,
-        y_train,
-        X_val,
-        y_val,
-        learning_rate=0.01,
-        batch_size=50,
+    model = Chronos2(
+        regime="zero_shot",
+        horizon=HORIZON,
+        quantile_levels=C.QUANTILE_LEVELS,
+        seasonality=SEASONALITY,
     )
-    predictions = get_predictions_for_unseen_data(y_val, model)
-    predictions = scaler.inverse_transform(predictions)
-    predictions[predictions < 0] = 0
+    model.fit()
 
     forecast_results = []
-    for i in range(predictions.shape[0]):
-        for j in range(predictions.shape[1]):
-            product, store = items_and_stores_ids[j]
-            forecasted_sold = round(predictions[i][j])
-            forecasted_date = end_date + timedelta(days=i + 1)
+    for (item_id, store_id), history in panel.iterrows():
+        quantiles = model.predict_quantiles(history.to_numpy(dtype=float))
+        order = inv.order_from_quantiles(quantiles)
+        for day, quantity in enumerate(order, start=1):
             forecast_results.append(
                 {
-                    "store_id": store,
-                    "item_id": product,
-                    "forecasted_sold": forecasted_sold,
-                    "forecasted_date": forecasted_date,
+                    "store_id": store_id,
+                    "item_id": item_id,
+                    "forecasted_sold": max(round(float(quantity)), 0),
+                    "forecasted_date": end_date + timedelta(days=day),
                 }
             )
-    forecast_results = pd.DataFrame.from_records(forecast_results)
-    return forecast_results
+    return pd.DataFrame.from_records(forecast_results)

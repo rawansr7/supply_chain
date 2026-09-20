@@ -1,11 +1,3 @@
-"""Synthetic data generator.
-
-Two uses:
-  1. the `synthetic` dataset (medium size) for developing without any download;
-  2. the smoke-mode stand-in: every real loader, when called with smoke=True,
-     returns a tiny synthetic panel with that dataset's covariate columns, so the
-     full code path is exercised with no files, network, GPU or cloud.
-"""
 from __future__ import annotations
 
 import numpy as np
@@ -15,36 +7,25 @@ from .. import config as C
 from .base import Dataset
 
 
-def make_panel(n_series: int, length: int, seasonality: int,
-               covariate_cols: list[str], seed: int) -> pd.DataFrame:
+def make_panel(n_series, length, seasonality, seed):
     rng = np.random.default_rng(seed)
     frames = []
+    t = np.arange(length)
     for s in range(n_series):
         base = rng.uniform(10, 50)
         amp = rng.uniform(0, base * 0.5)
-        t = np.arange(length)
-        seasonal = amp * np.sin(2 * np.pi * t / seasonality)
-        noise = rng.normal(0, base * 0.1, length)
-        y = np.clip(base + seasonal + noise, 0, None).round()
-        df = pd.DataFrame({"series_id": f"S{s:03d}", "t": t, "y": y})
-        for c in covariate_cols:                       # generic numeric covariates
-            df[c] = rng.normal(0, 1, length).round(3)
-        frames.append(df)
+        y = base + amp * np.sin(2 * np.pi * t / seasonality) + rng.normal(0, base * 0.1, length)
+        frames.append(pd.DataFrame({"series_id": f"S{s:03d}", "t": t,
+                                    "y": np.clip(y, 0, None).round()}))
     return pd.concat(frames, ignore_index=True)
 
 
-def make_smoke(covariate_cols: list[str]) -> Dataset:
-    """Tiny panel used by every loader in smoke mode."""
-    panel = make_panel(C.SMOKE_N_SERIES, C.SMOKE_LENGTH, C.SMOKE_SEASONALITY,
-                        covariate_cols, C.SEED)
-    return Dataset("smoke", panel, seasonality=C.SMOKE_SEASONALITY,
-                   covariate_cols=covariate_cols)
+def make_smoke():
+    panel = make_panel(C.SMOKE_N_SERIES, C.SMOKE_LENGTH, C.SMOKE_SEASONALITY, C.SEED)
+    return Dataset("smoke", panel, C.SMOKE_SEASONALITY)
 
 
-def load(smoke: bool = False) -> Dataset:
-    """The `synthetic` dataset (no download needed)."""
+def load(smoke=False):
     if smoke:
-        return make_smoke(["price"])
-    panel = make_panel(n_series=30, length=120, seasonality=12,
-                       covariate_cols=["price"], seed=C.SEED)
-    return Dataset("synthetic", panel, seasonality=12, covariate_cols=["price"])
+        return make_smoke()
+    return Dataset("synthetic", make_panel(30, 120, 12, C.SEED), 12)

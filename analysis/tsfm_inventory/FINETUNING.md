@@ -1,78 +1,43 @@
-# Fine-tuning the foundation models
+# Fine-tuning
 
-How each foundation model is fine-tuned in this codebase, what to install, and the
-honest caveats. All recipes were read from each library's **official source / examples**
-and adversarially cross-checked against the current public code (June 2026). **None has
-been run here** (no GPU/cloud) — verify on first real run. GPU strongly recommended for
-every fine-tune; CPU is functional only for tiny smoke tests.
+Only **Chronos-2** is fine-tuned in this thesis. The other three foundation models
+(TimesFM, Lag-Llama, TimeGPT) are evaluated **off the shelf only**, and their fine-tune
+adapters have been removed rather than left as untested code.
 
-The fine-tune is **global**: it trains once on the warm history of *all* series in the
-dataset, then forecasts each series from its own history. Hyperparameters are class
-attributes on each adapter (e.g. `Chronos2.num_steps`) — edit there to change them.
+**Why one model is enough.** The research question is make-vs-buy: is a bought,
+off-the-shelf forecaster worth adopting? Fine-tuning answers the follow-up "and is it
+worth adapting?" — and Chronos-2 answers that decisively enough to stand on its own.
+It is the strongest model on every dataset, the cheapest to tune (LoRA), and the only
+one of the four with a clean, officially supported `fit()`. Its result (RESULTS.md
+finding 2) is that untuned fine-tuning buys ~2% on the two larger datasets, is not
+statistically significant, and is neutral-to-negative on the smallest — for a large
+added compute cost. Fine-tuning the weaker models was not expected to overturn that,
+and the cells were never run.
 
-**No tuning, by design.** We use each library's default / recommended fine-tune config
-and deliberately do not tune hyperparameters — this reflects realistic out-of-the-box
-adoption (the make-vs-buy premise). A consequence worth reporting: untuned fine-tuning
-does not always beat zero-shot. The `--smoke` flag shrinks steps/epochs to ~1 so you can
-check the code runs without waiting for a real training job (smoke is never a result).
-
-| Model | Fine-tune | Notes |
-|---|---|---|
-| chronos2 | ✅ official `pipeline.fit()` | cleanest; LoRA by default |
-| timesfm | ✅ official recipe | needs one repo file copied in (below) |
-| lag_llama | ✅ official `.train()` | install from git + checkpoint |
-| timegpt | ✅ API `finetune_steps` | paid API, no GPU needed |
-
----
+**No hyperparameter tuning, by design.** We use the library's default fine-tune config.
+This reflects realistic out-of-the-box adoption, which is the make-vs-buy premise — and
+it is why "fine-tuning does not always beat zero-shot" is an honest finding rather than
+a tuning failure.
 
 ## chronos2 — Chronos-2
-```
-pip install "chronos-forecasting>=2.1.0"
-pip install peft          # only if using LoRA (the default; cheapest)
-```
-`BaseChronosPipeline.fit(...)` returns a **new** fine-tuned pipeline. Defaults (the
-official notebook config — no tuning): `finetune_mode="lora"`, `num_steps=1000`,
-`batch_size=32`, `lr=1e-4`. Set `Chronos2.finetune_mode="full"` for full fine-tuning
-(GPU). `api_correct: yes` (verified against v2.3.0 source).
 
-## timesfm — TimesFM 2.0
 ```
-pip install "timesfm[torch]==1.3.0"
-pip install wandb
-# copy the repo's finetuning helper into this folder:
-#   v1/src/finetuning/finetuning_torch.py  ->  analysis/tsfm_inventory/models/finetuning_torch.py
+pip install chronos-forecasting
+pip install peft          # for LoRA (the default; cheapest)
 ```
-That file is **not** in the pip wheel; the adapter raises a clear error if it's missing.
-Full-parameter fine-tune of a 500M model — GPU only in practice. The model emits the 9
-deciles; arbitrary quantile levels snap to the nearest decile. Verified caveat: backend
-must be `"gpu"`/`"cpu"`, never `"cuda"` (handled internally).
 
-## lag_llama — Lag-Llama
-```
-git clone https://github.com/time-series-foundation-models/lag-llama
-pip install -r lag-llama/requirements.txt          # NOT on PyPI; use the pinned gluonts
-huggingface-cli download time-series-foundation-models/Lag-Llama lag-llama.ckpt --local-dir .
-```
-Run with `lag_llama` importable and `lag-llama.ckpt` in the working dir (or edit `CKPT_PATH`
-in `models/lag_llama.py`). Fine-tune = construct the estimator with `ckpt_path` then `.train()`.
-Defaults: `lr=5e-4`, `max_epochs=50`, `context_length=32`. Maintainers call fine-tuning
-"preliminary" and note it can underperform on tiny data — the global multi-series recipe used
-here is the safer path.
+The fine-tune is **global**: it trains once on the training panel of *all* series in the
+dataset, then forecasts each series from its own history. `BaseChronosPipeline.fit(...)`
+returns a **new** fine-tuned pipeline rather than mutating the base one.
 
-## timegpt — TimeGPT (commercial API)
-```
-pip install nixtla
-export NIXTLA_API_KEY=...
-```
-Fine-tune = `finetune_steps>0` in the forecast call. No GPU needed (runs on Nixtla's
-servers) — but your demand data leaves your premises (the data-governance case study).
+Defaults (the official notebook config, untouched): `finetune_mode="lora"`,
+`num_steps=1000`, `batch_size=32`, `lr=1e-4`. Set `Chronos2.finetune_mode = "full"` for
+full fine-tuning (GPU). GPU strongly recommended; CPU works only for smoke tests.
 
----
+Check the plumbing without a real training job:
 
-### Quick check it's wired (no GPU needed)
-Install a model's library and smoke-test the plumbing on tiny data:
 ```
 python -m analysis.tsfm_inventory.run --run chronos2:fine_tune --smoke
 ```
-Until a library is installed, that cell reports a clear `ModuleNotFoundError` and the run
-continues — by design.
+
+`--smoke` shrinks the run to 50 steps on tiny synthetic data — never a result.

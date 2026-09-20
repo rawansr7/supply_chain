@@ -1,14 +1,9 @@
-"""Global LightGBM baseline: one gradient-boosted model across all series.
-
-The standard ML baseline. Uses autoregressive lag features and forecasts recursively.
-Quantiles come from the global training-residual distribution. lightgbm is imported
-lazily so smoke runs (baselines only) need it not installed.
-"""
 from __future__ import annotations
 
 import numpy as np
 import pandas as pd
 
+from .. import config as C
 from .base import Forecaster, quantiles_from_residuals
 
 
@@ -19,23 +14,23 @@ class LightGBMGlobal(Forecaster):
     def _lags(self):
         return sorted({1, 2, 3, 4, self.seasonality})
 
-    def _design(self, df: pd.DataFrame):
+    def _design(self, df):
         g = df.groupby("series_id")["y"]
-        feats = {f"lag_{L}": g.shift(L) for L in self._lags()}
+        feats = {f"lag_{lag}": g.shift(lag) for lag in self._lags()}
         feats["roll4"] = g.transform(lambda s: s.shift(1).rolling(4).mean())
-        X = pd.DataFrame(feats, index=df.index)
-        return X
+        return pd.DataFrame(feats, index=df.index)
 
-    def fit(self, train_panel, dataset):
-        import lightgbm as lgb   # lazy
-        df = train_panel.sort_values(["series_id", "t"]).copy()
+    def fit(self, train_panel=None):
+        import lightgbm as lgb
+
+        df = train_panel.sort_values(["series_id", "t"])
         X = self._design(df)
-        y = df["y"]
         keep = X.dropna().index
-        X, y = X.loc[keep], y.loc[keep]
+        X, y = X.loc[keep], df["y"].loc[keep]
+
         self.feat_cols = list(X.columns)
         self.model = lgb.LGBMRegressor(n_estimators=200, learning_rate=0.05,
-                                       num_leaves=31, random_state=51, verbose=-1)
+                                       num_leaves=31, random_state=C.SEED, verbose=-1)
         self.model.fit(X, y)
         self.residuals = (y - self.model.predict(X)).to_numpy()
         return self
@@ -45,8 +40,8 @@ class LightGBMGlobal(Forecaster):
         lags = self._lags()
         point = []
         for _ in range(self.horizon):
-            row = {f"lag_{L}": (buf[-L] if len(buf) >= L else buf[0]) for L in lags}
-            row["roll4"] = float(np.mean(buf[-4:])) if buf else 0.0
+            row = {f"lag_{lag}": (buf[-lag] if len(buf) >= lag else buf[0]) for lag in lags}
+            row["roll4"] = float(np.mean(buf[-4:]))
             x = pd.DataFrame([row])[self.feat_cols]
             yhat = max(float(self.model.predict(x)[0]), 0.0)
             point.append(yhat)

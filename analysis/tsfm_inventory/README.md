@@ -7,73 +7,75 @@ their forecasts drive. Companion to `../../plan.md` and `../../NOVELTY.md`.
 ## Install
 
 ```bash
-conda activate supply
-# baselines need only numpy/pandas/scipy/lightgbm (already in `supply`).
-# TSFMs are optional and imported lazily — install only the ones you run:
-pip install chronos-forecasting          # chronos2
-pip install timesfm                       # timesfm
-pip install nixtla                        # timegpt (also: export NIXTLA_API_KEY=...)
-# lag_llama: follow its repo; needs lag-llama.ckpt in the working dir
+# baselines need only numpy/pandas/pyarrow/scipy/lightgbm.
+# TSFMs are imported lazily — install only the ones you run (one env per model is easiest):
+pip install chronos-forecasting        # chronos2 (fine-tune also needs: pip install peft)
+pip install "timesfm[torch]==1.3.0"    # timesfm
+pip install nixtla                     # timegpt (also: export NIXTLA_API_KEY=...)
+# lag_llama: not on PyPI —
+#   git clone https://github.com/time-series-foundation-models/lag-llama
+#   pip install -r lag-llama/requirements.txt
+#   huggingface-cli download time-series-foundation-models/Lag-Llama lag-llama.ckpt --local-dir .
+#   run with that clone on PYTHONPATH and lag-llama.ckpt in the working dir
 ```
 
 ## Datasets
 
-Put raw Kaggle files under `raw/` (loaders tell you the exact filenames if missing):
+Put raw Kaggle files under `raw/`:
 
 ```
-raw/m5/sales_train_evaluation.csv, calendar.csv, sell_prices.csv
+raw/m5/sales_train_evaluation.csv, calendar.csv
 raw/favorita/train.csv
 raw/rossmann/train.csv
 ```
 
-You don't need any download to develop: the `synthetic` dataset and `--smoke` mode
-generate tiny data in-memory.
+Each loader builds a weekly panel (`series_id, t, y`) of the top-300 series by volume
+and caches it as `cache/<name>_panel.parquet`; delete that file to force a rebuild.
+You need no download to develop: the `synthetic` dataset and `--smoke` generate data
+in memory.
 
-## The three ways to run
+## Running
 
 ```bash
-# (1) FULL thesis run — every model x dataset x supported regime
+# FULL thesis run — every model x dataset x supported regime (24 cells)
 python -m analysis.tsfm_inventory.run --full
 
-# (2) SELECTED — pick models / regimes / datasets
-python -m analysis.tsfm_inventory.run --run chronos2:zero_shot timegpt:fine_tune --datasets m5
-python -m analysis.tsfm_inventory.run --models seasonal_naive chronos2 --regimes zero_shot --datasets m5 favorita
+# SELECTED
+python -m analysis.tsfm_inventory.run --run chronos2:zero_shot --datasets m5
+python -m analysis.tsfm_inventory.run --models seasonal_naive chronos2 --datasets m5 favorita
 
-# (3) SMOKE — same selection, tiny synthetic data, just checks the code runs (no GPU/network)
-python -m analysis.tsfm_inventory.run --full --smoke
-python -m analysis.tsfm_inventory.run --models seasonal_naive lightgbm_global --smoke
+# SMOKE — tiny synthetic data, just checks the code runs (no GPU/network)
+python -m analysis.tsfm_inventory.run --models seasonal_naive chronos2 --smoke
 
-# list what's available
+# write elsewhere instead of overwriting the committed thesis results
+python -m analysis.tsfm_inventory.run --full --results-dir /tmp/rerun
+
 python -m analysis.tsfm_inventory.run --list
 ```
 
-A failing cell (missing library, unimplemented regime) is reported and skipped — it
-never aborts the rest of the run. Each cell writes `results/<dataset>__<model>__<regime>.json`.
+A failing cell (missing library, unsupported regime) is reported and skipped — it never
+aborts the rest of the run. Each cell writes `<results-dir>/<dataset>__<model>__<regime>.json`.
 
 ## Regimes
 
 - `statistical` — the only regime for the baselines (seasonal_naive, moving_average, lightgbm_global).
 - `zero_shot` — foundation model used out of the box, on the series' own history.
-- `fine_tune` — foundation model fine-tuned on the dataset first. Implemented for all
-  foundation models: **chronos2, timesfm, lag_llama, timegpt**.
+- `fine_tune` — **chronos2 only** (LoRA, the library's default config). The other three
+  foundation models are evaluated off the shelf; see FINETUNING.md for why.
 
-See **FINETUNING.md** for the per-model install/setup each fine-tune needs (verified against
-each library's official recipe; not yet run — verify on first GPU run). Future work
-(out of scope): feeding extra info like price/promotion, and a few-shot / new-product regime.
-
-## Layout (one concern per file)
+## Layout
 
 ```
 config.py              paths, seed, horizon, quantiles, inventory costs, smoke sizes
-data/<name>.py         one loader per dataset (m5, favorita, rossmann, synthetic) -> standard panel
-data/base.py           Dataset shape + train/test split
+data/<name>.py         one loader per dataset (m5, favorita, rossmann, synthetic)
+data/base.py           panel columns, parquet cache, train/test split
 models/<name>.py       one model per file; all share models/base.Forecaster
-metrics/accuracy.py    MAE, RMSE, sMAPE, MASE, mean-pinball (~CRPS)
-metrics/inventory.py   newsvendor order, costs, service level, fill rate
+metrics/accuracy.py    MASE, CRPS (mean pinball loss)
+metrics/inventory.py   newsvendor order, cost, fill rate
 metrics/significance.py paired Diebold-Mariano test
 experiment.py          run one cell: forecast -> decision -> metrics -> json
 report.py              leaderboard + pairwise significance
-run.py                 CLI (the three modes above)
+run.py                 CLI
 ```
 
 ## Adding things
@@ -83,6 +85,7 @@ run.py                 CLI (the three modes above)
 
 ## Evaluation in one line
 
-Forecast → order the **critical-ratio quantile** (Cu/(Cu+Co) = 0.80) → score by the
-four kept metrics: **MASE** and **CRPS** (accuracy), **cost per unit** and **fill rate**
-(inventory), plus a paired significance test on cost. See `../../NOVELTY.md` for the why.
+Forecast → order the **critical-ratio quantile** (Cu/(Cu+Co) = 0.80) → score by four
+metrics: **MASE** and **CRPS** (accuracy), **cost per unit** and **fill rate**
+(inventory), plus a paired significance test on per-series cost. See `RESULTS.md` for
+the numbers and `../../NOVELTY.md` for the why.
