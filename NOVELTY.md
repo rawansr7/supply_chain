@@ -42,7 +42,7 @@ combination.
 | **Service level** | The chance you *don't* run out of stock (e.g. "95% service level"). |
 | **Fill rate** | The fraction of customer demand you can satisfy immediately from stock. |
 | **Holding cost / stockout cost** | Cost of carrying one unit of unsold stock vs. cost of failing to meet one unit of demand. Their ratio sets how cautious you should be. |
-| **MASE, sMAPE, CRPS** | Standard forecast-accuracy scores. **MASE** = error compared to a simple naive forecast (1 = as good as naive, <1 = better). **sMAPE** = average percentage error. **CRPS** = a score for *probabilistic* forecasts (forecasts that give a whole range of likely outcomes, not just one number). |
+| **MASE** | The forecast-accuracy score this thesis reports: error compared to a simple naive forecast (1 = as good as naive, <1 = better). Reported as both the mean and the median across products, because a handful of barely-selling products can distort the mean. |
 | **Information Systems (IS)** | An academic field that studies **how organizations adopt and use technology to make decisions** — it sits between computer science and business/management. An IS thesis asks not just "does this technology work?" but "*should an organization adopt it, under what conditions, and at what cost and risk?*" This thesis is an IS thesis, which is why the business-adoption angle below matters as much as the technical results. |
 | **Make-vs-buy** | A classic management decision: should a company **build** a capability in-house ("make") or **purchase/adopt** a ready-made external one ("buy")? Here: *build your own custom forecasting model* (make) vs. *adopt a ready-made foundation model* (buy). |
 | **Total Cost of Ownership (TCO)** | The *full* cost of a solution over its life — not just the purchase or subscription price, but also the computing hardware, the engineering staff time, maintenance, and retraining. A "free" model can have a high TCO; a paid API can have a low one. |
@@ -71,6 +71,7 @@ The empty cell below is the gap this thesis fills (✓ = the paper has that ingr
 |---|:---:|:---:|:---:|
 | Maichle, Stein & Pibernik (2025) | ✗ (bespoke model) | ✓ | ✗ |
 | Puvvada & Chaudhuri (2024) | ✓ | ✗ (accuracy only) | ✗ |
+| **Theodorou, Spiliotis & Assimakopoulos (2025)** | ✗ (statistical/aggregation) | ✓ (M5, order-up-to) | ✗ |
 | Marik, Saha & Chatterjee (2026) | ✗ (classical/ML/DL) | ✓ | ✗ |
 | Fukuhara et al. (2026) | ✗ (model-agnostic framework) | ✓ | ✗ |
 | "Operational Viability of FMs" (2026) | ✓ | ✗ (not inventory) | ✗ |
@@ -122,6 +123,22 @@ stand on their own regardless of who was technically "first."
   methods on demand data, judged on forecast **accuracy and uncertainty**.
   *Difference:* they stop at accuracy; we connect the forecasts to **inventory
   decisions** and add the **business-adoption (make-vs-buy)** layer.
+
+- **Theodorou, Spiliotis & Assimakopoulos (2025) — "Forecast accuracy and inventory
+  performance: Insights on their relationship from the M5 competition data."**
+  (*European Journal of Operational Research* 322(2), 414–426; EJOR Editor's Choice)
+  *Contribution:* the closest paper to our **method** on our **main dataset**. It scores
+  forecasts on M5 by the inventory performance they produce under an order-up-to policy —
+  rolling simulation, trade-off curves, cost estimates — and finds that the link between
+  forecast accuracy and inventory performance is often weak and depends on product
+  characteristics, the policy, and the cost structure. That last point is the same
+  phenomenon we report (accuracy and cost rank models differently).
+  *Difference:* they compare **statistical and temporal-aggregation methods**
+  (exponential smoothing, Croston, ARIMA) — **no foundation models at all** — and they
+  ask a forecasting-research question, not an adoption one: there is no make-vs-buy
+  framing, no TCO, no governance, no build-versus-buy rubric. We take their evaluation
+  stance as established and apply it to the thing a manager can actually purchase.
+  **A reviewer will raise this paper; cite it early and position against it explicitly.**
 
 - **Marik, Saha & Chatterjee (2026) — "Beyond Accuracy: Evaluating Forecasting Models
   by Multi-Echelon Inventory Cost."** (arXiv 2603.16815)

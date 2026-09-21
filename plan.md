@@ -44,7 +44,7 @@ Three claims, none of which uses the word "first":
 | D3 | Fine-tuning | **In scope** for every model that supports it; run selectively |
 | D4 | TimeGPT | **Include** as the commercial/API reference (and the data-governance case study) |
 | D5 | LLM-description / cold-start work | **Dropped** — archive `analysis/online_retail/`; reuse only its generic harness (metrics, newsvendor, backtest, DM test), not the text arms |
-| D6 | Datasets | **All three**: M5, Favorita, Rossmann (Rossmann store-level — flagged) |
+| D6 | Datasets | **M5 + Favorita** — both item×store *unit* demand, the quantity a replenishment decision is actually placed against |
 
 Prerequisites: cloud account + container image, HuggingFace token, Nixtla TimeGPT key,
 conda env `supply` (reuse; add the model SDKs).
@@ -55,7 +55,7 @@ conda env `supply` (reuse; add the model SDKs).
 
 From `analysis/online_retail/`:
 - `metrics.py` — `mae/rmse/rmsse`, `critical_ratio`, `newsvendor_costs`,
-  `diebold_mariano`. **Extend** with MASE, sMAPE, CRPS/pinball, and the (s,S) cost.
+  `diebold_mariano`. **Extend** with MASE and the (s,S) cost.
 - newsvendor simulator + inventory KPIs (cost/unit, service level, fill rate).
 - rolling-origin backtest pattern (`evaluate.py`) and the multi-seed significance
   pattern (`coldstart.py`).
@@ -84,14 +84,15 @@ runs unless you select it. The mechanism:
 **Suggested run order (cheapest, highest-signal first):**
 1. Baselines on all datasets (CPU, ~free) — establishes the leaderboard floor.
 2. Zero-shot TSFMs on M5 — the core result, modest GPU.
-3. Zero-shot on Favorita + Rossmann — robustness.
+3. Zero-shot on Favorita — robustness.
 4. Few-shot / in-context regime.
 5. Fine-tuning (most expensive) — last, model-by-model.
 
 **Full model roster** (all buildable, selectable at run time):
 **Chronos-2, TimesFM-2.0 (+2.5), Lag-Llama, TimeGPT.**
-Baselines: Seasonal-Naive, ETS/AutoARIMA, Croston/ADIDA (intermittent),
-Global LightGBM (ML), one DL (PatchTST or N-BEATS via `neuralforecast`).
+Baselines: Seasonal-Naive, moving average, Global LightGBM (ML), Global LSTM (DL —
+multi-quantile head trained on pinball loss, so the built model is not handicapped on
+the probabilistic axis the newsvendor depends on).
 
 ---
 
@@ -101,7 +102,6 @@ Global LightGBM (ML), one DL (PatchTST or N-BEATS via `neuralforecast`).
 |---|---|---|---|---|
 | **M5** | item×store daily, 30k+ series | standard, intermittent, has price+calendar covariates | Kaggle `m5-forecasting-accuracy` | aggregate to chosen freq; rich covariates for Chronos-2/TimesFM |
 | **Favorita** | item×store daily | large, promotions/oil/holidays covariates | Kaggle `favorita-grocery-sales-forecasting` | huge — subsample SKUs for tractability |
-| **Rossmann** | store daily | popular, but store-level not SKU | Kaggle `rossmann-store-sales` | robustness; (s,S) at store grain is a proxy — flag it |
 
 Loader contract (one per dataset, same as `data.py`): raw → cleaned long panel
 (`series_id, date, demand, [covariates...]`) → cached parquet; plus a `series_meta`
@@ -115,7 +115,7 @@ table (price tier, intermittency class, launch date) for **stratification**.
 analysis/tsfm_inventory/
   config.py            # seeds, horizons, freq, cost params, model & dataset registries
   data/
-    m5.py  favorita.py  rossmann.py      # loaders -> panel + series_meta
+    m5.py  favorita.py                   # loaders -> panel + series_meta
   tsfm/
     base.py            # Forecaster ABC: .fit(optional) / .predict_quantiles()
     chronos2.py  timesfm.py  lag_llama.py  timegpt.py
@@ -127,7 +127,7 @@ analysis/tsfm_inventory/
     newsvendor.py      # reuse/extend existing
     sS_policy.py       # (s,S) multi-period simulator w/ lead time + service target
   eval/
-    metrics.py         # MASE, sMAPE, CRPS/pinball + inventory KPIs + DM test
+    metrics.py         # MASE + inventory KPIs + DM test
     backtest.py        # rolling-origin, multi-seed, per-series loss capture
     stratify.py        # slice results by SKU traits -> the "when it pays" map
   is_analysis/
@@ -162,7 +162,7 @@ class Forecaster(ABC):
 | Lag-Llama | GitHub `lag-llama` | zero-shot + fine-tune | fiddly install |
 | TimesFM-2.5 | `timesfm` / HF | zero-shot | run alongside 2.0; report both (2.0 often stronger) |
 
-All produce **quantile** forecasts (needed for newsvendor/(s,S) and CRPS).
+All produce **quantile** forecasts (needed for the newsvendor/(s,S) order quantile).
 
 ---
 
@@ -173,14 +173,21 @@ All produce **quantile** forecasts (needed for newsvendor/(s,S) and CRPS).
   periodic review. Drive `s`/`S` from the model's predictive distribution
   (lead-time-demand quantile) so a better forecast → better policy. Simulate the test
   horizon, accumulate holding/stockout cost, service level, fill rate, avg inventory.
-- Sensitivity over cost asymmetry (e.g. Cu:Co ∈ {2:1, 4:1, 9:1}) — feeds the
-  stratified map (TSFMs may only pay off at high service targets).
+- Cost asymmetry Cu:Co ∈ {2:1, 4:1, 9:1} — **resolved 2026-09-21 as one ratio per
+  dataset rather than a sweep within each.** The ratio only selects a quantile, so
+  sweeping it on a single dataset re-answers "does a higher critical ratio order more?";
+  what carries information is that the three datasets sell different goods. Favorita
+  (perishable grocery) gets 2:1 and M5 (shelf-stable packaged retail) 4:1, each setting
+  justified by its catalogue rather than swept. See `analysis/tsfm_inventory/config.py`.
 
 ---
 
 ## 8. Evaluation
 
-- **Accuracy:** MASE, sMAPE (point), CRPS / weighted pinball (probabilistic).
+- **Accuracy:** MASE, as mean and median over series. **Resolved 2026-09-21: CRPS and
+  sMAPE dropped.** The decision metrics already score the predictive distribution where
+  it matters — the newsvendor consumes exactly one quantile of it — so a second
+  distributional score added a column that never changed a conclusion.
 - **Decision:** (s,S) and newsvendor cost per unit demand, service level, fill rate.
 - **Significance:** paired Diebold-Mariano (reuse) on per-series loss, model vs.
   best baseline, per dataset/regime.
@@ -213,7 +220,7 @@ All produce **quantile** forecasts (needed for newsvendor/(s,S) and CRPS).
 | 2 | `Forecaster` ABC + **experiment registry & run-selector CLI** + baselines (stats, LightGBM, one DL) + backtest harness | baseline leaderboard on M5; cost-estimating selector | 1 wk |
 | 3 | TSFM adapters (all 6) zero-shot | accuracy leaderboard, all models × M5 | 1.5 wk |
 | 4 | Decision layer: (s,S) + newsvendor sim → inventory KPIs | accuracy-vs-decision divergence table/figure | 1 wk |
-| 5 | Few-shot/in-context regime; add Favorita + Rossmann; significance tests | model×dataset×(zero+few) grid | 1.5 wk |
+| 5 | Few-shot/in-context regime; add Favorita; significance tests | model×dataset×(zero+few) grid | 1.5 wk |
 | 6 | Stratified "when it pays" map | the headline heatmap + analysis | 1 wk |
 | 7 | IS layer: TCO + governance + design principles | make-vs-buy chapter | 1 wk |
 | 8 | Fine-tuning regime (selectable models/datasets) | fine-tuned cells, make-vs-buy "adapt" column | 1.5–2 wk |
@@ -232,7 +239,9 @@ what's worth it.
 - **Zero-shot TSFM inference** dominates and is cheap on a single cloud GPU (Chronos-2
   ~300 series/s on an A10G; M5 ~30k series × a few origins is GPU-hours, not days).
   Use **spot/preemptible** instances; cache every forecast.
-- **Favorita** is the size risk → stratified SKU subsample fixed in Phase 1.
+- **Favorita** is the size risk → **resolved**: a uniform random sample of 300 series
+  (seeded), the same rule as the other two datasets, so the sample is a cross-section of
+  the catalogue and not a selection of fast movers.
 - **Fine-tuning** is the expensive tail → run last, model-by-model, only on the cells
   the make-vs-buy story needs. Start with Chronos-Bolt (cheapest to tune).
 - The selector prints estimated GPU-hours + $ for any chosen subset before launch, so
@@ -247,7 +256,7 @@ what's worth it.
 | Scope creep (the full 6×3×3 grid) | everything is buildable but **run-selectable**; grow the matrix incrementally, cheapest cells first |
 | "First"/novelty challenged by 2026 papers | reframe to "systematic + make-vs-buy IS lens"; cite & differentiate them explicitly |
 | Fine-tuning cost | run last and selectively; estimates surfaced before launch; Chronos-Bolt first |
-| Favorita too large | stratified SKU subsample, decided in Phase 1 |
+| Favorita too large | seeded uniform sample of 300 series, same rule as M5 |
 | TimeGPT cost/availability | budget the API spend; if dropped, it becomes the "no closed API" governance finding |
 | Model SDK/version churn (TimesFM 2.5<2.0) | pin versions in `config.py`; record exact model IDs for repro |
 | Leakage (FMs pretrained on M5?) | report which benchmarks each model's authors used in pretraining; treat as a caveat, prefer Favorita for clean claims |

@@ -2,17 +2,16 @@ from __future__ import annotations
 
 import numpy as np
 
-from .. import config as C
 
-
-def order_from_quantiles(quantile_forecast):
-    level = min(quantile_forecast, key=lambda q: abs(q - C.CRITICAL_RATIO))
+def order_from_quantiles(quantile_forecast, costs):
+    """Newsvendor order: the critical-ratio quantile of the predictive distribution."""
+    level = min(quantile_forecast, key=lambda q: abs(q - costs.critical_ratio))
     return quantile_forecast[level]
 
 
-def cost(order, demand):
-    return (C.HOLDING_COST * np.maximum(order - demand, 0)
-            + C.STOCKOUT_COST * np.maximum(demand - order, 0))
+def cost(order, demand, costs):
+    return (costs.holding * np.maximum(order - demand, 0)
+            + costs.stockout * np.maximum(demand - order, 0))
 
 
 def fill_rate(order, demand):

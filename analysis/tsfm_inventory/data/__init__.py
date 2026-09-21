@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-from . import favorita, m5, rossmann, synthetic
+from . import favorita, m5, synthetic
 from .base import train_test_split
 
-LOADERS = {"synthetic": synthetic.load, "m5": m5.load,
-           "favorita": favorita.load, "rossmann": rossmann.load}
-THESIS_DATASETS = ["m5", "favorita", "rossmann"]
+LOADERS = {"synthetic": synthetic.load, "m5": m5.load, "favorita": favorita.load}
+THESIS_DATASETS = ["m5", "favorita"]
 
 
 def load_dataset(name, smoke=False):

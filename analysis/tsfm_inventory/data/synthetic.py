@@ -22,10 +22,10 @@ def make_panel(n_series, length, seasonality, seed):
 
 def make_smoke():
     panel = make_panel(C.SMOKE_N_SERIES, C.SMOKE_LENGTH, C.SMOKE_SEASONALITY, C.SEED)
-    return Dataset("smoke", panel, C.SMOKE_SEASONALITY)
+    return Dataset("smoke", panel, C.SMOKE_SEASONALITY, C.COSTS["smoke"])
 
 
 def load(smoke=False):
     if smoke:
         return make_smoke()
-    return Dataset("synthetic", make_panel(30, 120, 12, C.SEED), 12)
+    return Dataset("synthetic", make_panel(30, 120, 12, C.SEED), 12, C.COSTS["synthetic"])

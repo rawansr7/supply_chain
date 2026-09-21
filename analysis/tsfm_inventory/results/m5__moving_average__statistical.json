@@ -4,913 +4,1519 @@
   "regime": "statistical",
   "smoke": false,
   "horizon": 4,
+  "costs": {
+    "holding": 1.0,
+    "stockout": 4.0,
+    "ratio": "4:1",
+    "critical_ratio": 0.8
+  },
   "summary": {
-    "MASE": 0.6725845588196099,
-    "CRPS": 19.002579861111112,
-    "cost_per_unit": 0.7101156512781548,
-    "fill_rate": 0.9683803706977797,
+    "MASE": 0.8946898863928584,
+    "MASE_median": 0.7044736603197483,
+    "cost_per_unit": 0.7837039787383725,
+    "fill_rate": 0.8874443054795592,
     "n_series": 300
   },
   "per_series": {
-    "FOODS_1_046_TX_2_evaluation": {
-      "cost": 169.0
-    },
-    "FOODS_1_085_WI_1_evaluation": {
-      "cost": 175.5
-    },
-    "FOODS_1_085_WI_2_evaluation": {
-      "cost": 200.25
-    },
-    "FOODS_1_096_WI_2_evaluation": {
-      "cost": 472.5
-    },
-    "FOODS_1_204_WI_2_evaluation": {
-      "cost": 238.75
-    },
-    "FOODS_1_218_CA_1_evaluation": {
-      "cost": 183.5
-    },
-    "FOODS_1_218_CA_2_evaluation": {
-      "cost": 149.5
-    },
-    "FOODS_1_218_CA_3_evaluation": {
-      "cost": 246.0
-    },
-    "FOODS_1_218_TX_2_evaluation": {
-      "cost": 301.5
-    },
-    "FOODS_1_218_TX_3_evaluation": {
-      "cost": 142.5
-    },
-    "FOODS_1_218_WI_2_evaluation": {
-      "cost": 175.875
-    },
-    "FOODS_1_218_WI_3_evaluation": {
-      "cost": 237.25
-    },
-    "FOODS_2_019_CA_1_evaluation": {
-      "cost": 210.0
-    },
-    "FOODS_2_019_CA_3_evaluation": {
-      "cost": 185.5
-    },
-    "FOODS_2_021_WI_2_evaluation": {
-      "cost": 244.0
-    },
-    "FOODS_2_128_TX_2_evaluation": {
-      "cost": 121.0
-    },
-    "FOODS_2_128_TX_3_evaluation": {
-      "cost": 136.5
-    },
-    "FOODS_2_128_WI_2_evaluation": {
-      "cost": 321.75
-    },
-    "FOODS_2_181_TX_1_evaluation": {
-      "cost": 238.5
-    },
-    "FOODS_2_181_TX_2_evaluation": {
-      "cost": 216.0
-    },
-    "FOODS_2_197_CA_1_evaluation": {
-      "cost": 180.125
-    },
-    "FOODS_2_197_CA_3_evaluation": {
-      "cost": 204.0
-    },
-    "FOODS_2_244_CA_3_evaluation": {
-      "cost": 169.5
-    },
-    "FOODS_2_276_CA_1_evaluation": {
-      "cost": 198.0
-    },
-    "FOODS_2_276_CA_3_evaluation": {
-      "cost": 218.5
-    },
-    "FOODS_2_326_WI_2_evaluation": {
-      "cost": 423.5
-    },
-    "FOODS_2_347_CA_1_evaluation": {
-      "cost": 154.125
-    },
-    "FOODS_2_347_CA_3_evaluation": {
-      "cost": 172.0
-    },
-    "FOODS_2_360_CA_1_evaluation": {
-      "cost": 119.75
-    },
-    "FOODS_2_360_CA_3_evaluation": {
-      "cost": 279.5
-    },
-    "FOODS_2_360_TX_2_evaluation": {
-      "cost": 174.5
-    },
-    "FOODS_2_360_TX_3_evaluation": {
-      "cost": 353.0
-    },
-    "FOODS_2_360_WI_2_evaluation": {
-      "cost": 621.0
-    },
-    "FOODS_2_360_WI_3_evaluation": {
-      "cost": 357.0
-    },
-    "FOODS_3_007_CA_3_evaluation": {
-      "cost": 223.5
-    },
-    "FOODS_3_007_WI_2_evaluation": {
-      "cost": 801.75
-    },
-    "FOODS_3_007_WI_3_evaluation": {
-      "cost": 576.0
-    },
-    "FOODS_3_030_TX_2_evaluation": {
-      "cost": 209.25
-    },
-    "FOODS_3_030_TX_3_evaluation": {
-      "cost": 244.0
-    },
-    "FOODS_3_042_WI_1_evaluation": {
-      "cost": 158.5
-    },
-    "FOODS_3_064_CA_1_evaluation": {
-      "cost": 240.75
-    },
-    "FOODS_3_070_WI_2_evaluation": {
-      "cost": 951.5
-    },
-    "FOODS_3_080_CA_1_evaluation": {
-      "cost": 150.125
-    },
-    "FOODS_3_080_CA_2_evaluation": {
-      "cost": 119.0
-    },
-    "FOODS_3_080_CA_3_evaluation": {
-      "cost": 163.0
-    },
-    "FOODS_3_080_TX_2_evaluation": {
-      "cost": 109.5
-    },
-    "FOODS_3_080_TX_3_evaluation": {
-      "cost": 90.875
-    },
-    "FOODS_3_080_WI_1_evaluation": {
-      "cost": 131.875
-    },
-    "FOODS_3_080_WI_3_evaluation": {
-      "cost": 52.5
-    },
-    "FOODS_3_086_WI_3_evaluation": {
-      "cost": 346.75
-    },
-    "FOODS_3_090_CA_1_evaluation": {
-      "cost": 765.5
-    },
-    "FOODS_3_090_CA_2_evaluation": {
-      "cost": 537.625
-    },
-    "FOODS_3_090_CA_3_evaluation": {
-      "cost": 1849.5
-    },
-    "FOODS_3_090_CA_4_evaluation": {
-      "cost": 506.5
-    },
-    "FOODS_3_090_TX_1_evaluation": {
-      "cost": 942.0
-    },
-    "FOODS_3_090_TX_2_evaluation": {
-      "cost": 933.5
-    },
-    "FOODS_3_090_TX_3_evaluation": {
-      "cost": 804.5
-    },
-    "FOODS_3_090_WI_1_evaluation": {
-      "cost": 443.5
-    },
-    "FOODS_3_090_WI_2_evaluation": {
-      "cost": 547.0
-    },
-    "FOODS_3_090_WI_3_evaluation": {
-      "cost": 1204.0
-    },
-    "FOODS_3_099_CA_1_evaluation": {
-      "cost": 143.5
-    },
-    "FOODS_3_099_CA_3_evaluation": {
-      "cost": 155.5
-    },
-    "FOODS_3_099_TX_2_evaluation": {
-      "cost": 173.5
-    },
-    "FOODS_3_109_CA_3_evaluation": {
-      "cost": 117.5
-    },
-    "FOODS_3_109_WI_2_evaluation": {
-      "cost": 206.25
-    },
-    "FOODS_3_109_WI_3_evaluation": {
-      "cost": 432.0
-    },
-    "FOODS_3_120_CA_1_evaluation": {
-      "cost": 323.5
-    },
-    "FOODS_3_120_CA_3_evaluation": {
-      "cost": 665.5
-    },
-    "FOODS_3_120_WI_3_evaluation": {
-      "cost": 483.375
-    },
-    "FOODS_3_134_WI_2_evaluation": {
-      "cost": 286.75
-    },
-    "FOODS_3_150_CA_3_evaluation": {
-      "cost": 102.5
-    },
-    "FOODS_3_150_TX_2_evaluation": {
-      "cost": 108.5
-    },
-    "FOODS_3_154_WI_2_evaluation": {
-      "cost": 296.5
-    },
-    "FOODS_3_154_WI_3_evaluation": {
-      "cost": 264.5
-    },
-    "FOODS_3_202_CA_1_evaluation": {
-      "cost": 176.0
-    },
-    "FOODS_3_202_CA_3_evaluation": {
-      "cost": 390.0
-    },
-    "FOODS_3_202_TX_1_evaluation": {
-      "cost": 211.5
-    },
-    "FOODS_3_202_TX_2_evaluation": {
-      "cost": 147.5
-    },
-    "FOODS_3_202_TX_3_evaluation": {
-      "cost": 295.0
-    },
-    "FOODS_3_202_WI_3_evaluation": {
-      "cost": 275.5
-    },
-    "FOODS_3_226_TX_1_evaluation": {
-      "cost": 139.5
-    },
-    "FOODS_3_226_TX_2_evaluation": {
-      "cost": 111.75
-    },
-    "FOODS_3_226_WI_1_evaluation": {
-      "cost": 289.0
-    },
-    "FOODS_3_226_WI_2_evaluation": {
-      "cost": 407.5
-    },
-    "FOODS_3_226_WI_3_evaluation": {
-      "cost": 346.125
-    },
-    "FOODS_3_228_TX_2_evaluation": {
-      "cost": 108.5
-    },
-    "FOODS_3_234_CA_3_evaluation": {
-      "cost": 514.5
-    },
-    "FOODS_3_234_TX_1_evaluation": {
-      "cost": 71.5
-    },
-    "FOODS_3_234_TX_2_evaluation": {
-      "cost": 249.25
-    },
-    "FOODS_3_234_WI_2_evaluation": {
-      "cost": 1863.0
-    },
-    "FOODS_3_234_WI_3_evaluation": {
-      "cost": 412.0
-    },
-    "FOODS_3_252_CA_1_evaluation": {
-      "cost": 245.5
-    },
-    "FOODS_3_252_CA_2_evaluation": {
-      "cost": 351.875
-    },
-    "FOODS_3_252_CA_3_evaluation": {
-      "cost": 617.5
-    },
-    "FOODS_3_252_CA_4_evaluation": {
-      "cost": 241.375
-    },
-    "FOODS_3_252_TX_1_evaluation": {
-      "cost": 342.625
-    },
-    "FOODS_3_252_TX_2_evaluation": {
-      "cost": 583.0
-    },
-    "FOODS_3_252_TX_3_evaluation": {
-      "cost": 336.5
-    },
-    "FOODS_3_252_WI_3_evaluation": {
-      "cost": 146.0
-    },
-    "FOODS_3_281_CA_1_evaluation": {
-      "cost": 105.5
-    },
-    "FOODS_3_281_CA_3_evaluation": {
-      "cost": 344.5
-    },
-    "FOODS_3_281_WI_3_evaluation": {
-      "cost": 80.375
-    },
-    "FOODS_3_282_CA_1_evaluation": {
-      "cost": 220.5
-    },
-    "FOODS_3_282_CA_3_evaluation": {
-      "cost": 865.0
-    },
-    "FOODS_3_282_WI_3_evaluation": {
-      "cost": 294.5
-    },
-    "FOODS_3_288_CA_2_evaluation": {
-      "cost": 325.0
-    },
-    "FOODS_3_288_CA_3_evaluation": {
-      "cost": 353.0
-    },
-    "FOODS_3_295_CA_1_evaluation": {
-      "cost": 283.5
-    },
-    "FOODS_3_295_CA_3_evaluation": {
-      "cost": 294.5
-    },
-    "FOODS_3_295_TX_2_evaluation": {
-      "cost": 220.0
-    },
-    "FOODS_3_313_CA_3_evaluation": {
-      "cost": 193.5
-    },
-    "FOODS_3_318_CA_1_evaluation": {
-      "cost": 176.0
-    },
-    "FOODS_3_318_CA_3_evaluation": {
-      "cost": 387.5
-    },
-    "FOODS_3_318_WI_2_evaluation": {
-      "cost": 379.0
-    },
-    "FOODS_3_318_WI_3_evaluation": {
-      "cost": 253.125
-    },
-    "FOODS_3_319_CA_1_evaluation": {
-      "cost": 245.0
-    },
-    "FOODS_3_319_CA_2_evaluation": {
-      "cost": 419.0
-    },
-    "FOODS_3_319_CA_3_evaluation": {
-      "cost": 452.0
-    },
-    "FOODS_3_329_CA_3_evaluation": {
-      "cost": 424.0
-    },
-    "FOODS_3_348_CA_3_evaluation": {
-      "cost": 160.0
-    },
-    "FOODS_3_362_CA_1_evaluation": {
-      "cost": 419.0
-    },
-    "FOODS_3_362_CA_3_evaluation": {
-      "cost": 1065.5
-    },
-    "FOODS_3_376_CA_3_evaluation": {
-      "cost": 222.0
-    },
-    "FOODS_3_376_TX_2_evaluation": {
-      "cost": 267.0
-    },
-    "FOODS_3_376_TX_3_evaluation": {
-      "cost": 267.0
-    },
-    "FOODS_3_376_WI_2_evaluation": {
-      "cost": 740.375
-    },
-    "FOODS_3_376_WI_3_evaluation": {
-      "cost": 508.0
-    },
-    "FOODS_3_377_CA_3_evaluation": {
-      "cost": 117.5
-    },
-    "FOODS_3_377_TX_1_evaluation": {
-      "cost": 193.75
-    },
-    "FOODS_3_377_TX_2_evaluation": {
-      "cost": 286.0
-    },
-    "FOODS_3_377_TX_3_evaluation": {
-      "cost": 440.75
-    },
-    "FOODS_3_389_CA_3_evaluation": {
-      "cost": 130.5
-    },
-    "FOODS_3_389_TX_2_evaluation": {
-      "cost": 176.5
-    },
-    "FOODS_3_389_WI_3_evaluation": {
-      "cost": 116.5
-    },
-    "FOODS_3_404_CA_3_evaluation": {
-      "cost": 274.0
-    },
-    "FOODS_3_406_CA_3_evaluation": {
-      "cost": 211.0
-    },
-    "FOODS_3_412_CA_3_evaluation": {
-      "cost": 228.5
-    },
-    "FOODS_3_412_WI_2_evaluation": {
-      "cost": 505.25
-    },
-    "FOODS_3_412_WI_3_evaluation": {
-      "cost": 209.5
-    },
-    "FOODS_3_435_WI_3_evaluation": {
-      "cost": 173.5
-    },
-    "FOODS_3_454_WI_2_evaluation": {
-      "cost": 363.0
-    },
-    "FOODS_3_455_CA_3_evaluation": {
-      "cost": 99.0
-    },
-    "FOODS_3_455_TX_1_evaluation": {
-      "cost": 199.5
-    },
-    "FOODS_3_458_CA_3_evaluation": {
-      "cost": 186.5
-    },
-    "FOODS_3_458_WI_3_evaluation": {
-      "cost": 122.5
-    },
-    "FOODS_3_462_CA_3_evaluation": {
-      "cost": 232.0
-    },
-    "FOODS_3_462_TX_2_evaluation": {
-      "cost": 223.0
-    },
-    "FOODS_3_462_WI_2_evaluation": {
-      "cost": 375.0
-    },
-    "FOODS_3_491_CA_1_evaluation": {
-      "cost": 197.5
-    },
-    "FOODS_3_491_CA_3_evaluation": {
-      "cost": 223.5
-    },
-    "FOODS_3_491_WI_1_evaluation": {
-      "cost": 364.0
-    },
-    "FOODS_3_491_WI_3_evaluation": {
-      "cost": 169.0
-    },
-    "FOODS_3_498_CA_3_evaluation": {
-      "cost": 159.875
-    },
-    "FOODS_3_498_WI_2_evaluation": {
-      "cost": 1421.5
-    },
-    "FOODS_3_498_WI_3_evaluation": {
-      "cost": 446.0
-    },
-    "FOODS_3_499_CA_3_evaluation": {
-      "cost": 451.0
-    },
-    "FOODS_3_501_CA_1_evaluation": {
-      "cost": 318.0
-    },
-    "FOODS_3_501_CA_3_evaluation": {
-      "cost": 226.5
-    },
-    "FOODS_3_501_TX_2_evaluation": {
-      "cost": 157.5
-    },
-    "FOODS_3_524_CA_3_evaluation": {
-      "cost": 211.5
-    },
-    "FOODS_3_541_CA_1_evaluation": {
-      "cost": 223.5
-    },
-    "FOODS_3_541_CA_2_evaluation": {
-      "cost": 373.0
-    },
-    "FOODS_3_541_CA_3_evaluation": {
-      "cost": 556.0
-    },
-    "FOODS_3_541_TX_1_evaluation": {
-      "cost": 173.5
-    },
-    "FOODS_3_541_TX_2_evaluation": {
-      "cost": 198.5
-    },
-    "FOODS_3_541_TX_3_evaluation": {
-      "cost": 266.5
-    },
-    "FOODS_3_541_WI_3_evaluation": {
-      "cost": 130.0
-    },
-    "FOODS_3_547_CA_3_evaluation": {
-      "cost": 263.0
-    },
-    "FOODS_3_547_WI_2_evaluation": {
-      "cost": 852.75
-    },
-    "FOODS_3_547_WI_3_evaluation": {
-      "cost": 398.0
-    },
-    "FOODS_3_555_CA_1_evaluation": {
-      "cost": 145.625
-    },
-    "FOODS_3_555_CA_2_evaluation": {
-      "cost": 183.0
-    },
-    "FOODS_3_555_CA_3_evaluation": {
-      "cost": 202.5
-    },
-    "FOODS_3_555_TX_1_evaluation": {
-      "cost": 300.5
-    },
-    "FOODS_3_555_TX_2_evaluation": {
-      "cost": 448.5
-    },
-    "FOODS_3_555_TX_3_evaluation": {
-      "cost": 383.5
-    },
-    "FOODS_3_555_WI_2_evaluation": {
-      "cost": 264.0
-    },
-    "FOODS_3_555_WI_3_evaluation": {
-      "cost": 223.5
-    },
-    "FOODS_3_580_CA_3_evaluation": {
-      "cost": 176.375
-    },
-    "FOODS_3_580_WI_2_evaluation": {
-      "cost": 686.5
-    },
-    "FOODS_3_580_WI_3_evaluation": {
-      "cost": 131.5
-    },
-    "FOODS_3_586_CA_1_evaluation": {
-      "cost": 312.0
-    },
-    "FOODS_3_586_CA_2_evaluation": {
-      "cost": 177.0
-    },
-    "FOODS_3_586_CA_3_evaluation": {
-      "cost": 444.5
-    },
-    "FOODS_3_586_CA_4_evaluation": {
-      "cost": 137.5
-    },
-    "FOODS_3_586_TX_1_evaluation": {
-      "cost": 412.5
-    },
-    "FOODS_3_586_TX_2_evaluation": {
-      "cost": 724.0
-    },
-    "FOODS_3_586_TX_3_evaluation": {
-      "cost": 443.0
-    },
-    "FOODS_3_586_WI_1_evaluation": {
-      "cost": 176.25
-    },
-    "FOODS_3_586_WI_2_evaluation": {
-      "cost": 111.625
-    },
-    "FOODS_3_586_WI_3_evaluation": {
-      "cost": 337.0
+    "FOODS_1_045_TX_1_evaluation": {
+      "cost": 26.375,
+      "demand": 46.0,
+      "MASE": 0.5376914486279515
+    },
+    "FOODS_1_053_TX_1_evaluation": {
+      "cost": 32.59999999999999,
+      "demand": 13.0,
+      "MASE": 1.8933021806853583
+    },
+    "FOODS_1_054_TX_3_evaluation": {
+      "cost": 19.60000000000001,
+      "demand": 5.0,
+      "MASE": 0.7003101402373246
+    },
+    "FOODS_1_061_TX_2_evaluation": {
+      "cost": 87.82499999999996,
+      "demand": 58.0,
+      "MASE": 1.068010372465818
+    },
+    "FOODS_1_067_TX_2_evaluation": {
+      "cost": 12.125,
+      "demand": 44.0,
+      "MASE": 0.3394097222222222
+    },
+    "FOODS_1_070_CA_1_evaluation": {
+      "cost": 67.25,
+      "demand": 36.0,
+      "MASE": 0.8522385252069226
+    },
+    "FOODS_1_092_WI_3_evaluation": {
+      "cost": 20.800000000000026,
+      "demand": 19.0,
+      "MASE": 0.3166189111747851
+    },
+    "FOODS_1_104_TX_1_evaluation": {
+      "cost": 52.60000000000001,
+      "demand": 65.0,
+      "MASE": 0.6751246882793017
+    },
+    "FOODS_1_106_CA_2_evaluation": {
+      "cost": 14.424999999999994,
+      "demand": 115.0,
+      "MASE": 0.4853470622119816
+    },
+    "FOODS_1_112_WI_1_evaluation": {
+      "cost": 21.10000000000001,
+      "demand": 44.0,
+      "MASE": 0.4028645833333333
+    },
+    "FOODS_1_144_WI_3_evaluation": {
+      "cost": 14.0,
+      "demand": 10.0,
+      "MASE": 0.5590219224283306
+    },
+    "FOODS_1_159_TX_1_evaluation": {
+      "cost": 36.75,
+      "demand": 18.0,
+      "MASE": 2.6437988281249996
+    },
+    "FOODS_1_160_WI_3_evaluation": {
+      "cost": 33.75,
+      "demand": 18.0,
+      "MASE": 4.510204081632653
+    },
+    "FOODS_1_162_CA_1_evaluation": {
+      "cost": 64.5,
+      "demand": 81.0,
+      "MASE": 0.22643442622950818
+    },
+    "FOODS_1_168_WI_3_evaluation": {
+      "cost": 8.0,
+      "demand": 14.0,
+      "MASE": 0.327893175074184
+    },
+    "FOODS_1_175_CA_3_evaluation": {
+      "cost": 25.599999999999998,
+      "demand": 29.0,
+      "MASE": 0.3593046523261631
+    },
+    "FOODS_1_175_TX_2_evaluation": {
+      "cost": 22.5,
+      "demand": 13.0,
+      "MASE": 0.9304587688734031
+    },
+    "FOODS_1_189_TX_3_evaluation": {
+      "cost": 14.5,
+      "demand": 5.0,
+      "MASE": 1.0980648535564854
+    },
+    "FOODS_1_196_TX_2_evaluation": {
+      "cost": 24.5,
+      "demand": 0.0,
+      "MASE": 0.1962431693989071
+    },
+    "FOODS_1_201_TX_2_evaluation": {
+      "cost": 23.5,
+      "demand": 35.0,
+      "MASE": 0.32122093023255816
+    },
+    "FOODS_1_217_CA_4_evaluation": {
+      "cost": 23.300000000000026,
+      "demand": 41.0,
+      "MASE": 0.5150883218842003
+    },
+    "FOODS_2_024_TX_2_evaluation": {
+      "cost": 17.0,
+      "demand": 8.0,
+      "MASE": 0.3398506151142355
+    },
+    "FOODS_2_026_WI_2_evaluation": {
+      "cost": 89.70000000000002,
+      "demand": 85.0,
+      "MASE": 0.7646000553556602
+    },
+    "FOODS_2_030_CA_1_evaluation": {
+      "cost": 37.10000000000001,
+      "demand": 86.0,
+      "MASE": 0.4804971443406023
+    },
+    "FOODS_2_041_CA_3_evaluation": {
+      "cost": 28.625,
+      "demand": 35.0,
+      "MASE": 0.5940860215053764
+    },
+    "FOODS_2_045_WI_1_evaluation": {
+      "cost": 6.849999999999998,
+      "demand": 14.0,
+      "MASE": 0.3531015037593985
+    },
+    "FOODS_2_052_TX_1_evaluation": {
+      "cost": 50.20000000000002,
+      "demand": 15.0,
+      "MASE": 0.9168253536452665
+    },
+    "FOODS_2_059_CA_1_evaluation": {
+      "cost": 45.32499999999995,
+      "demand": 46.0,
+      "MASE": 1.133447304907482
+    },
+    "FOODS_2_061_WI_3_evaluation": {
+      "cost": 24.25,
+      "demand": 48.0,
+      "MASE": 0.3740160579345088
+    },
+    "FOODS_2_063_TX_1_evaluation": {
+      "cost": 20.10000000000001,
+      "demand": 97.0,
+      "MASE": 0.28188775510204084
+    },
+    "FOODS_2_067_CA_4_evaluation": {
+      "cost": 60.0,
+      "demand": 18.0,
+      "MASE": 1.0189549180327868
+    },
+    "FOODS_2_069_TX_2_evaluation": {
+      "cost": 4.75,
+      "demand": 4.0,
+      "MASE": 0.7099883177570093
+    },
+    "FOODS_2_072_TX_1_evaluation": {
+      "cost": 8.75,
+      "demand": 9.0,
+      "MASE": 0.5962230215827339
+    },
+    "FOODS_2_072_TX_2_evaluation": {
+      "cost": 10.600000000000009,
+      "demand": 14.0,
+      "MASE": 0.30995792426367463
+    },
+    "FOODS_2_078_CA_1_evaluation": {
+      "cost": 28.75,
+      "demand": 26.0,
+      "MASE": 0.9208333333333333
+    },
+    "FOODS_2_080_WI_1_evaluation": {
+      "cost": 60.699999999999974,
+      "demand": 21.0,
+      "MASE": 0.8240411931818182
+    },
+    "FOODS_2_094_CA_2_evaluation": {
+      "cost": 23.25,
+      "demand": 13.0,
+      "MASE": 3.2713815789473686
+    },
+    "FOODS_2_099_TX_3_evaluation": {
+      "cost": 28.0,
+      "demand": 53.0,
+      "MASE": 0.7076612903225806
+    },
+    "FOODS_2_123_TX_2_evaluation": {
+      "cost": 20.75,
+      "demand": 15.0,
+      "MASE": 0.9242565055762083
+    },
+    "FOODS_2_147_CA_4_evaluation": {
+      "cost": 7.75,
+      "demand": 24.0,
+      "MASE": 0.4796006944444444
+    },
+    "FOODS_2_149_WI_2_evaluation": {
+      "cost": 38.97499999999998,
+      "demand": 85.0,
+      "MASE": 0.18676513815402704
+    },
+    "FOODS_2_176_WI_1_evaluation": {
+      "cost": 6.6000000000000085,
+      "demand": 27.0,
+      "MASE": 0.1879251700680272
+    },
+    "FOODS_2_186_TX_2_evaluation": {
+      "cost": 3.625,
+      "demand": 1.0,
+      "MASE": 0.21034263959390861
+    },
+    "FOODS_2_199_WI_1_evaluation": {
+      "cost": 38.34999999999999,
+      "demand": 94.0,
+      "MASE": 0.7797379032258065
+    },
+    "FOODS_2_202_WI_1_evaluation": {
+      "cost": 23.349999999999987,
+      "demand": 25.0,
+      "MASE": 1.0962301587301586
+    },
+    "FOODS_2_206_WI_1_evaluation": {
+      "cost": 18.5,
+      "demand": 14.0,
+      "MASE": 2.1148325358851676
+    },
+    "FOODS_2_207_CA_4_evaluation": {
+      "cost": 8.125,
+      "demand": 8.0,
+      "MASE": 0.6445833333333334
+    },
+    "FOODS_2_211_CA_4_evaluation": {
+      "cost": 9.0,
+      "demand": 15.0,
+      "MASE": 0.22032208588957053
+    },
+    "FOODS_2_211_WI_3_evaluation": {
+      "cost": 33.10000000000001,
+      "demand": 20.0,
+      "MASE": 0.2660513643659711
+    },
+    "FOODS_2_218_WI_1_evaluation": {
+      "cost": 17.375,
+      "demand": 37.0,
+      "MASE": 0.8125
+    },
+    "FOODS_2_228_WI_3_evaluation": {
+      "cost": 16.0,
+      "demand": 12.0,
+      "MASE": 0.52
+    },
+    "FOODS_2_241_WI_3_evaluation": {
+      "cost": 25.60000000000001,
+      "demand": 95.0,
+      "MASE": 0.1885665529010239
+    },
+    "FOODS_2_250_WI_1_evaluation": {
+      "cost": 31.375,
+      "demand": 13.0,
+      "MASE": 3.500428082191781
+    },
+    "FOODS_2_258_CA_3_evaluation": {
+      "cost": 37.59999999999999,
+      "demand": 25.0,
+      "MASE": 1.0855739400206823
+    },
+    "FOODS_2_265_WI_3_evaluation": {
+      "cost": 6.5,
+      "demand": 6.0,
+      "MASE": 1.0543893129770991
+    },
+    "FOODS_2_280_CA_4_evaluation": {
+      "cost": 7.6000000000000085,
+      "demand": 13.0,
+      "MASE": 1.3594980314960632
+    },
+    "FOODS_2_285_WI_1_evaluation": {
+      "cost": 24.0,
+      "demand": 18.0,
+      "MASE": 0.6616766467065869
+    },
+    "FOODS_2_296_CA_1_evaluation": {
+      "cost": 16.599999999999998,
+      "demand": 9.0,
+      "MASE": 1.0582157258064515
+    },
+    "FOODS_2_299_WI_3_evaluation": {
+      "cost": 40.75,
+      "demand": 97.0,
+      "MASE": 0.5353682170542636
+    },
+    "FOODS_2_312_TX_3_evaluation": {
+      "cost": 14.0,
+      "demand": 22.0,
+      "MASE": 0.7935368043087971
+    },
+    "FOODS_2_341_WI_1_evaluation": {
+      "cost": 168.0,
+      "demand": 42.0,
+      "MASE": 5.1681514476614705
+    },
+    "FOODS_2_349_WI_1_evaluation": {
+      "cost": 52.22499999999998,
+      "demand": 124.0,
+      "MASE": 0.7849726775956284
+    },
+    "FOODS_2_353_TX_3_evaluation": {
+      "cost": 7.5,
+      "demand": 5.0,
+      "MASE": 0.30424008810572684
+    },
+    "FOODS_2_380_CA_1_evaluation": {
+      "cost": 11.25,
+      "demand": 45.0,
+      "MASE": 0.147748626770743
+    },
+    "FOODS_2_380_CA_4_evaluation": {
+      "cost": 11.349999999999998,
+      "demand": 57.0,
+      "MASE": 0.13873195229127433
+    },
+    "FOODS_2_393_TX_2_evaluation": {
+      "cost": 13.0,
+      "demand": 6.0,
+      "MASE": 2.326315789473684
+    },
+    "FOODS_3_002_TX_1_evaluation": {
+      "cost": 88.85,
+      "demand": 26.0,
+      "MASE": 1.2235945485519593
+    },
+    "FOODS_3_003_WI_1_evaluation": {
+      "cost": 22.0,
+      "demand": 33.0,
+      "MASE": 0.6304460580912864
+    },
+    "FOODS_3_026_TX_2_evaluation": {
+      "cost": 24.474999999999998,
+      "demand": 51.0,
+      "MASE": 0.5705679862306369
+    },
+    "FOODS_3_041_TX_2_evaluation": {
+      "cost": 33.60000000000001,
+      "demand": 38.0,
+      "MASE": 0.704627207325049
+    },
+    "FOODS_3_046_TX_1_evaluation": {
+      "cost": 5.0,
+      "demand": 2.0,
+      "MASE": 0.32047563805104406
+    },
+    "FOODS_3_053_TX_2_evaluation": {
+      "cost": 30.199999999999974,
+      "demand": 28.0,
+      "MASE": 1.378787878787879
+    },
+    "FOODS_3_060_CA_3_evaluation": {
+      "cost": 17.349999999999987,
+      "demand": 41.0,
+      "MASE": 0.7910242290748899
+    },
+    "FOODS_3_085_CA_3_evaluation": {
+      "cost": 23.300000000000026,
+      "demand": 26.0,
+      "MASE": 1.8598111658456487
+    },
+    "FOODS_3_087_TX_1_evaluation": {
+      "cost": 39.574999999999996,
+      "demand": 89.0,
+      "MASE": 0.6494221651521138
+    },
+    "FOODS_3_107_CA_3_evaluation": {
+      "cost": 82.67499999999997,
+      "demand": 308.0,
+      "MASE": 0.27186507936507937
+    },
+    "FOODS_3_114_CA_4_evaluation": {
+      "cost": 62.25,
+      "demand": 47.0,
+      "MASE": 1.819610778443114
+    },
+    "FOODS_3_121_CA_3_evaluation": {
+      "cost": 46.50000000000006,
+      "demand": 173.0,
+      "MASE": 0.3135245901639344
+    },
+    "FOODS_3_142_CA_4_evaluation": {
+      "cost": 73.59999999999997,
+      "demand": 43.0,
+      "MASE": 1.425986842105263
+    },
+    "FOODS_3_151_CA_4_evaluation": {
+      "cost": 57.09999999999999,
+      "demand": 75.0,
+      "MASE": 0.7279080976863753
+    },
+    "FOODS_3_151_WI_2_evaluation": {
+      "cost": 5.625,
+      "demand": 7.0,
+      "MASE": 0.0807355090112031
+    },
+    "FOODS_3_157_WI_1_evaluation": {
+      "cost": 9.375,
+      "demand": 16.0,
+      "MASE": 1.6575
+    },
+    "FOODS_3_158_TX_1_evaluation": {
+      "cost": 12.349999999999987,
+      "demand": 9.0,
+      "MASE": 0.752813981042654
+    },
+    "FOODS_3_173_WI_3_evaluation": {
+      "cost": 6.875,
+      "demand": 2.0,
+      "MASE": 1.5234375
+    },
+    "FOODS_3_208_CA_3_evaluation": {
+      "cost": 20.25,
+      "demand": 56.0,
+      "MASE": 0.2799831081081081
+    },
+    "FOODS_3_220_CA_2_evaluation": {
+      "cost": 12.875,
+      "demand": 14.0,
+      "MASE": 1.2901785714285714
+    },
+    "FOODS_3_236_WI_2_evaluation": {
+      "cost": 29.5,
+      "demand": 83.0,
+      "MASE": 0.46469676848162905
+    },
+    "FOODS_3_251_TX_3_evaluation": {
+      "cost": 7.0,
+      "demand": 7.0,
+      "MASE": 0.4752006880733945
+    },
+    "FOODS_3_290_TX_3_evaluation": {
+      "cost": 60.625,
+      "demand": 80.0,
+      "MASE": 0.6441538974017322
+    },
+    "FOODS_3_308_TX_2_evaluation": {
+      "cost": 17.5,
+      "demand": 9.0,
+      "MASE": 0.5982484076433121
+    },
+    "FOODS_3_315_CA_4_evaluation": {
+      "cost": 20.125,
+      "demand": 10.0,
+      "MASE": 1.2600877192982456
+    },
+    "FOODS_3_318_CA_4_evaluation": {
+      "cost": 101.90000000000009,
+      "demand": 251.0,
+      "MASE": 0.2567602456788782
+    },
+    "FOODS_3_318_TX_3_evaluation": {
+      "cost": 30.100000000000023,
+      "demand": 294.0,
+      "MASE": 0.2196973241017964
+    },
+    "FOODS_3_328_CA_3_evaluation": {
+      "cost": 27.0,
+      "demand": 22.0,
+      "MASE": 0.4185606060606061
+    },
+    "FOODS_3_328_CA_4_evaluation": {
+      "cost": 18.75,
+      "demand": 12.0,
+      "MASE": 0.5386490250696379
+    },
+    "FOODS_3_344_TX_2_evaluation": {
+      "cost": 18.125,
+      "demand": 29.0,
+      "MASE": 0.5263633377135348
+    },
+    "FOODS_3_355_WI_3_evaluation": {
+      "cost": 28.0,
+      "demand": 56.0,
+      "MASE": 0.2009090909090909
+    },
+    "FOODS_3_356_CA_1_evaluation": {
+      "cost": 23.0,
+      "demand": 49.0,
+      "MASE": 0.45435855263157887
+    },
+    "FOODS_3_382_TX_3_evaluation": {
+      "cost": 19.849999999999998,
+      "demand": 50.0,
+      "MASE": 0.8952546296296297
+    },
+    "FOODS_3_384_WI_1_evaluation": {
+      "cost": 7.349999999999987,
+      "demand": 11.0,
+      "MASE": 0.4560731132075472
+    },
+    "FOODS_3_390_CA_2_evaluation": {
+      "cost": 17.25,
+      "demand": 33.0,
+      "MASE": 0.7043201133144475
+    },
+    "FOODS_3_392_TX_1_evaluation": {
+      "cost": 15.100000000000009,
+      "demand": 20.0,
+      "MASE": 0.5858960763520679
+    },
+    "FOODS_3_395_CA_2_evaluation": {
+      "cost": 27.625,
+      "demand": 29.0,
+      "MASE": 0.8535814606741573
+    },
+    "FOODS_3_402_CA_3_evaluation": {
+      "cost": 9.100000000000009,
+      "demand": 20.0,
+      "MASE": 0.42554557124518616
+    },
+    "FOODS_3_409_CA_1_evaluation": {
+      "cost": 29.25,
+      "demand": 34.0,
+      "MASE": 2.0462962962962963
+    },
+    "FOODS_3_423_CA_1_evaluation": {
+      "cost": 28.474999999999977,
+      "demand": 103.0,
+      "MASE": 0.6320974576271187
+    },
+    "FOODS_3_423_WI_3_evaluation": {
+      "cost": 15.0,
+      "demand": 24.0,
+      "MASE": 0.3124410933081998
+    },
+    "FOODS_3_426_TX_3_evaluation": {
+      "cost": 9.5,
+      "demand": 11.0,
+      "MASE": 0.9644638403990025
+    },
+    "FOODS_3_452_CA_2_evaluation": {
+      "cost": 5.6000000000000085,
+      "demand": 12.0,
+      "MASE": 0.3381591337099812
+    },
+    "FOODS_3_462_TX_1_evaluation": {
+      "cost": 363.5999999999997,
+      "demand": 396.0,
+      "MASE": 1.1688652727093403
+    },
+    "FOODS_3_468_CA_1_evaluation": {
+      "cost": 16.5,
+      "demand": 85.0,
+      "MASE": 0.35178634594977004
+    },
+    "FOODS_3_469_CA_3_evaluation": {
+      "cost": 58.0,
+      "demand": 180.0,
+      "MASE": 0.19259474436896676
+    },
+    "FOODS_3_471_CA_3_evaluation": {
+      "cost": 8.0,
+      "demand": 6.0,
+      "MASE": 1.3273273273273274
+    },
+    "FOODS_3_477_CA_2_evaluation": {
+      "cost": 32.949999999999974,
+      "demand": 69.0,
+      "MASE": 0.5695876288659794
+    },
+    "FOODS_3_477_WI_2_evaluation": {
+      "cost": 38.70000000000002,
+      "demand": 46.0,
+      "MASE": 0.4652097366809553
+    },
+    "FOODS_3_494_CA_1_evaluation": {
+      "cost": 19.849999999999998,
+      "demand": 42.0,
+      "MASE": 0.7028484513274336
+    },
+    "FOODS_3_505_CA_3_evaluation": {
+      "cost": 43.70000000000002,
+      "demand": 108.0,
+      "MASE": 0.39474355702985453
+    },
+    "FOODS_3_519_CA_1_evaluation": {
+      "cost": 1150.0,
+      "demand": 466.0,
+      "MASE": 4.210132356720637
+    },
+    "FOODS_3_523_TX_2_evaluation": {
+      "cost": 39.75,
+      "demand": 98.0,
+      "MASE": 0.5509573195053848
+    },
+    "FOODS_3_542_CA_2_evaluation": {
+      "cost": 7.5,
+      "demand": 14.0,
+      "MASE": 1.8921232876712328
+    },
+    "FOODS_3_544_TX_1_evaluation": {
+      "cost": 14.5,
+      "demand": 21.0,
+      "MASE": 0.7380725190839694
+    },
+    "FOODS_3_547_WI_1_evaluation": {
+      "cost": 82.0,
+      "demand": 116.0,
+      "MASE": 0.4635416666666667
+    },
+    "FOODS_3_549_CA_1_evaluation": {
+      "cost": 50.5,
+      "demand": 22.0,
+      "MASE": 0.8106659142212189
+    },
+    "FOODS_3_552_WI_1_evaluation": {
+      "cost": 8.5,
+      "demand": 59.0,
+      "MASE": 0.3762769580022701
+    },
+    "FOODS_3_559_CA_4_evaluation": {
+      "cost": 4.75,
+      "demand": 12.0,
+      "MASE": 0.6482400722021661
+    },
+    "FOODS_3_563_CA_2_evaluation": {
+      "cost": 0.0,
+      "demand": 0.0,
+      "MASE": 0.0
+    },
+    "FOODS_3_576_TX_3_evaluation": {
+      "cost": 8.0,
+      "demand": 11.0,
+      "MASE": 0.8969155844155845
+    },
+    "FOODS_3_576_WI_1_evaluation": {
+      "cost": 16.0,
+      "demand": 19.0,
+      "MASE": 1.3199658703071673
+    },
+    "FOODS_3_580_CA_2_evaluation": {
+      "cost": 136.97499999999997,
+      "demand": 105.0,
+      "MASE": 0.8139732547597461
     },
     "FOODS_3_587_CA_1_evaluation": {
-      "cost": 312.5
+      "cost": 292.6,
+      "demand": 598.0,
+      "MASE": 0.3221991554690443
     },
-    "FOODS_3_587_CA_3_evaluation": {
-      "cost": 377.5
+    "FOODS_3_595_TX_3_evaluation": {
+      "cost": 26.75,
+      "demand": 21.0,
+      "MASE": 0.9579918032786885
     },
-    "FOODS_3_587_CA_4_evaluation": {
-      "cost": 190.0
+    "FOODS_3_601_CA_2_evaluation": {
+      "cost": 15.5,
+      "demand": 7.0,
+      "MASE": 3.2122093023255816
     },
-    "FOODS_3_587_TX_1_evaluation": {
-      "cost": 509.0
+    "FOODS_3_603_CA_2_evaluation": {
+      "cost": 26.5,
+      "demand": 95.0,
+      "MASE": 1.6425675675675675
     },
-    "FOODS_3_587_TX_2_evaluation": {
-      "cost": 440.5
+    "FOODS_3_605_WI_2_evaluation": {
+      "cost": 16.60000000000001,
+      "demand": 68.0,
+      "MASE": 0.9441455696202531
     },
-    "FOODS_3_587_TX_3_evaluation": {
-      "cost": 392.0
+    "FOODS_3_628_WI_1_evaluation": {
+      "cost": 49.925,
+      "demand": 95.0,
+      "MASE": 0.6710526315789473
     },
-    "FOODS_3_587_WI_2_evaluation": {
-      "cost": 311.5
+    "FOODS_3_631_WI_1_evaluation": {
+      "cost": 10.75,
+      "demand": 38.0,
+      "MASE": 0.6169354838709677
     },
-    "FOODS_3_587_WI_3_evaluation": {
-      "cost": 508.5
+    "FOODS_3_660_WI_3_evaluation": {
+      "cost": 35.349999999999994,
+      "demand": 11.0,
+      "MASE": 0.36217633562766305
     },
-    "FOODS_3_607_CA_1_evaluation": {
-      "cost": 356.5
+    "FOODS_3_662_CA_1_evaluation": {
+      "cost": 20.25,
+      "demand": 18.0,
+      "MASE": 0.8026634382566585
     },
-    "FOODS_3_607_CA_3_evaluation": {
-      "cost": 244.5
+    "FOODS_3_662_CA_3_evaluation": {
+      "cost": 10.0,
+      "demand": 17.0,
+      "MASE": 0.9162520729684909
     },
-    "FOODS_3_607_TX_1_evaluation": {
-      "cost": 283.0
+    "FOODS_3_663_TX_3_evaluation": {
+      "cost": 17.599999999999998,
+      "demand": 25.0,
+      "MASE": 0.17589317297488502
     },
-    "FOODS_3_607_TX_2_evaluation": {
-      "cost": 404.0
+    "FOODS_3_679_TX_1_evaluation": {
+      "cost": 29.75,
+      "demand": 49.0,
+      "MASE": 0.25517447827574413
     },
-    "FOODS_3_607_TX_3_evaluation": {
-      "cost": 129.0
+    "FOODS_3_683_WI_1_evaluation": {
+      "cost": 33.59999999999999,
+      "demand": 47.0,
+      "MASE": 1.257496387283237
     },
-    "FOODS_3_635_CA_1_evaluation": {
-      "cost": 236.5
+    "FOODS_3_686_WI_2_evaluation": {
+      "cost": 11.625,
+      "demand": 14.0,
+      "MASE": 0.51
     },
-    "FOODS_3_635_CA_2_evaluation": {
-      "cost": 398.0
-    },
-    "FOODS_3_635_CA_3_evaluation": {
-      "cost": 689.5
-    },
-    "FOODS_3_635_TX_2_evaluation": {
-      "cost": 282.0
-    },
-    "FOODS_3_635_TX_3_evaluation": {
-      "cost": 233.0
-    },
-    "FOODS_3_635_WI_3_evaluation": {
-      "cost": 132.0
-    },
-    "FOODS_3_668_WI_1_evaluation": {
-      "cost": 159.625
-    },
-    "FOODS_3_668_WI_3_evaluation": {
-      "cost": 81.5
-    },
-    "FOODS_3_681_CA_1_evaluation": {
-      "cost": 189.5
-    },
-    "FOODS_3_681_CA_3_evaluation": {
-      "cost": 669.375
-    },
-    "FOODS_3_681_TX_1_evaluation": {
-      "cost": 315.0
-    },
-    "FOODS_3_681_TX_2_evaluation": {
-      "cost": 184.5
-    },
-    "FOODS_3_681_TX_3_evaluation": {
-      "cost": 248.0
-    },
-    "FOODS_3_681_WI_3_evaluation": {
-      "cost": 331.25
-    },
-    "FOODS_3_694_CA_1_evaluation": {
-      "cost": 111.0
-    },
-    "FOODS_3_694_CA_3_evaluation": {
-      "cost": 176.0
-    },
-    "FOODS_3_694_TX_1_evaluation": {
-      "cost": 199.25
-    },
-    "FOODS_3_694_TX_2_evaluation": {
-      "cost": 127.5
-    },
-    "FOODS_3_694_TX_3_evaluation": {
-      "cost": 245.0
-    },
-    "FOODS_3_694_WI_1_evaluation": {
-      "cost": 143.0
-    },
-    "FOODS_3_694_WI_2_evaluation": {
-      "cost": 461.5
+    "FOODS_3_691_WI_2_evaluation": {
+      "cost": 4.5,
+      "demand": 5.0,
+      "MASE": 0.8007246376811594
     },
     "FOODS_3_694_WI_3_evaluation": {
-      "cost": 358.0
+      "cost": 237.0,
+      "demand": 1230.0,
+      "MASE": 0.5060280373831776
     },
-    "FOODS_3_702_CA_1_evaluation": {
-      "cost": 265.25
+    "FOODS_3_695_TX_2_evaluation": {
+      "cost": 109.10000000000002,
+      "demand": 80.0,
+      "MASE": 1.2021253602305475
     },
-    "FOODS_3_702_CA_3_evaluation": {
-      "cost": 1105.125
+    "FOODS_3_706_WI_2_evaluation": {
+      "cost": 51.599999999999966,
+      "demand": 78.0,
+      "MASE": 0.6647727272727273
     },
-    "FOODS_3_711_CA_3_evaluation": {
-      "cost": 294.5
+    "FOODS_3_708_TX_3_evaluation": {
+      "cost": 12.75,
+      "demand": 24.0,
+      "MASE": 0.3611111111111111
     },
-    "FOODS_3_711_WI_2_evaluation": {
-      "cost": 538.125
+    "FOODS_3_718_WI_1_evaluation": {
+      "cost": 56.20000000000002,
+      "demand": 67.0,
+      "MASE": 0.39038186725944746
     },
-    "FOODS_3_711_WI_3_evaluation": {
-      "cost": 265.0
+    "FOODS_3_726_CA_4_evaluation": {
+      "cost": 33.949999999999974,
+      "demand": 23.0,
+      "MASE": 1.0641705974842768
     },
-    "FOODS_3_714_CA_1_evaluation": {
-      "cost": 206.5
+    "FOODS_3_730_CA_2_evaluation": {
+      "cost": 25.875,
+      "demand": 53.0,
+      "MASE": 0.5553664072632944
     },
-    "FOODS_3_714_CA_3_evaluation": {
-      "cost": 349.375
+    "FOODS_3_736_CA_2_evaluation": {
+      "cost": 50.25,
+      "demand": 15.0,
+      "MASE": 1.6443452380952381
     },
-    "FOODS_3_714_TX_1_evaluation": {
-      "cost": 175.625
+    "FOODS_3_736_WI_2_evaluation": {
+      "cost": 11.100000000000009,
+      "demand": 3.0,
+      "MASE": 1.2415730337078652
     },
-    "FOODS_3_714_TX_2_evaluation": {
-      "cost": 198.25
+    "FOODS_3_741_WI_3_evaluation": {
+      "cost": 32.0,
+      "demand": 53.0,
+      "MASE": 0.9075229960578186
     },
-    "FOODS_3_714_TX_3_evaluation": {
-      "cost": 252.5
-    },
-    "FOODS_3_714_WI_1_evaluation": {
-      "cost": 115.0
-    },
-    "FOODS_3_714_WI_2_evaluation": {
-      "cost": 135.0
-    },
-    "FOODS_3_714_WI_3_evaluation": {
-      "cost": 199.5
-    },
-    "FOODS_3_723_CA_1_evaluation": {
-      "cost": 217.5
-    },
-    "FOODS_3_723_CA_3_evaluation": {
-      "cost": 462.5
-    },
-    "FOODS_3_723_TX_1_evaluation": {
-      "cost": 343.0
-    },
-    "FOODS_3_723_TX_2_evaluation": {
-      "cost": 290.5
-    },
-    "FOODS_3_723_TX_3_evaluation": {
-      "cost": 266.0
-    },
-    "FOODS_3_723_WI_2_evaluation": {
-      "cost": 391.0
-    },
-    "FOODS_3_723_WI_3_evaluation": {
-      "cost": 490.5
-    },
-    "FOODS_3_739_CA_1_evaluation": {
-      "cost": 268.0
-    },
-    "FOODS_3_739_CA_3_evaluation": {
-      "cost": 427.5
-    },
-    "FOODS_3_741_CA_1_evaluation": {
-      "cost": 207.875
-    },
-    "FOODS_3_741_CA_3_evaluation": {
-      "cost": 286.0
-    },
-    "FOODS_3_744_CA_1_evaluation": {
-      "cost": 184.5
-    },
-    "FOODS_3_752_CA_3_evaluation": {
-      "cost": 324.5
-    },
-    "FOODS_3_752_WI_2_evaluation": {
-      "cost": 332.5
-    },
-    "FOODS_3_752_WI_3_evaluation": {
-      "cost": 430.375
-    },
-    "FOODS_3_755_CA_1_evaluation": {
-      "cost": 127.5
-    },
-    "FOODS_3_764_CA_3_evaluation": {
-      "cost": 235.0
-    },
-    "FOODS_3_767_CA_3_evaluation": {
-      "cost": 203.0
-    },
-    "FOODS_3_785_CA_1_evaluation": {
-      "cost": 1270.5
-    },
-    "FOODS_3_785_CA_3_evaluation": {
-      "cost": 1190.0
-    },
-    "FOODS_3_804_CA_2_evaluation": {
-      "cost": 413.75
-    },
-    "FOODS_3_804_CA_3_evaluation": {
-      "cost": 113.0
-    },
-    "FOODS_3_804_TX_2_evaluation": {
-      "cost": 216.5
-    },
-    "FOODS_3_804_TX_3_evaluation": {
-      "cost": 864.25
-    },
-    "FOODS_3_804_WI_2_evaluation": {
-      "cost": 190.0
-    },
-    "FOODS_3_808_CA_1_evaluation": {
-      "cost": 297.0
-    },
-    "FOODS_3_808_CA_2_evaluation": {
-      "cost": 311.0
-    },
-    "FOODS_3_808_CA_3_evaluation": {
-      "cost": 814.0
-    },
-    "FOODS_3_808_TX_1_evaluation": {
-      "cost": 191.0
+    "FOODS_3_775_CA_4_evaluation": {
+      "cost": 21.5,
+      "demand": 18.0,
+      "MASE": 0.6880448318804483
     },
     "FOODS_3_808_TX_2_evaluation": {
-      "cost": 258.0
+      "cost": 286.40000000000003,
+      "demand": 0.0,
+      "MASE": 0.5018830413137647
     },
-    "FOODS_3_808_TX_3_evaluation": {
-      "cost": 175.0
+    "FOODS_3_815_CA_1_evaluation": {
+      "cost": 19.25,
+      "demand": 15.0,
+      "MASE": 0.8464484679665738
     },
-    "FOODS_3_808_WI_3_evaluation": {
-      "cost": 350.0
+    "FOODS_3_817_CA_1_evaluation": {
+      "cost": 28.75,
+      "demand": 20.0,
+      "MASE": 0.8142105263157895
     },
-    "FOODS_3_811_CA_3_evaluation": {
-      "cost": 172.375
+    "HOBBIES_1_012_WI_2_evaluation": {
+      "cost": 6.1000000000000085,
+      "demand": 3.0,
+      "MASE": 0.5772388059701493
     },
-    "FOODS_3_811_TX_2_evaluation": {
-      "cost": 456.5
+    "HOBBIES_1_033_WI_1_evaluation": {
+      "cost": 22.099999999999977,
+      "demand": 28.0,
+      "MASE": 0.7515243902439025
     },
-    "FOODS_3_811_TX_3_evaluation": {
-      "cost": 322.5
+    "HOBBIES_1_049_WI_2_evaluation": {
+      "cost": 14.0,
+      "demand": 9.0,
+      "MASE": 1.1656118143459917
     },
-    "FOODS_3_811_WI_2_evaluation": {
-      "cost": 929.25
+    "HOBBIES_1_051_WI_1_evaluation": {
+      "cost": 1.5,
+      "demand": 0.0,
+      "MASE": 0.18294701986754966
     },
-    "FOODS_3_816_WI_2_evaluation": {
-      "cost": 367.0
+    "HOBBIES_1_079_WI_1_evaluation": {
+      "cost": 7.25,
+      "demand": 37.0,
+      "MASE": 0.50650396432111
     },
-    "HOBBIES_1_234_CA_3_evaluation": {
-      "cost": 310.5
+    "HOBBIES_1_081_CA_1_evaluation": {
+      "cost": 11.875,
+      "demand": 22.0,
+      "MASE": 0.3081528871391076
     },
-    "HOBBIES_1_348_CA_1_evaluation": {
-      "cost": 78.25
+    "HOBBIES_1_084_TX_2_evaluation": {
+      "cost": 11.0,
+      "demand": 16.0,
+      "MASE": 0.594885598923284
     },
-    "HOBBIES_1_371_CA_1_evaluation": {
-      "cost": 140.5
+    "HOBBIES_1_094_TX_2_evaluation": {
+      "cost": 20.25,
+      "demand": 11.0,
+      "MASE": 1.5490654205607477
     },
-    "HOUSEHOLD_1_019_CA_3_evaluation": {
-      "cost": 262.0
+    "HOBBIES_1_129_TX_3_evaluation": {
+      "cost": 10.5,
+      "demand": 10.0,
+      "MASE": 1.0650602409638554
     },
-    "HOUSEHOLD_1_083_CA_3_evaluation": {
-      "cost": 121.5
+    "HOBBIES_1_136_CA_1_evaluation": {
+      "cost": 2.0,
+      "demand": 2.0,
+      "MASE": 0.7129032258064517
     },
-    "HOUSEHOLD_1_110_CA_3_evaluation": {
-      "cost": 163.5
+    "HOBBIES_1_152_CA_4_evaluation": {
+      "cost": 1.6000000000000085,
+      "demand": 15.0,
+      "MASE": 0.29784366576819404
     },
-    "HOUSEHOLD_1_110_WI_2_evaluation": {
-      "cost": 226.0
+    "HOBBIES_1_154_TX_3_evaluation": {
+      "cost": 31.25,
+      "demand": 45.0,
+      "MASE": 0.7993617021276596
     },
-    "HOUSEHOLD_1_118_CA_3_evaluation": {
-      "cost": 274.25
+    "HOBBIES_1_155_CA_2_evaluation": {
+      "cost": 19.849999999999998,
+      "demand": 34.0,
+      "MASE": 0.7293729372937294
     },
-    "HOUSEHOLD_1_179_CA_3_evaluation": {
-      "cost": 193.5
+    "HOBBIES_1_157_TX_3_evaluation": {
+      "cost": 6.1000000000000085,
+      "demand": 11.0,
+      "MASE": 0.4231400437636761
     },
-    "HOUSEHOLD_1_234_CA_3_evaluation": {
-      "cost": 92.5
+    "HOBBIES_1_163_WI_1_evaluation": {
+      "cost": 5.5,
+      "demand": 5.0,
+      "MASE": 0.5525
     },
-    "HOUSEHOLD_1_277_CA_3_evaluation": {
-      "cost": 180.5
+    "HOBBIES_1_177_CA_2_evaluation": {
+      "cost": 10.375,
+      "demand": 15.0,
+      "MASE": 0.414167916041979
     },
-    "HOUSEHOLD_1_303_CA_3_evaluation": {
-      "cost": 261.0
+    "HOBBIES_1_189_WI_2_evaluation": {
+      "cost": 53.449999999999996,
+      "demand": 147.0,
+      "MASE": 0.5068402999361838
     },
-    "HOUSEHOLD_1_334_CA_3_evaluation": {
-      "cost": 324.0
+    "HOBBIES_1_195_TX_1_evaluation": {
+      "cost": 5.125,
+      "demand": 7.0,
+      "MASE": 0.7836879432624114
     },
-    "HOUSEHOLD_1_334_WI_2_evaluation": {
-      "cost": 174.5
+    "HOBBIES_1_200_WI_3_evaluation": {
+      "cost": 10.0,
+      "demand": 6.0,
+      "MASE": 0.5437992125984252
     },
-    "HOUSEHOLD_1_339_CA_3_evaluation": {
-      "cost": 229.0
+    "HOBBIES_1_212_CA_4_evaluation": {
+      "cost": 4.1000000000000085,
+      "demand": 1.0,
+      "MASE": 1.047844827586207
     },
-    "HOUSEHOLD_1_351_CA_3_evaluation": {
-      "cost": 178.5
+    "HOBBIES_1_219_WI_1_evaluation": {
+      "cost": 2.75,
+      "demand": 2.0,
+      "MASE": 0.4585062240663901
     },
-    "HOUSEHOLD_1_418_CA_3_evaluation": {
-      "cost": 279.5
+    "HOBBIES_1_247_TX_3_evaluation": {
+      "cost": 6.5,
+      "demand": 11.0,
+      "MASE": 0.4915480427046264
     },
-    "HOUSEHOLD_1_447_CA_3_evaluation": {
-      "cost": 352.0
+    "HOBBIES_1_253_TX_1_evaluation": {
+      "cost": 16.0,
+      "demand": 8.0,
+      "MASE": 0.9558823529411764
     },
-    "HOUSEHOLD_1_459_CA_3_evaluation": {
-      "cost": 402.5
+    "HOBBIES_1_254_WI_2_evaluation": {
+      "cost": 25.849999999999998,
+      "demand": 43.0,
+      "MASE": 0.35320321001088134
     },
-    "HOUSEHOLD_1_459_WI_2_evaluation": {
-      "cost": 224.5
+    "HOBBIES_1_261_WI_1_evaluation": {
+      "cost": 59.375,
+      "demand": 107.0,
+      "MASE": 3.1633179231863444
     },
-    "HOUSEHOLD_1_465_CA_3_evaluation": {
-      "cost": 373.5
+    "HOBBIES_1_271_TX_2_evaluation": {
+      "cost": 26.625,
+      "demand": 19.0,
+      "MASE": 1.653366583541147
     },
-    "HOUSEHOLD_1_521_CA_3_evaluation": {
-      "cost": 267.0
+    "HOBBIES_1_275_CA_4_evaluation": {
+      "cost": 15.75,
+      "demand": 6.0,
+      "MASE": 0.7416107382550335
     },
-    "HOUSEHOLD_1_521_TX_3_evaluation": {
-      "cost": 181.5
+    "HOBBIES_1_283_WI_2_evaluation": {
+      "cost": 6.25,
+      "demand": 4.0,
+      "MASE": 2.104761904761905
     },
-    "HOUSEHOLD_1_535_CA_3_evaluation": {
-      "cost": 235.5
+    "HOBBIES_1_288_WI_3_evaluation": {
+      "cost": 87.74999999999994,
+      "demand": 71.0,
+      "MASE": 0.9075865085536547
+    },
+    "HOBBIES_1_294_TX_2_evaluation": {
+      "cost": 9.0,
+      "demand": 13.0,
+      "MASE": 0.53005079006772
+    },
+    "HOBBIES_1_302_TX_2_evaluation": {
+      "cost": 5.0,
+      "demand": 1.0,
+      "MASE": 1.1124161073825503
+    },
+    "HOBBIES_1_313_TX_1_evaluation": {
+      "cost": 11.5,
+      "demand": 5.0,
+      "MASE": 0.8653614457831326
+    },
+    "HOBBIES_1_325_WI_3_evaluation": {
+      "cost": 7.5,
+      "demand": 3.0,
+      "MASE": 0.9364406779661016
+    },
+    "HOBBIES_1_351_CA_4_evaluation": {
+      "cost": 8.5,
+      "demand": 4.0,
+      "MASE": 0.3642241379310345
+    },
+    "HOBBIES_1_352_CA_2_evaluation": {
+      "cost": 58.0,
+      "demand": 49.0,
+      "MASE": 1.510431654676259
+    },
+    "HOBBIES_1_356_TX_3_evaluation": {
+      "cost": 12.25,
+      "demand": 26.0,
+      "MASE": 0.7156735751295337
+    },
+    "HOBBIES_1_361_CA_3_evaluation": {
+      "cost": 9.25,
+      "demand": 12.0,
+      "MASE": 0.6424418604651163
+    },
+    "HOBBIES_1_364_TX_1_evaluation": {
+      "cost": 6.75,
+      "demand": 6.0,
+      "MASE": 0.5552763819095478
+    },
+    "HOBBIES_1_367_TX_3_evaluation": {
+      "cost": 9.600000000000009,
+      "demand": 34.0,
+      "MASE": 0.28081321473951715
+    },
+    "HOBBIES_1_378_WI_3_evaluation": {
+      "cost": 11.0,
+      "demand": 7.0,
+      "MASE": 0.5767857142857143
+    },
+    "HOBBIES_1_400_TX_1_evaluation": {
+      "cost": 49.25,
+      "demand": 43.0,
+      "MASE": 1.5129839471199245
+    },
+    "HOBBIES_2_025_TX_3_evaluation": {
+      "cost": 6.0,
+      "demand": 5.0,
+      "MASE": 0.7206521739130434
+    },
+    "HOBBIES_2_038_CA_3_evaluation": {
+      "cost": 39.75,
+      "demand": 28.0,
+      "MASE": 3.8166118421052633
+    },
+    "HOBBIES_2_038_TX_3_evaluation": {
+      "cost": 9.0,
+      "demand": 5.0,
+      "MASE": 0.6849173553719008
+    },
+    "HOBBIES_2_078_CA_4_evaluation": {
+      "cost": 3.375,
+      "demand": 1.0,
+      "MASE": 0.41231343283582095
+    },
+    "HOBBIES_2_093_TX_1_evaluation": {
+      "cost": 12.875,
+      "demand": 7.0,
+      "MASE": 1.7356020942408377
+    },
+    "HOBBIES_2_126_TX_1_evaluation": {
+      "cost": 3.5,
+      "demand": 1.0,
+      "MASE": 1.0231481481481481
+    },
+    "HOBBIES_2_126_WI_3_evaluation": {
+      "cost": 60.0,
+      "demand": 31.0,
+      "MASE": 1.5583333333333333
+    },
+    "HOBBIES_2_137_CA_2_evaluation": {
+      "cost": 8.0,
+      "demand": 5.0,
+      "MASE": 0.690625
+    },
+    "HOUSEHOLD_1_036_TX_3_evaluation": {
+      "cost": 22.25,
+      "demand": 20.0,
+      "MASE": 1.6742424242424243
+    },
+    "HOUSEHOLD_1_047_CA_1_evaluation": {
+      "cost": 18.200000000000017,
+      "demand": 18.0,
+      "MASE": 0.3697834645669291
+    },
+    "HOUSEHOLD_1_055_CA_3_evaluation": {
+      "cost": 30.0,
+      "demand": 75.0,
+      "MASE": 0.2702312138728324
+    },
+    "HOUSEHOLD_1_063_WI_3_evaluation": {
+      "cost": 14.0,
+      "demand": 16.0,
+      "MASE": 0.8599221789883268
+    },
+    "HOUSEHOLD_1_080_CA_3_evaluation": {
+      "cost": 14.099999999999998,
+      "demand": 30.0,
+      "MASE": 0.5434426229508197
+    },
+    "HOUSEHOLD_1_133_WI_1_evaluation": {
+      "cost": 43.70000000000002,
+      "demand": 34.0,
+      "MASE": 1.2190391459074734
+    },
+    "HOUSEHOLD_1_140_TX_3_evaluation": {
+      "cost": 31.10000000000001,
+      "demand": 26.0,
+      "MASE": 1.025146484375
+    },
+    "HOUSEHOLD_1_153_TX_3_evaluation": {
+      "cost": 51.75,
+      "demand": 75.0,
+      "MASE": 0.9329695222405272
+    },
+    "HOUSEHOLD_1_194_WI_3_evaluation": {
+      "cost": 17.60000000000001,
+      "demand": 12.0,
+      "MASE": 0.8707509270704574
+    },
+    "HOUSEHOLD_1_216_CA_1_evaluation": {
+      "cost": 10.625,
+      "demand": 7.0,
+      "MASE": 0.9739583333333333
+    },
+    "HOUSEHOLD_1_227_CA_4_evaluation": {
+      "cost": 6.5,
+      "demand": 31.0,
+      "MASE": 0.46901528013582344
+    },
+    "HOUSEHOLD_1_230_WI_2_evaluation": {
+      "cost": 13.25,
+      "demand": 8.0,
+      "MASE": 0.7301762114537446
+    },
+    "HOUSEHOLD_1_236_WI_3_evaluation": {
+      "cost": 27.824999999999996,
+      "demand": 59.0,
+      "MASE": 0.5997765006385696
+    },
+    "HOUSEHOLD_1_245_TX_1_evaluation": {
+      "cost": 20.75,
+      "demand": 18.0,
+      "MASE": 0.7240423387096774
+    },
+    "HOUSEHOLD_1_254_TX_2_evaluation": {
+      "cost": 71.70000000000002,
+      "demand": 130.0,
+      "MASE": 0.7037723964165734
+    },
+    "HOUSEHOLD_1_261_CA_1_evaluation": {
+      "cost": 17.25,
+      "demand": 17.0,
+      "MASE": 0.7006340579710145
+    },
+    "HOUSEHOLD_1_267_CA_4_evaluation": {
+      "cost": 92.0,
+      "demand": 33.0,
+      "MASE": 3.1299261083743843
+    },
+    "HOUSEHOLD_1_268_TX_2_evaluation": {
+      "cost": 9.100000000000009,
+      "demand": 21.0,
+      "MASE": 0.3444513715710723
+    },
+    "HOUSEHOLD_1_270_TX_1_evaluation": {
+      "cost": 19.0,
+      "demand": 27.0,
+      "MASE": 0.7603211009174311
+    },
+    "HOUSEHOLD_1_277_CA_1_evaluation": {
+      "cost": 37.60000000000001,
+      "demand": 5.0,
+      "MASE": 0.16902916581684682
+    },
+    "HOUSEHOLD_1_277_CA_2_evaluation": {
+      "cost": 29.700000000000017,
+      "demand": 69.0,
+      "MASE": 0.08631314007984725
+    },
+    "HOUSEHOLD_1_293_CA_1_evaluation": {
+      "cost": 176.0,
+      "demand": 44.0,
+      "MASE": 2.602783725910064
+    },
+    "HOUSEHOLD_1_306_WI_3_evaluation": {
+      "cost": 83.85,
+      "demand": 100.0,
+      "MASE": 1.4767576990122022
+    },
+    "HOUSEHOLD_1_333_TX_1_evaluation": {
+      "cost": 9.099999999999987,
+      "demand": 24.0,
+      "MASE": 0.5482359426681368
+    },
+    "HOUSEHOLD_1_347_TX_2_evaluation": {
+      "cost": 16.375,
+      "demand": 38.0,
+      "MASE": 0.5235507246376812
+    },
+    "HOUSEHOLD_1_353_WI_2_evaluation": {
+      "cost": 23.599999999999987,
+      "demand": 16.0,
+      "MASE": 1.6226719197707737
+    },
+    "HOUSEHOLD_1_364_WI_2_evaluation": {
+      "cost": 11.5,
+      "demand": 4.0,
+      "MASE": 0.7119845360824741
+    },
+    "HOUSEHOLD_1_378_CA_1_evaluation": {
+      "cost": 3.5,
+      "demand": 2.0,
+      "MASE": 5.022727272727273
+    },
+    "HOUSEHOLD_1_380_CA_4_evaluation": {
+      "cost": 9.0,
+      "demand": 10.0,
+      "MASE": 1.3102766798418972
+    },
+    "HOUSEHOLD_1_397_WI_2_evaluation": {
+      "cost": 6.849999999999987,
+      "demand": 32.0,
+      "MASE": 0.4361842105263158
+    },
+    "HOUSEHOLD_1_409_CA_4_evaluation": {
+      "cost": 43.25,
+      "demand": 87.0,
+      "MASE": 0.5421728971962617
+    },
+    "HOUSEHOLD_1_415_TX_3_evaluation": {
+      "cost": 6.1000000000000085,
+      "demand": 11.0,
+      "MASE": 0.4682203389830508
+    },
+    "HOUSEHOLD_1_424_CA_2_evaluation": {
+      "cost": 6.875,
+      "demand": 10.0,
+      "MASE": 0.3781520172910663
+    },
+    "HOUSEHOLD_1_430_TX_1_evaluation": {
+      "cost": 121.975,
+      "demand": 277.0,
+      "MASE": 0.9102263594963835
+    },
+    "HOUSEHOLD_1_438_TX_2_evaluation": {
+      "cost": 8.0,
+      "demand": 21.0,
+      "MASE": 0.13046044864226683
+    },
+    "HOUSEHOLD_1_441_TX_3_evaluation": {
+      "cost": 144.5,
+      "demand": 310.0,
+      "MASE": 1.790509259259259
+    },
+    "HOUSEHOLD_1_444_WI_2_evaluation": {
+      "cost": 53.599999999999966,
+      "demand": 21.0,
+      "MASE": 1.9928482587064678
+    },
+    "HOUSEHOLD_1_464_CA_1_evaluation": {
+      "cost": 6.375,
+      "demand": 10.0,
+      "MASE": 0.46137787056367435
+    },
+    "HOUSEHOLD_1_487_CA_1_evaluation": {
+      "cost": 104.0,
+      "demand": 46.0,
+      "MASE": 1.0106707317073171
+    },
+    "HOUSEHOLD_1_488_CA_2_evaluation": {
+      "cost": 23.10000000000001,
+      "demand": 31.0,
+      "MASE": 0.2981881264456438
+    },
+    "HOUSEHOLD_1_491_WI_1_evaluation": {
+      "cost": 20.849999999999977,
+      "demand": 23.0,
+      "MASE": 0.736273987206823
+    },
+    "HOUSEHOLD_1_493_CA_4_evaluation": {
+      "cost": 10.25,
+      "demand": 7.0,
+      "MASE": 0.6409512761020881
+    },
+    "HOUSEHOLD_1_513_CA_1_evaluation": {
+      "cost": 15.0,
+      "demand": 29.0,
+      "MASE": 0.19585584064821066
+    },
+    "HOUSEHOLD_1_513_WI_2_evaluation": {
+      "cost": 30.849999999999977,
+      "demand": 23.0,
+      "MASE": 0.8371212121212122
+    },
+    "HOUSEHOLD_1_518_CA_1_evaluation": {
+      "cost": 7.1000000000000085,
+      "demand": 29.0,
+      "MASE": 0.5965531561461794
+    },
+    "HOUSEHOLD_1_529_TX_1_evaluation": {
+      "cost": 91.59999999999997,
+      "demand": 58.0,
+      "MASE": 1.8214285714285716
+    },
+    "HOUSEHOLD_1_534_WI_3_evaluation": {
+      "cost": 24.0,
+      "demand": 13.0,
+      "MASE": 1.4046610169491525
+    },
+    "HOUSEHOLD_2_013_CA_1_evaluation": {
+      "cost": 12.0,
+      "demand": 12.0,
+      "MASE": 0.8586811722912967
+    },
+    "HOUSEHOLD_2_017_CA_4_evaluation": {
+      "cost": 15.0,
+      "demand": 6.0,
+      "MASE": 2.3848920863309355
+    },
+    "HOUSEHOLD_2_037_CA_3_evaluation": {
+      "cost": 26.625,
+      "demand": 43.0,
+      "MASE": 1.2010869565217392
+    },
+    "HOUSEHOLD_2_037_TX_1_evaluation": {
+      "cost": 21.25,
+      "demand": 12.0,
+      "MASE": 1.0877600297176822
+    },
+    "HOUSEHOLD_2_045_CA_2_evaluation": {
+      "cost": 19.75,
+      "demand": 11.0,
+      "MASE": 1.5299999999999998
+    },
+    "HOUSEHOLD_2_052_CA_2_evaluation": {
+      "cost": 41.84999999999998,
+      "demand": 23.0,
+      "MASE": 1.1482273838630805
+    },
+    "HOUSEHOLD_2_062_WI_2_evaluation": {
+      "cost": 4.5,
+      "demand": 1.0,
+      "MASE": 0.32373046874999994
+    },
+    "HOUSEHOLD_2_065_CA_4_evaluation": {
+      "cost": 3.25,
+      "demand": 1.0,
+      "MASE": 1.4694148936170213
+    },
+    "HOUSEHOLD_2_075_WI_3_evaluation": {
+      "cost": 9.5,
+      "demand": 11.0,
+      "MASE": 0.25277777777777777
+    },
+    "HOUSEHOLD_2_088_CA_3_evaluation": {
+      "cost": 10.0,
+      "demand": 16.0,
+      "MASE": 0.28705684596577014
+    },
+    "HOUSEHOLD_2_118_TX_2_evaluation": {
+      "cost": 9.125,
+      "demand": 15.0,
+      "MASE": 0.7125496031746033
+    },
+    "HOUSEHOLD_2_131_WI_2_evaluation": {
+      "cost": 5.0,
+      "demand": 0.0,
+      "MASE": 0.9147350993377483
+    },
+    "HOUSEHOLD_2_133_CA_1_evaluation": {
+      "cost": 7.0,
+      "demand": 0.0,
+      "MASE": 0.35993485342019543
+    },
+    "HOUSEHOLD_2_137_TX_1_evaluation": {
+      "cost": 7.0,
+      "demand": 6.0,
+      "MASE": 0.7853260869565217
+    },
+    "HOUSEHOLD_2_167_CA_1_evaluation": {
+      "cost": 19.5,
+      "demand": 6.0,
+      "MASE": 0.8700787401574803
+    },
+    "HOUSEHOLD_2_167_CA_2_evaluation": {
+      "cost": 128.0,
+      "demand": 61.0,
+      "MASE": 2.932006633499171
+    },
+    "HOUSEHOLD_2_177_CA_2_evaluation": {
+      "cost": 43.75,
+      "demand": 17.0,
+      "MASE": 2.245141342756184
+    },
+    "HOUSEHOLD_2_191_WI_3_evaluation": {
+      "cost": 10.5,
+      "demand": 4.0,
+      "MASE": 0.8104272959183674
+    },
+    "HOUSEHOLD_2_195_TX_1_evaluation": {
+      "cost": 8.5,
+      "demand": 7.0,
+      "MASE": 0.775438596491228
+    },
+    "HOUSEHOLD_2_199_TX_2_evaluation": {
+      "cost": 6.5,
+      "demand": 24.0,
+      "MASE": 0.29905277401894453
+    },
+    "HOUSEHOLD_2_211_CA_3_evaluation": {
+      "cost": 8.25,
+      "demand": 7.0,
+      "MASE": 1.1301136363636364
+    },
+    "HOUSEHOLD_2_214_WI_3_evaluation": {
+      "cost": 5.375,
+      "demand": 3.0,
+      "MASE": 0.6449416342412451
+    },
+    "HOUSEHOLD_2_290_CA_2_evaluation": {
+      "cost": 7.0,
+      "demand": 6.0,
+      "MASE": 0.8875502008032129
+    },
+    "HOUSEHOLD_2_302_CA_3_evaluation": {
+      "cost": 5.0,
+      "demand": 1.0,
+      "MASE": 0.12462406015037594
+    },
+    "HOUSEHOLD_2_311_CA_4_evaluation": {
+      "cost": 14.849999999999987,
+      "demand": 8.0,
+      "MASE": 1.0659163987138263
+    },
+    "HOUSEHOLD_2_313_TX_1_evaluation": {
+      "cost": 47.5,
+      "demand": 25.0,
+      "MASE": 2.0404829545454546
+    },
+    "HOUSEHOLD_2_317_CA_4_evaluation": {
+      "cost": 4.0,
+      "demand": 0.0,
+      "MASE": 0.13608374384236455
+    },
+    "HOUSEHOLD_2_319_CA_4_evaluation": {
+      "cost": 27.5,
+      "demand": 15.0,
+      "MASE": 1.530362215909091
+    },
+    "HOUSEHOLD_2_322_WI_3_evaluation": {
+      "cost": 10.0,
+      "demand": 11.0,
+      "MASE": 1.3014817629179332
+    },
+    "HOUSEHOLD_2_345_TX_2_evaluation": {
+      "cost": 6.0,
+      "demand": 5.0,
+      "MASE": 0.5153917910447762
+    },
+    "HOUSEHOLD_2_354_WI_1_evaluation": {
+      "cost": 25.0,
+      "demand": 20.0,
+      "MASE": 1.0791015625
+    },
+    "HOUSEHOLD_2_403_CA_1_evaluation": {
+      "cost": 12.5,
+      "demand": 23.0,
+      "MASE": 0.3156081989247312
+    },
+    "HOUSEHOLD_2_406_CA_3_evaluation": {
+      "cost": 12.5,
+      "demand": 16.0,
+      "MASE": 0.6205615942028986
+    },
+    "HOUSEHOLD_2_424_CA_1_evaluation": {
+      "cost": 4.0,
+      "demand": 11.0,
+      "MASE": 0.31813819577735125
+    },
+    "HOUSEHOLD_2_439_TX_2_evaluation": {
+      "cost": 6.5,
+      "demand": 10.0,
+      "MASE": 0.4069540727902946
+    },
+    "HOUSEHOLD_2_440_CA_4_evaluation": {
+      "cost": 11.625,
+      "demand": 17.0,
+      "MASE": 0.4123134328358209
+    },
+    "HOUSEHOLD_2_442_TX_3_evaluation": {
+      "cost": 17.199999999999974,
+      "demand": 29.0,
+      "MASE": 0.5991354044548651
+    },
+    "HOUSEHOLD_2_456_CA_2_evaluation": {
+      "cost": 7.5,
+      "demand": 2.0,
+      "MASE": 0.61731843575419
+    },
+    "HOUSEHOLD_2_459_CA_4_evaluation": {
+      "cost": 6.849999999999998,
+      "demand": 6.0,
+      "MASE": 1.6870229007633588
+    },
+    "HOUSEHOLD_2_464_CA_3_evaluation": {
+      "cost": 4.099999999999987,
+      "demand": 6.0,
+      "MASE": 0.32309941520467833
+    },
+    "HOUSEHOLD_2_478_CA_4_evaluation": {
+      "cost": 13.0,
+      "demand": 10.0,
+      "MASE": 1.2033617424242424
+    },
+    "HOUSEHOLD_2_488_TX_3_evaluation": {
+      "cost": 7.0,
+      "demand": 6.0,
+      "MASE": 0.8956911262798635
+    },
+    "HOUSEHOLD_2_494_WI_1_evaluation": {
+      "cost": 9.5,
+      "demand": 8.0,
+      "MASE": 1.0762987012987013
+    },
+    "HOUSEHOLD_2_496_CA_3_evaluation": {
+      "cost": 16.5,
+      "demand": 29.0,
+      "MASE": 0.9885685884691849
+    },
+    "HOUSEHOLD_2_497_TX_2_evaluation": {
+      "cost": 7.5,
+      "demand": 2.0,
+      "MASE": 0.25056689342403626
+    },
+    "HOUSEHOLD_2_502_WI_1_evaluation": {
+      "cost": 9.75,
+      "demand": 3.0,
+      "MASE": 1.392857142857143
     }
   }
 }

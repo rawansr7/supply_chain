@@ -4,15 +4,24 @@ Only **Chronos-2** is fine-tuned in this thesis. The other three foundation mode
 (TimesFM, Lag-Llama, TimeGPT) are evaluated **off the shelf only**, and their fine-tune
 adapters have been removed rather than left as untested code.
 
-**Why one model is enough.** The research question is make-vs-buy: is a bought,
-off-the-shelf forecaster worth adopting? Fine-tuning answers the follow-up "and is it
-worth adapting?" — and Chronos-2 answers that decisively enough to stand on its own.
-It is the strongest model on every dataset, the cheapest to tune (LoRA), and the only
-one of the four with a clean, officially supported `fit()`. Its result (RESULTS.md
-finding 2) is that untuned fine-tuning buys ~2% on the two larger datasets, is not
-statistically significant, and is neutral-to-negative on the smallest — for a large
-added compute cost. Fine-tuning the weaker models was not expected to overturn that,
-and the cells were never run.
+**Why one model.** The research question is make-vs-buy: is a bought, off-the-shelf
+forecaster worth adopting? Fine-tuning answers the follow-up "and is it worth adapting?".
+Chronos-2 is the model to ask it of: comfortably the strongest of the four foundation
+models on every dataset, the cheapest to tune (LoRA), and the only one of the four with a
+clean, officially supported `fit()`.
+
+Its answer (RESULTS.md finding 6) is **it depends, and we cannot yet say on what**:
+fine-tuning buys a real 9% over its own zero-shot on M5 (p<0.001) and nothing at all on
+Favorita (p=0.429), two datasets that are both intermittent and differ in several other
+ways at once. It also never turns a loss into a win — against the
+best model you could *build* (the global LSTM) the fine-tuned Chronos-2 is statistically
+indistinguishable on both datasets. Adapting recovers ground rather than winning it, for
+~26 minutes of CPU per dataset against seconds for zero-shot.
+
+**An honest limit of stopping at one model.** Since adapting demonstrably helps on at
+least one dataset, whether tuning TimesFM or Lag-Llama would narrow their (large) gap to
+Chronos-2 is an open question. Nothing here answers it — future work, not a settled
+claim.
 
 **No hyperparameter tuning, by design.** We use the library's default fine-tune config.
 This reflects realistic out-of-the-box adoption, which is the make-vs-buy premise — and

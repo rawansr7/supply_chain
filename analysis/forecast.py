@@ -40,7 +40,7 @@ def forecast_next_month(df):
     forecast_results = []
     for (item_id, store_id), history in panel.iterrows():
         quantiles = model.predict_quantiles(history.to_numpy(dtype=float))
-        order = inv.order_from_quantiles(quantiles)
+        order = inv.order_from_quantiles(quantiles, C.DEFAULT_COSTS)
         for day, quantity in enumerate(order, start=1):
             forecast_results.append(
                 {

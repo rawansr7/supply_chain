@@ -3,6 +3,7 @@
     python -m analysis.tsfm_inventory.run --full
     python -m analysis.tsfm_inventory.run --run chronos2:zero_shot --datasets m5
     python -m analysis.tsfm_inventory.run --models seasonal_naive chronos2 --smoke
+    python -m analysis.tsfm_inventory.run --report
     python -m analysis.tsfm_inventory.run --list
 """
 from __future__ import annotations
@@ -53,7 +54,16 @@ def main():
     p.add_argument("--results-dir", type=Path, help=f"where results land (default {C.RESULTS_DIR})")
     p.add_argument("--smoke", action="store_true", help="tiny synthetic data — just check it runs")
     p.add_argument("--list", action="store_true", help="list available models and datasets")
+    p.add_argument("--report", action="store_true",
+                   help="rebuild the RESULTS.md tables from the saved cells; runs nothing")
     args = p.parse_args()
+
+    if args.results_dir:
+        C.RESULTS_DIR = args.results_dir
+
+    if args.report:
+        report.print_markdown(report.load_results(C.RESULTS_DIR))
+        return
 
     if args.list:
         print("datasets:", list(LOADERS), " thesis:", THESIS_DATASETS)
@@ -62,10 +72,7 @@ def main():
             print(f"  {name:<16} regimes={cls.supported_regimes}{gpu}")
         return
 
-    if args.results_dir:
-        C.RESULTS_DIR = args.results_dir
-        C.RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-
+    C.RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     cells = build_cells(args)
     print(f"\n{len(cells)} cell(s){' [SMOKE]' if args.smoke else ''} -> {C.RESULTS_DIR}")
 

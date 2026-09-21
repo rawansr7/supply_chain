@@ -7,13 +7,6 @@ def mase(y, f, history, m):
     if len(history) <= m:
         return float("nan")
     scale = np.mean(np.abs(history[m:] - history[:-m]))
-    scale = scale if scale > 0 else 1e-8
+    if scale <= 0:  # a series flat over every season has no naive error to scale by
+        return float("nan")
     return float(np.mean(np.abs(y - f)) / scale)
-
-
-def crps(y, quantile_forecast):
-    losses = []
-    for q, fq in quantile_forecast.items():
-        diff = y - fq
-        losses.append(np.mean(np.maximum(q * diff, (q - 1) * diff)))
-    return float(np.mean(losses))
