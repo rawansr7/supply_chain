@@ -119,10 +119,10 @@ Fill rate therefore tracks the ratio by construction — M5 sits near 0.90, Favo
 ## Significance
 
 Quoted as a **series-level bootstrap** (10,000 resamples) of the difference in the
-headline cost per unit, with the paired Diebold–Mariano test on per-series cost beside it.
-The bootstrap is the one to quote: a uniform sample spans four orders of magnitude of
-demand, and a paired test over raw per-series costs is effectively decided by the largest
-few.
+headline cost per unit: a nonparametric cluster bootstrap with percentile intervals,
+resampling whole series rather than observations. The resampling unit matters because a
+uniform sample spans four orders of magnitude of demand, so a test over raw per-series
+costs would be effectively decided by the largest few.
 
 **"Buy vs. make" — Chronos-2 zero-shot against each model you could build:**
 
@@ -162,8 +162,7 @@ p<0.001; Favorita −0.210, p<0.001) and TimesFM on Favorita (−0.226, p=0.008)
 gap to TimesFM is undecided — −0.101 with a 95% CI of −0.399…+0.073 (p=0.644). That width
 is the bootstrap doing its job: **a single series accounts for 129% of the net gap** (the
 rest of the panel partly offsets it), so whether TimesFM looks worse than TimeGPT on M5
-depends on whether that one SKU is in the sample. The paired DM test agrees it is
-undecided (p=0.449).
+depends on whether that one SKU is in the sample.
 
 **"Buy and adapt" — Chronos-2 fine-tune vs. its own zero-shot:**
 

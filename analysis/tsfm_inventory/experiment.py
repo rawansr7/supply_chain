@@ -33,9 +33,9 @@ def run_cell(dataset_name, model_name, regime, smoke=False):
         series_mase = accuracy.mase(truth, quantiles[0.5], history, ds.seasonality)
         # Everything is kept per series. A uniform sample spans several orders of
         # magnitude of demand, so the demand is needed to resample the headline
-        # cost-per-unit rather than lean on a paired test the largest series would
-        # decide — and the MASE of a barely-moving SKU divides by a near-zero naive
-        # error, so the mean of the column needs a median beside it to be read safely.
+        # cost-per-unit at the series level — and the MASE of a barely-moving SKU
+        # divides by a near-zero naive error, so the mean of the column needs a median
+        # beside it to be read safely.
         per_series[sid] = {
             "cost": float(inventory.cost(order, truth, ds.costs).sum()),
             "demand": float(truth.sum()),

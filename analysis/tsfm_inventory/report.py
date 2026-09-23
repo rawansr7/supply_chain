@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 
-from .metrics.significance import diebold_mariano, paired_bootstrap
+from .metrics.significance import paired_bootstrap
 
 _KEYS = [("model", 16), ("regime", 12), ("dataset", 10)]
 _METRICS = [("MASE", "MASE", 8), ("med", "MASE_median", 7),
@@ -30,12 +30,6 @@ def _aligned(result_a, result_b):
     common = sorted(set(a) & set(b))
     return ([a[s]["cost"] for s in common], [b[s]["cost"] for s in common],
             [a[s].get("demand", float("nan")) for s in common])
-
-
-def compare(result_a, result_b):
-    """Paired test on per-series stocking cost (plan.md §8)."""
-    cost_a, cost_b, _ = _aligned(result_a, result_b)
-    return diebold_mariano(cost_a, cost_b)
 
 
 def compare_cost_per_unit(result_a, result_b):
@@ -78,12 +72,12 @@ def print_markdown(results):
                             ("adapt vs. buy (chronos2 fine-tune vs. its zero-shot)", tuned, buy)]:
             if a is None or b is None or a is b:
                 continue
-            boot, dm = compare_cost_per_unit(a, b), compare(a, b)
+            boot = compare_cost_per_unit(a, b)
             if boot["n"] == 0:
                 continue
             print(f"\n{label} — vs `{b['model']}`: "
                   f"{a['summary']['cost_per_unit']:.3f} vs {b['summary']['cost_per_unit']:.3f}, "
                   f"diff {boot['diff']:+.3f} "
                   f"(95% CI {boot['ci_lo']:+.3f}..{boot['ci_hi']:+.3f}, "
-                  f"bootstrap p={boot['p_value']:.3f}; paired DM p={dm['p_value']:.3f})")
+                  f"bootstrap p={boot['p_value']:.3f})")
         print()

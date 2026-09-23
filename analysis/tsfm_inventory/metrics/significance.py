@@ -7,28 +7,15 @@ from .. import config as C
 N_RESAMPLES = 10_000
 
 
-def diebold_mariano(loss_a, loss_b):
-    a = np.asarray(loss_a, dtype=float)
-    b = np.asarray(loss_b, dtype=float)
-    d = a - b
-    out = {"mean_diff": float(np.mean(d)), "t_stat": float("nan"),
-           "p_value": float("nan"), "n": len(d)}
-    if len(d) >= 2 and not np.allclose(d, 0):
-        from scipy import stats
-        t, p = stats.ttest_rel(a, b)
-        out["t_stat"], out["p_value"] = float(t), float(p)
-    return out
-
-
 def paired_bootstrap(cost_a, cost_b, demand, n_resamples=N_RESAMPLES, seed=None):
     """Resample series to put an interval on the difference in pooled cost per unit.
 
     The headline metric divides total cost by total demand, so a paired test over
-    per-series costs answers a different question from the one the table reports — and
-    on a uniform sample of series, where demand spans four orders of magnitude, it is
-    effectively decided by the few largest. Drawing whole series with replacement asks
-    the question the table asks: would another 300 series from this catalogue rank these
-    two models the same way?
+    per-series costs would answer a different question from the one the table reports —
+    and on a uniform sample of series, where demand spans four orders of magnitude, it
+    would be decided by the few largest. Drawing whole series with replacement asks the
+    question the table asks: would another 300 series from this catalogue rank these two
+    models the same way?
     """
     a = np.asarray(cost_a, dtype=float)
     b = np.asarray(cost_b, dtype=float)

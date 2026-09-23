@@ -43,7 +43,7 @@ Three claims, none of which uses the word "first":
 | D2 | Scope | **Build the full matrix** (6 models × 3 datasets × 3 regimes) — but every cell is independently runnable, so compute spend is opt-in |
 | D3 | Fine-tuning | **In scope** for every model that supports it; run selectively |
 | D4 | TimeGPT | **Include** as the commercial/API reference (and the data-governance case study) |
-| D5 | LLM-description / cold-start work | **Dropped** — archive `analysis/online_retail/`; reuse only its generic harness (metrics, newsvendor, backtest, DM test), not the text arms |
+| D5 | LLM-description / cold-start work | **Dropped** — archive `analysis/online_retail/`; reuse only its generic harness (metrics, newsvendor, backtest), not the text arms |
 | D6 | Datasets | **M5 + Favorita** — both item×store *unit* demand, the quantity a replenishment decision is actually placed against |
 
 Prerequisites: cloud account + container image, HuggingFace token, Nixtla TimeGPT key,
@@ -54,8 +54,8 @@ conda env `supply` (reuse; add the model SDKs).
 ## 2. Reuse from the current codebase (head start)
 
 From `analysis/online_retail/`:
-- `metrics.py` — `mae/rmse/rmsse`, `critical_ratio`, `newsvendor_costs`,
-  `diebold_mariano`. **Extend** with MASE and the (s,S) cost.
+- `metrics.py` — `mae/rmse/rmsse`, `critical_ratio`, `newsvendor_costs`.
+  **Extend** with MASE and the (s,S) cost.
 - newsvendor simulator + inventory KPIs (cost/unit, service level, fill rate).
 - rolling-origin backtest pattern (`evaluate.py`) and the multi-seed significance
   pattern (`coldstart.py`).
@@ -127,7 +127,7 @@ analysis/tsfm_inventory/
     newsvendor.py      # reuse/extend existing
     sS_policy.py       # (s,S) multi-period simulator w/ lead time + service target
   eval/
-    metrics.py         # MASE + inventory KPIs + DM test
+    metrics.py         # MASE + inventory KPIs + bootstrap significance
     backtest.py        # rolling-origin, multi-seed, per-series loss capture
     stratify.py        # slice results by SKU traits -> the "when it pays" map
   is_analysis/
@@ -189,8 +189,13 @@ All produce **quantile** forecasts (needed for the newsvendor/(s,S) order quanti
   it matters — the newsvendor consumes exactly one quantile of it — so a second
   distributional score added a column that never changed a conclusion.
 - **Decision:** (s,S) and newsvendor cost per unit demand, service level, fill rate.
-- **Significance:** paired Diebold-Mariano (reuse) on per-series loss, model vs.
-  best baseline, per dataset/regime.
+- **Significance:** series-level bootstrap (nonparametric cluster bootstrap, percentile
+  intervals, 10,000 resamples) of the difference in headline cost per unit, model vs.
+  best baseline, per dataset/regime. **Resolved 2026-09-23: the paired Diebold-Mariano
+  test was dropped.** It was a paired t-test across series, not a DM test (no HAC
+  variance correction), and it answered a different question from the one the leaderboard
+  reports — the headline metric is a ratio of sums, which the bootstrap handles directly
+  and a paired test over raw per-series costs does not.
 - **Stratified map (key deliverable):** slice every metric by intermittency
   (smooth/erratic/lumpy/intermittent — SBC classification), volume decile, launch
   recency (new-product stratum), and price tier → heatmap of *where* buying a TSFM
@@ -266,7 +271,7 @@ what's worth it.
 ## 13. Immediate next actions
 
 1. **Archive** `analysis/online_retail/` (LLM/cold-start work, per D5) — keep for
-   reference; port only the generic harness (metrics, newsvendor, backtest, DM test).
+   reference; port only the generic harness (metrics, newsvendor, backtest).
 2. Scaffold `analysis/tsfm_inventory/` per §5; build the **experiment registry +
    run-selector CLI** (the cost-control spine) early.
 3. Build the M5 loader + stratification labels (Phase 1) and a baseline leaderboard

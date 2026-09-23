@@ -103,7 +103,7 @@ data/base.py           panel columns, parquet cache, random sample, weekly grid,
 models/<name>.py       one model per file; all share models/base.Forecaster
 metrics/accuracy.py    MASE
 metrics/inventory.py   newsvendor order, cost, fill rate
-metrics/significance.py paired Diebold-Mariano test, series-level bootstrap
+metrics/significance.py series-level bootstrap of the headline metric
 experiment.py          run one cell: forecast -> decision -> metrics -> json
 report.py              leaderboard + pairwise significance
 run.py                 CLI
@@ -118,8 +118,7 @@ run.py                 CLI
 
 Forecast → order the **critical-ratio quantile** for that dataset → score by three
 metrics: **MASE** (accuracy, reported as both mean and median), **cost per unit** and
-**fill rate** (inventory). Significance comes from a paired Diebold-Mariano test on per-series cost
-and a series-level bootstrap of the headline cost per unit — the bootstrap is the one to
-quote, since a uniform sample of series spans four orders of magnitude of demand and a
-paired test over raw costs is decided by the largest few. See `RESULTS.md` for the
-numbers and `../../NOVELTY.md` for the why.
+**fill rate** (inventory). Significance comes from a series-level bootstrap of the
+headline cost per unit — a uniform sample of series spans four orders of magnitude of
+demand, so the resampling unit is the whole series rather than the observation. See
+`RESULTS.md` for the numbers and `../../NOVELTY.md` for the why.
