@@ -12,6 +12,12 @@ predictive distribution rather than a point forecast widened by residual spread,
 "make" side is not handicapped on the very axis the newsvendor depends on. It is the
 deep-learning baseline plan.md §3 called for.
 
+**TimeGPT is in this run.** Earlier passes had no cells for it — the Nixtla API answered
+`429 … request limit per month` — so the commercial-API arm of make-vs-buy rested on no
+evidence. Both cells are now filled (300 series each, zero-shot), completing the roster of
+four foundation models. It is the only model here that is a *service* rather than a
+weights download, which changes what its numbers mean; see "Buying a service" below.
+
 Regenerate every table below from the saved cells with
 `python -m analysis.tsfm_inventory.run --report`.
 
@@ -70,6 +76,7 @@ Fill rate therefore tracks the ratio by construction — M5 sits near 0.90, Favo
 |---|---|---|---|---|---|
 | **chronos2** | fine_tune | 0.852 | 0.636 | **0.695** | 0.913 |
 | lstm_global | statistical | 0.862 | 0.667 | 0.706 | 0.923 |
+| timegpt | zero_shot | 0.917 | 0.729 | 0.757 | 0.896 |
 | chronos2 | zero_shot | 0.901 | 0.687 | 0.763 | 0.897 |
 | moving_average | statistical | 0.895 | 0.704 | 0.784 | 0.887 |
 | lightgbm_global | statistical | 0.972 | 0.748 | 0.834 | 0.853 |
@@ -85,6 +92,7 @@ Fill rate therefore tracks the ratio by construction — M5 sits near 0.90, Favo
 | chronos2 | fine_tune | 1.754 | 0.549 | 0.484 | 0.879 |
 | lstm_global | statistical | 1.733 | 0.557 | 0.492 | 0.892 |
 | lightgbm_global | statistical | 4.581 | 0.716 | 0.536 | 0.837 |
+| timegpt | zero_shot | 1.861 | 0.587 | 0.559 | 0.865 |
 | moving_average | statistical | 2.018 | 0.627 | 0.567 | 0.854 |
 | lag_llama | zero_shot | 2.596 | 0.597 | 0.769 | 0.706 |
 | timesfm | zero_shot | 2.350 | 0.559 | 0.785 | 0.893 |
@@ -100,6 +108,12 @@ Fill rate therefore tracks the ratio by construction — M5 sits near 0.90, Favo
 > position in that table, but a real limitation of buying that model for a given cost
 > structure.
 
+> **TimeGPT, by contrast, serves the exact critical ratio.** Asked for q=0.667 it returns
+> that quantile (the API merely *names* the column by truncating the percentage, so it
+> arrives labelled `TimeGPT-q-66`). Of the four bought models it is the one that adapts
+> cleanly to an arbitrary cost structure — which matters more for a newsvendor than a
+> decile grid does.
+
 ---
 
 ## Significance
@@ -114,10 +128,42 @@ few.
 
 | dataset | vs. LSTM | vs. LightGBM | vs. moving average | vs. seasonal naive |
 |---|---|---|---|---|
-| M5 (0.763) | 0.706 — +0.057, **p=0.080** | 0.834 — −0.071, p=0.048 | 0.784 — −0.021, p=0.554 | 1.246 — −0.483, p<0.001 |
+| M5 (0.763) | 0.706 — +0.057, **p=0.080** | 0.834 — −0.071, p=0.048 | 0.784 — −0.021, **p=0.554** | 1.246 — −0.483, p<0.001 |
 | Favorita (0.475) | 0.492 — −0.017, **p=0.356** | 0.536 — −0.061, p=0.020 | 0.567 — −0.092, p<0.001 | 1.050 — −0.575, p<0.001 |
 
 (Negative = Chronos-2 is cheaper. **Bold** = not significant at 5%.)
+
+**"Buy a service" — TimeGPT zero-shot against the same four:**
+
+| dataset | vs. LSTM | vs. LightGBM | vs. moving average | vs. seasonal naive |
+|---|---|---|---|---|
+| M5 (0.757) | 0.706 — +0.051, **p=0.069** | 0.834 — −0.077, **p=0.088** | 0.784 — −0.026, **p=0.418** | 1.246 — −0.488, p<0.001 |
+| Favorita (0.559) | 0.492 — +0.067, p<0.001 | 0.536 — +0.023, **p=0.407** | 0.567 — −0.008, **p=0.833** | 1.050 — −0.491, p<0.001 |
+
+(Negative = TimeGPT is cheaper. **Bold** = not significant at 5%.)
+
+The commercial API clears only the seasonal naive on both datasets. On M5 it is
+indistinguishable from everything you could build; on Favorita it is **significantly worse
+than the global LSTM** (+0.067, p<0.001) and no better than an eight-week moving average.
+
+**The two "buy" options against each other — TimeGPT vs. Chronos-2:**
+
+| dataset | TimeGPT | Chronos-2 zero-shot | difference | Chronos-2 fine-tuned |
+|---|---|---|---|---|
+| M5 | 0.757 | 0.763 | −0.005 (95% CI −0.075…+0.059), **p=0.907** | 0.695 — +0.062, p=0.003 |
+| Favorita | 0.559 | 0.475 | +0.084 (95% CI +0.039…+0.134), p<0.001 | 0.484 — +0.075, p<0.001 |
+
+(Negative = TimeGPT is cheaper, in both difference columns.)
+
+Off the shelf the two are a dead heat on M5 and Chronos-2 wins clearly on Favorita; once
+Chronos-2 is fine-tuned it beats the API on **both**. TimeGPT does, though, sit clearly
+above the other two bought models: it beats Lag-Llama on both datasets (M5 −0.272,
+p<0.001; Favorita −0.210, p<0.001) and TimesFM on Favorita (−0.226, p=0.008). Only the M5
+gap to TimesFM is undecided — −0.101 with a 95% CI of −0.399…+0.073 (p=0.644). That width
+is the bootstrap doing its job: **a single series accounts for 129% of the net gap** (the
+rest of the panel partly offsets it), so whether TimesFM looks worse than TimeGPT on M5
+depends on whether that one SKU is in the sample. The paired DM test agrees it is
+undecided (p=0.449).
 
 **"Buy and adapt" — Chronos-2 fine-tune vs. its own zero-shot:**
 
@@ -161,6 +207,12 @@ the foundation models is a model-quality result, not a context-window artifact.
 exactly — M5 0.6947 vs 0.6952 (−0.08%), Favorita identical to five decimals. The 9% M5
 fine-tuning gain is not a lucky run.
 
+**5. TimeGPT, called twice.** The one cell served by a remote API, so it is the one whose
+determinism cannot be assumed. Twenty-five series per dataset were forecast twice in the
+same session: **50/50 bit-identical**, max absolute difference 0.0 across all ten quantile
+levels. Within a run the endpoint is deterministic, so its rows carry no sampling noise.
+What this check *cannot* cover is version drift — see the limitation below.
+
 ---
 
 ## Headline findings
@@ -176,25 +228,42 @@ fine-tuning gain is not a lucky run.
    could actually build*: buying wins against LightGBM and below, and only ties once a
    properly-built neural forecaster is on the table.
 3. **Choosing the wrong foundation model costs far more than choosing wrong between
-   buying and building.** The spread between the best and worst foundation model is 0.266
-   on M5 and 0.310 on Favorita — **4.7× and 18×** the Chronos-2-vs-LSTM gap on the same
-   dataset. "Adopt a TSFM" is not a decision; "adopt Chronos-2" is, and the vendor-
-   selection risk dominates everything else measured here.
+   buying and building.** Across all four bought models the spread between best and worst
+   is 0.266 on M5 and 0.310 on Favorita — **4.7× and 18×** the Chronos-2-vs-LSTM gap on
+   the same dataset. "Adopt a TSFM" is not a decision; "adopt Chronos-2" is, and the
+   vendor-selection risk dominates everything else measured here. TimeGPT lands inside
+   that spread on both datasets (3rd of 9 on M5, 5th of 9 on Favorita), so adding the
+   commercial API widens the roster without changing the conclusion.
 4. **Accuracy and cost disagree, sharply.** On M5, TimesFM has the **second-best median
-   MASE of eight models** (0.647, behind only the fine-tuned Chronos-2) and the
+   MASE of nine models** (0.647, behind only the fine-tuned Chronos-2) and the
    **third-worst cost** (0.858). On Favorita, LightGBM has the **worst mean MASE by a
-   distance** (4.58) and the **fourth-best cost** (0.536). Ranking by accuracy would pick
-   the wrong model in both cases — which is the whole argument for scoring decisions
-   rather than forecasts.
+   distance** (4.58) and the **fourth-best cost** (0.536). TimeGPT makes the same point
+   from the other side: on M5 it is **third-worst of nine on median MASE** (0.729) yet
+   **third-best on cost** (0.757), ranking above a Chronos-2 zero-shot that beats it on
+   both MASE columns (the 0.005 cost gap is itself noise, p=0.907 — but the accuracy gap
+   pointed the other way and would have ranked them confidently). Ranking by accuracy
+   would pick the wrong model in all three cases — which is the whole argument for
+   scoring decisions rather than forecasts.
 5. **Two of the four foundation models are not worth buying at all.** TimesFM and
    Lag-Llama are both beaten by an eight-week moving average on **both** datasets (M5
-   0.784, Favorita 0.567). Only Chronos-2 is competitive.
+   0.784, Favorita 0.567). Chronos-2 and TimeGPT are the two that clear that bar — and
+   TimeGPT clears it by 0.008 on Favorita (p=0.833), which is not clearing it by much.
 6. **Adapting pays on one dataset and not the other, and this study cannot say why.**
    LoRA fine-tuning buys a real 9% on M5 (p<0.001) and nothing on Favorita (p=0.429), and
    the fine-tuned model is still statistically tied with the LSTM on both. With two
    datasets that differ in several ways at once — history length, cost ratio, catalogue,
    country, perishability — the difference is an observation, not an explained mechanism.
    Separating it needs either a within-dataset stratification or more datasets.
+7. **Paying for the service buys nothing over the free download.** TimeGPT, the only
+   commercial API in the roster, ties Chronos-2 on M5 (p=0.907) and is significantly
+   *worse* on Favorita (+0.084, p<0.001) — and loses to a fine-tuned Chronos-2 on both
+   (p=0.003, p<0.001); Chronos-2 also beats it on both MASE columns on both datasets.
+   Against the make side the only model it significantly beats on both datasets is the
+   seasonal naive. So on these two datasets the "buy a service" option is
+   dominated by the "download the weights" option on the decision metric, before its extra
+   costs — per-call pricing, network dependency, an unpinnable model version and demand
+   data leaving the premises — are counted at all. Those costs are what the governance
+   case study weighs; the forecast quality does not offset them here.
 
 ---
 
@@ -209,24 +278,52 @@ fine-tuning gain is not a lucky run.
   corpus. If so, it inflates the bought models — which makes finding 1 (a tie) and
   finding 2 (buying beats LightGBM) *conservative* rather than optimistic. The per-model
   training corpora should be cited from the model cards.
-- **TimeGPT is absent** — see below. The commercial-API arm of the make-vs-buy comparison
-  has no evidence in this run.
+- **TimeGPT's model version cannot be pinned.** The other three bought models are frozen
+  checkpoints with a recorded revision; TimeGPT is whatever the vendor was serving on
+  2026-09-23. Calls within the run are bit-identical (robustness check 5), but a rerun
+  next quarter may not reproduce these two rows and nothing in the API surfaces a version
+  to cite. That is a property of buying a service, not a defect of this run — and it is
+  itself one of the governance findings.
+- **TimeGPT sees no calendar.** Like every other model here it is given the series'
+  history alone, on a synthetic weekly index. Date-aware features are part of what the API
+  markets, so this benchmark scores it on the same footing as the others rather than at
+  its best. The covariate regime that would test that was scoped out (plan.md, future
+  work).
 - **Two datasets**, both grocery/mass retail in the Americas. The benchmark says nothing
   about other retail formats, and every dataset-level contrast rests on n=2.
 
 ---
 
-## Not run: TimeGPT
+## Buying a service: what the TimeGPT cells cost to produce
 
-TimeGPT — the commercial API, and the data-governance case study — **has no cells here**:
-the Nixtla API answers `429 … You have reached your request limit per month` (tried twice,
-3.5 hours apart). Nothing above says anything about it, in either direction. To fill the
-two cells in once the quota resets:
+The other three bought models are files you download and run on your own hardware.
+TimeGPT is an endpoint, and running it produced facts the other cells cannot:
+
+| | |
+|---|---|
+| requests | **600** — one per series, 300 per dataset, no batching |
+| wall time | **~3.7 min per dataset** (~84 requests/min sustained) |
+| quota consumed | 600 of a **10,000/month** free-tier allowance; the per-minute ceiling is 200 |
+| determinism | bit-identical within a session (robustness check 5) |
+| version | **not reportable** — the API exposes no model revision |
+| data egress | all 300 series' full demand history, per dataset, sent to a third party |
+
+Two practical notes for anyone rerunning this:
+
+- **The monthly ceiling is the real constraint.** An earlier attempt failed with
+  `429 … You have reached your request limit per month`, which is why previous versions of
+  this file had no TimeGPT rows. One benchmark pass is 6% of a month's free allowance; a
+  rolling-origin backtest over a dozen windows would exhaust it.
+- **Quantile column names are truncated, not rounded.** Asking for q=0.667 returns a
+  column called `TimeGPT-q-66`. Looking for `-q-67` raises `KeyError` and loses the whole
+  cell — the second reason these rows were missing before.
 
 ```bash
-NIXTLA_API_KEY=... python -m analysis.tsfm_inventory.run \
-    --run timegpt:zero_shot --datasets m5 favorita
+export NIXTLA_API_KEY=...   # raw key, no trailing newline
+python -m analysis.tsfm_inventory.run --run timegpt:zero_shot --datasets m5 favorita
 ```
 
-Until then the "buy a service" arm rests on no evidence, and the governance argument about
-sending demand data off-premises stands on its own terms rather than on a cost result.
+The governance argument — demand data leaving the premises, a dependency on a vendor's
+uptime and pricing, a model version you cannot cite — now sits **alongside** a cost
+result rather than standing in for one. Finding 7 is that the cost result does not pay
+for those risks: the service ties the free Chronos-2 on one dataset and loses on the other.

@@ -6,9 +6,12 @@ adapters have been removed rather than left as untested code.
 
 **Why one model.** The research question is make-vs-buy: is a bought, off-the-shelf
 forecaster worth adopting? Fine-tuning answers the follow-up "and is it worth adapting?".
-Chronos-2 is the model to ask it of: comfortably the strongest of the four foundation
-models on every dataset, the cheapest to tune (LoRA), and the only one of the four with a
-clean, officially supported `fit()`.
+Chronos-2 is the model to ask it of: the strongest of the four foundation models on every
+dataset and on both accuracy columns, the cheapest to tune (LoRA), and the only one of the
+four with a clean, officially supported `fit()`. (On the M5 *cost* metric TimeGPT edges it
+by 0.005 zero-shot, a difference the bootstrap cannot distinguish from zero at p=0.907;
+Chronos-2 wins Favorita on cost outright, and fine-tuning puts it ahead of TimeGPT on
+both.)
 
 Its answer (RESULTS.md finding 6) is **it depends, and we cannot yet say on what**:
 fine-tuning buys a real 9% over its own zero-shot on M5 (p<0.001) and nothing at all on

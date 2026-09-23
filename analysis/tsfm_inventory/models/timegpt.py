@@ -29,5 +29,10 @@ class TimeGPT(Forecaster):
             "y": np.asarray(history, "float32")})
         res = TimeGPT._client.forecast(df=df, h=self.horizon, quantiles=self.quantile_levels)
         time.sleep(RATE_LIMIT_SLEEP)
-        return {q: np.clip(res[f"TimeGPT-q-{int(round(q * 100))}"].to_numpy()[:self.horizon], 0, None)
+        # The API is asked for the exact levels and returns them, but names each column
+        # by TRUNCATING the percentage (nixtla_client.py: f"TimeGPT-q-{int(q * 100)}"),
+        # so Favorita's critical ratio 0.667 comes back as `TimeGPT-q-66`. Rounding the
+        # name to 67 looks for a column that is never there. Unlike TimesFM's decile
+        # grid, the values themselves are the levels we asked for.
+        return {q: np.clip(res[f"TimeGPT-q-{int(q * 100)}"].to_numpy()[:self.horizon], 0, None)
                 for q in self.quantile_levels}
