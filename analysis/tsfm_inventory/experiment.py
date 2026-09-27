@@ -15,7 +15,8 @@ def run_cell(dataset_name, model_name, regime, smoke=False):
     horizon = C.SMOKE_HORIZON if smoke else C.HORIZON
     train, test = train_test_split(ds.panel, horizon)
 
-    model = get_model(model_name)(regime=regime, horizon=horizon,
+    model_class = get_model(model_name)
+    model = model_class(regime=regime, horizon=horizon,
                                   quantile_levels=C.QUANTILE_LEVELS,
                                   seasonality=ds.seasonality, smoke=smoke)
     model.fit(train)
@@ -26,26 +27,34 @@ def run_cell(dataset_name, model_name, regime, smoke=False):
     for sid, g in train.groupby("series_id"):
         if sid not in truths:
             continue
-        history, truth = g["y"].to_numpy(dtype=float), truths[sid]
+        # sid: bchamoun_apple
+        # g: panel (series_id, y, t)*272
+        history = g["y"].to_numpy(dtype=float)  # lista 272 value
+        truth = truths[sid]  # lista 4 values
         quantiles = model.predict_quantiles(history)
         order = inventory.order_from_quantiles(quantiles, ds.costs)
 
         series_mase = accuracy.mase(truth, quantiles[0.5], history, ds.seasonality)
-        # Everything is kept per series. A uniform sample spans several orders of
-        # magnitude of demand, so the demand is needed to resample the headline
-        # cost-per-unit at the series level — and the MASE of a barely-moving SKU
-        # divides by a near-zero naive error, so the mean of the column needs a median
-        # beside it to be read safely.
+        series_cost = float(inventory.cost(order, truth, ds.costs).sum())
+        series_demand = float(truth.sum())
+
+
         per_series[sid] = {
-            "cost": float(inventory.cost(order, truth, ds.costs).sum()),
-            "demand": float(truth.sum()),
+            "cost": series_cost,
+            "demand": series_demand,
             "MASE": series_mase,
         }
         mases.append(series_mase)
         orders.append(order)
         demands.append(truth)
 
+    # mases = [0.61, 1.2, 0.9, 0.2, ....] (300)
+    # orders = [[120, 111, 135, 244], [532, 2345,224, 666], [6542, 9776, 234, 111], ...] (300)
+    # demands = [[332, 653, 222, 654], [532, 2345,224, 666], [6542, 9776, 234, 111], ...] (300)
+
     order, demand = np.concatenate(orders), np.concatenate(demands)
+    # order = [120, 111, 135, 244, 532, 2345,224, 666, 6542, 9776, 234, 111, ...]  (1200)
+    # demand = [120, 111, 135, 244, 532, 2345,224, 666, 6542, 9776, 234, 111, ...]  (1200)
     result = {
         "dataset": dataset_name, "model": model_name, "regime": regime,
         "smoke": smoke, "horizon": horizon,
