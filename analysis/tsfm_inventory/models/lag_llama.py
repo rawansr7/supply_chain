@@ -27,7 +27,6 @@ def _allow_full_unpickle(torch):
 class LagLlama(Forecaster):
     name = "lag_llama"
     supported_regimes = ["zero_shot"]
-    needs_gpu = True
 
     def fit(self, train_panel=None):
         import torch

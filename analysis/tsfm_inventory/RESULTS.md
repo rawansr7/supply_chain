@@ -18,8 +18,9 @@ evidence. Both cells are now filled (300 series each, zero-shot), completing the
 four foundation models. It is the only model here that is a *service* rather than a
 weights download, which changes what its numbers mean; see "Buying a service" below.
 
-Regenerate every table below from the saved cells with
-`python -m analysis.tsfm_inventory.run --report`.
+Pairwise significance tests between the saved cells, on mean/median MASE and cost per
+unit, come from
+`python -m analysis.tsfm_inventory.run --compute-significance` (→ `results/significance.csv`).
 
 ---
 

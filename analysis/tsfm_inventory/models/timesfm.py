@@ -13,7 +13,6 @@ DECILES = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 class TimesFM(Forecaster):
     name = "timesfm"
     supported_regimes = ["zero_shot"]
-    needs_gpu = True
 
     def fit(self, train_panel=None):
         import timesfm

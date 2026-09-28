@@ -10,7 +10,6 @@ REPO_ID = "amazon/chronos-2"
 class Chronos2(Forecaster):
     name = "chronos2"
     supported_regimes = ["zero_shot", "fine_tune"]
-    needs_gpu = True
     finetune_mode = "lora"
     num_steps = 1000
     batch_size = 32

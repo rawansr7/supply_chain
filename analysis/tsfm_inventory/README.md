@@ -63,8 +63,9 @@ python -m analysis.tsfm_inventory.run --models seasonal_naive chronos2 --smoke
 # write elsewhere instead of overwriting the committed thesis results
 python -m analysis.tsfm_inventory.run --full --results-dir /tmp/rerun
 
-# rebuild the RESULTS.md tables from the saved cells — runs no model
-python -m analysis.tsfm_inventory.run --report
+# bootstrap every pair of saved cells per dataset on mean/median MASE and cost per unit
+# -> <results-dir>/significance.csv — runs no model
+python -m analysis.tsfm_inventory.run --compute-significance
 
 python -m analysis.tsfm_inventory.run --list
 ```
@@ -103,9 +104,9 @@ data/base.py           panel columns, parquet cache, random sample, weekly grid,
 models/<name>.py       one model per file; all share models/base.Forecaster
 metrics/accuracy.py    MASE
 metrics/inventory.py   newsvendor order, cost, fill rate
-metrics/significance.py series-level bootstrap of the headline metric
+metrics/significance.py series-level bootstrap of a difference in a summary metric
 experiment.py          run one cell: forecast -> decision -> metrics -> json
-report.py              leaderboard + pairwise significance
+report.py              pairwise significance of the saved cells -> csv
 run.py                 CLI
 ```
 
@@ -118,7 +119,7 @@ run.py                 CLI
 
 Forecast → order the **critical-ratio quantile** for that dataset → score by three
 metrics: **MASE** (accuracy, reported as both mean and median), **cost per unit** and
-**fill rate** (inventory). Significance comes from a series-level bootstrap of the
-headline cost per unit — a uniform sample of series spans four orders of magnitude of
-demand, so the resampling unit is the whole series rather than the observation. See
+**fill rate** (inventory). Significance comes from a series-level bootstrap of mean
+and median MASE and cost per unit — a uniform sample of series spans four orders of magnitude of demand, so the
+resampling unit is the whole series rather than the observation. See
 `RESULTS.md` for the numbers and `../../NOVELTY.md` for the why.

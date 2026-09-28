@@ -12,7 +12,6 @@ def quantiles_from_residuals(point, residuals, quantile_levels):
 class Forecaster:
     name = "base"
     supported_regimes = ["zero_shot"]
-    needs_gpu = False
 
     def __init__(self, regime, horizon, quantile_levels, seasonality, smoke=False):
         if regime not in self.supported_regimes:

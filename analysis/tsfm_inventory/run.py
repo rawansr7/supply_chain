@@ -3,7 +3,7 @@
     python -m analysis.tsfm_inventory.run --full
     python -m analysis.tsfm_inventory.run --run chronos2:zero_shot --datasets m5
     python -m analysis.tsfm_inventory.run --models seasonal_naive chronos2 --smoke
-    python -m analysis.tsfm_inventory.run --report
+    python -m analysis.tsfm_inventory.run --compute-significance
     python -m analysis.tsfm_inventory.run --list
 """
 from __future__ import annotations
@@ -54,40 +54,38 @@ def main():
     p.add_argument("--results-dir", type=Path, help=f"where results land (default {C.RESULTS_DIR})")
     p.add_argument("--smoke", action="store_true", help="tiny synthetic data — just check it runs")
     p.add_argument("--list", action="store_true", help="list available models and datasets")
-    p.add_argument("--report", action="store_true",
-                   help="rebuild the RESULTS.md tables from the saved cells; runs nothing")
+    p.add_argument("--compute-significance", action="store_true",
+                   help="bootstrap every pair of saved cells within a dataset on mean MASE, "
+                        "median MASE and cost per unit, into "
+                        "<results-dir>/significance.csv; runs nothing")
     args = p.parse_args()
 
     if args.results_dir:
         C.RESULTS_DIR = args.results_dir
 
-    if args.report:
-        report.print_markdown(report.load_results(C.RESULTS_DIR))
+    if args.compute_significance:
+        path, n_tests = report.write_significance(C.RESULTS_DIR)
+        print(f"{n_tests} test(s) -> {path}")
         return
 
     if args.list:
         print("datasets:", list(LOADERS), " thesis:", THESIS_DATASETS)
         for name, cls in MODELS.items():
-            gpu = " [needs GPU]" if cls.needs_gpu else ""
-            print(f"  {name:<16} regimes={cls.supported_regimes}{gpu}")
+            print(f"  {name:<16} regimes={cls.supported_regimes}")
         return
 
     C.RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     cells = build_cells(args)
     print(f"\n{len(cells)} cell(s){' [SMOKE]' if args.smoke else ''} -> {C.RESULTS_DIR}")
 
-    results = []
     for dataset, model, regime in cells:
         try:
             res, _ = run_cell(dataset, model, regime, smoke=args.smoke)
             s = res["summary"]
             print(f"  OK  {dataset}/{model}/{regime}: cost/unit={s['cost_per_unit']:.3f} "
                   f"MASE={s['MASE']:.3f} fill={s['fill_rate']:.3f}")
-            results.append(res)
         except Exception as e:
             print(f"  ERR {dataset}/{model}/{regime}: {type(e).__name__}: {e}")
-
-    report.print_leaderboard(results)
 
 
 if __name__ == "__main__":
