@@ -1,10 +1,15 @@
 from .. import config as C
-from .base import Forecaster, empirical_quantiles
+from .base import Forecaster, quantiles_from_residuals
 
 
 class SeasonalNaive(Forecaster):
     grids = {"statistical": [{}]}
 
-    def predict(self, Y):
-        Y, m = Y.to_numpy(), C.SEASON
-        return empirical_quantiles(Y[:, -m:-m + self.horizon], (Y[:, m:] - Y[:, :-m])[..., None], self.levels)
+    def predict_quantiles(self, history):
+        history = history.to_numpy()
+        m = C.SEASONALITY
+
+        point = history[:, -m:-m + self.horizon]
+        residuals = history[:, m:] - history[:, :-m]
+        residuals = residuals[..., None]
+        return quantiles_from_residuals(point, residuals, self.quantile_levels)

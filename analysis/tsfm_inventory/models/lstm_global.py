@@ -16,35 +16,54 @@ BATCH = 256
 class Net(nn.Module):
     def __init__(self, hidden, outputs):
         super().__init__()
-        self.lstm = nn.LSTM(1, hidden, LAYERS, batch_first=True, dropout=DROPOUT)
+        self.encoder = nn.LSTM(1, hidden, LAYERS, batch_first=True, dropout=DROPOUT)
         self.head = nn.Linear(hidden, outputs)
 
     def forward(self, x):
-        return self.head(self.lstm(x.unsqueeze(-1))[0][:, -1])
+        out, _ = self.encoder(x.unsqueeze(-1))
+        return self.head(out[:, -1])
 
 
 class LSTMGlobal(Forecaster):
-    grids = {"statistical": [{"hidden": n, "lr": r} for n in (32, 64, 128, 256) for r in (3e-4, 1e-3, 3e-3, 1e-2)]}
+    grids = {"statistical": [{"hidden": n, "lr": r}
+                             for n in (32, 64, 128, 256)
+                             for r in (3e-4, 1e-3, 3e-3, 1e-2)]}
 
-    def fit(self, Y):
+    def fit(self, train_panel):
         torch.manual_seed(C.SEED)
-        X, F = (torch.tensor(a, device=DEVICE) for a in scaled_windows(Y.to_numpy(np.float32), CONTEXT, self.horizon))
-        levels = torch.tensor(self.levels, device=DEVICE)
-        self.net = Net(self.params["hidden"], self.horizon * len(self.levels)).to(DEVICE)
-        optimizer = torch.optim.Adam(self.net.parameters(), lr=self.params["lr"])
+        x, y = scaled_windows(train_panel.to_numpy(np.float32), CONTEXT, self.horizon)
+        x_t = torch.tensor(x, device=DEVICE)
+        y_t = torch.tensor(y, device=DEVICE)
+        levels = torch.tensor(self.quantile_levels, device=DEVICE)
+
+        n_outputs = self.horizon * len(self.quantile_levels)
+        self.net = Net(self.params["hidden"], n_outputs).to(DEVICE)
+        opt = torch.optim.Adam(self.net.parameters(), lr=self.params["lr"])
+
         for _ in range(STEPS):
-            batch = torch.randint(len(X), (BATCH,), device=DEVICE)
-            diff = F[batch, :, None] - self.net(X[batch]).view(BATCH, self.horizon, -1)
-            loss = torch.maximum(levels * diff, (levels - 1) * diff).mean()
-            optimizer.zero_grad()
+            batch = torch.randint(len(x_t), (BATCH,), device=DEVICE)
+            pred = self.net(x_t[batch]).view(BATCH, self.horizon, -1)
+            diff = y_t[batch, :, None] - pred
+            pinball = torch.maximum(levels * diff, (levels - 1) * diff)
+            loss = pinball.mean()
+
+            opt.zero_grad()
             loss.backward()
-            optimizer.step()
+            opt.step()
+
         self.net.eval()
         return self
 
-    def predict(self, Y):
-        context = Y.to_numpy(np.float32)[:, -CONTEXT:]
-        scale = 1 + context.mean(1, keepdims=True)
+    def predict_quantiles(self, history):
+        context = history.to_numpy(np.float32)[:, -CONTEXT:]
+        scale = 1 + context.mean(axis=1, keepdims=True)
+        inputs = torch.tensor(context / scale, device=DEVICE)
+
         with torch.no_grad():
-            Q = self.net(torch.tensor(context / scale, device=DEVICE)).view(len(context), self.horizon, -1)
-        return np.clip(np.sort(Q.cpu().numpy(), -1) * scale[..., None], 0, None)
+            pred = self.net(inputs)
+        pred = pred.view(len(context), self.horizon, -1)
+        pred = pred.cpu().numpy()
+
+        quantiles = np.sort(pred, axis=-1)
+        quantiles = quantiles * scale[..., None]
+        return np.clip(quantiles, 0, None)

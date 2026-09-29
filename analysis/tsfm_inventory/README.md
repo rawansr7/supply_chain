@@ -102,7 +102,7 @@ and MASE. A failing cell is reported and skipped.
 ```
 config.py        paths, seed, horizon, sample rules, costs
 data/            m5.py, favorita.py, base.py (sampling, cache)
-models/          one file per model on models/base.Forecaster: fit(Y) and predict(Y) -> (series, horizon, levels)
+models/          one file per model on models/base.Forecaster: fit(train_panel) and predict_quantiles(history) -> (series, horizon, quantile levels)
 metrics/         accuracy, inventory, significance
 experiment.py    tune on validation, refit, evaluate on test, write json
 report.py        markdown tables and pairwise tests

@@ -19,16 +19,25 @@ def main():
         print(f"{n_tests} test(s) -> {path}")
         return
 
-    cells = CELLS if args.full else [tuple(token.split(":")) for token in args.run]
+    if args.full:
+        cells = CELLS
+    else:
+        cells = [tuple(token.split(":")) for token in args.run]
+
     for dataset in args.datasets:
         for model, regime in cells:
             print(f"{dataset}/{model}/{regime}", flush=True)
             try:
-                s = run_cell(dataset, model, regime)["summary"]
-                print(f"  cost/unit {s['cost_per_unit']:.3f}  MASE {s['MASE']:.3f}  fill {s['fill_rate']:.3f}", flush=True)
+                result = run_cell(dataset, model, regime)
             except Exception as e:
                 print(f"  ERROR {type(e).__name__}: {e}", flush=True)
-    report.print_markdown(report.load_results())
+                continue
+            s = result["summary"]
+            print(f"  cost/unit {s['cost_per_unit']:.3f}  MASE {s['MASE']:.3f}  fill {s['fill_rate']:.3f}",
+                  flush=True)
+
+    results = report.load_results()
+    report.print_markdown(results)
 
 
 if __name__ == "__main__":

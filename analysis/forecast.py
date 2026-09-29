@@ -19,8 +19,11 @@ def _daily_panel(df):
 def forecast_next_month(df):
     panel = _daily_panel(df)
     end_date = panel.columns.max()
-    model = Chronos2("zero_shot", HORIZON, [C.DEFAULT_COSTS.critical_ratio]).fit(panel)
-    orders = model.predict(panel)[..., 0]
+    quantile_levels = [C.DEFAULT_COSTS.critical_ratio]
+    model = Chronos2("zero_shot", HORIZON, quantile_levels)
+    model.fit(panel)
+    quantiles = model.predict_quantiles(panel)
+    orders = quantiles[..., 0]
 
     forecast_results = []
     for (item_id, store_id), order in zip(panel.index, orders):
