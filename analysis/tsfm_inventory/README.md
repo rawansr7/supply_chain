@@ -79,9 +79,11 @@ PYTHONPATH=$PWD:$PWD/external/lag-llama conda run -n tsfm_lag \
     python -m analysis.tsfm_inventory.run --run lag_llama:zero_shot lag_llama:fine_tune
 python -m analysis.tsfm_inventory.run --run chronos2:fine_tune --datasets m5
 python -m analysis.tsfm_inventory.run
+python -m analysis.tsfm_inventory.run --compute-significance
 ```
 
-`--full` runs every cell in one environment. With no cells, `run` only prints the report
+`--full` runs every cell in one environment. `--compute-significance` bootstraps every pair of saved cells within a dataset on all three
+metrics into `results/significance.csv`. With no cells, `run` only prints the report
 tables from `results/`. Each cell writes `results/<dataset>__<model>__<regime>.json` with
 the chosen parameters, every validation trial, the wall time and per-series cost, demand
 and MASE. A failing cell is reported and skipped.
@@ -91,8 +93,9 @@ and MASE. A failing cell is reported and skipped.
 - MASE: seasonal (m = 52) scale over the series' own history, reported as mean and median.
 - Cost per unit: pooled newsvendor cost divided by pooled demand.
 - Fill rate: pooled units served from the order divided by pooled demand.
-- Significance: series-level paired bootstrap of cost per unit (10,000 resamples) and a
-  paired t-test (Diebold–Mariano) on per-series cost.
+- Significance: series-level paired bootstrap (10,000 resamples, percentile intervals) of the
+  difference in mean MASE, median MASE and cost per unit. Whole series are resampled because
+  demand spans orders of magnitude across series.
 
 ## Layout
 

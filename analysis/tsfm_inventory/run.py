@@ -11,7 +11,13 @@ def main():
     parser.add_argument("--full", action="store_true")
     parser.add_argument("--run", nargs="+", default=[], metavar="MODEL:REGIME")
     parser.add_argument("--datasets", nargs="+", default=list(LOADERS))
+    parser.add_argument("--compute-significance", action="store_true")
     args = parser.parse_args()
+
+    if args.compute_significance:
+        path, n_tests = report.write_significance(report.load_results())
+        print(f"{n_tests} test(s) -> {path}")
+        return
 
     cells = CELLS if args.full else [tuple(token.split(":")) for token in args.run]
     for dataset in args.datasets:

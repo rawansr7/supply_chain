@@ -103,9 +103,10 @@ a few barely-moving series, so read the median as well.
 ## Significance
 
 Differences in cost per unit (A − B, negative = A is cheaper) with a 95% interval from a
-series-level bootstrap (10,000 resamples) and its p-value. The paired Diebold–Mariano test on
-per-series cost agrees everywhere; both are in the `run` report. LightGBM is the best built
-model on both datasets.
+series-level bootstrap (10,000 resamples, whole series resampled) and its p-value. Every pair
+of cells on mean MASE, median MASE and cost per unit is in
+`run --compute-significance` (→ `results/significance.csv`). LightGBM is the best built model
+on both datasets.
 
 | comparison | M5 | Favorita |
 |---|---|---|
