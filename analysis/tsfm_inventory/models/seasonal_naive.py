@@ -1,20 +1,10 @@
-from __future__ import annotations
-
-import numpy as np
-
-from .base import Forecaster, quantiles_from_residuals
+from .. import config as C
+from .base import Forecaster, empirical_quantiles
 
 
 class SeasonalNaive(Forecaster):
-    name = "seasonal_naive"
-    supported_regimes = ["statistical"]
+    grids = {"statistical": [{}]}
 
-    def predict_quantiles(self, history):
-        m, h = self.seasonality, self.horizon
-        if len(history) >= m:
-            point = np.array([history[-m + (i % m)] for i in range(h)], dtype=float)
-            resid = history[m:] - history[:-m]
-        else:
-            point = np.full(h, float(history[-1]) if len(history) else 0.0)
-            resid = np.diff(history)
-        return quantiles_from_residuals(point, resid, self.quantile_levels)
+    def predict(self, Y):
+        Y, m = Y.to_numpy(), C.SEASON
+        return empirical_quantiles(Y[:, -m:-m + self.horizon], (Y[:, m:] - Y[:, :-m])[..., None], self.levels)

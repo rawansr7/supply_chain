@@ -1,55 +1,61 @@
 # Fine-tuning
 
-Only **Chronos-2** is fine-tuned in this thesis. The other three foundation models
-(TimesFM, Lag-Llama, TimeGPT) are evaluated **off the shelf only**, and their fine-tune
-adapters have been removed rather than left as untested code.
+All three foundation models are fine-tuned **globally**: one adaptation on the history of all
+1,000 series of a dataset, after which each series is forecast from its own history. The
+fine-tuned regime follows the same protocol as every other model (README, "Protocol"): each
+configuration in the grid is fit before each of the two validation windows, the one with the
+lowest pooled validation cost per unit is refit on all history before the test window, and it
+forecasts the test window once. Grids follow each vendor's documented knobs, and the two
+validation windows (8,000 series-weeks) score each candidate. Where a winner sat on the edge
+of its grid, the grid was widened or the next value checked (RESULTS.md, "Tuning").
 
-**Why one model.** The research question is make-vs-buy: is a bought, off-the-shelf
-forecaster worth adopting? Fine-tuning answers the follow-up "and is it worth adapting?".
-Chronos-2 is the model to ask it of: the strongest of the four foundation models on every
-dataset and on both accuracy columns, the cheapest to tune (LoRA), and the only one of the
-four with a clean, officially supported `fit()`. (On the M5 *cost* metric TimeGPT edges it
-by 0.005 zero-shot, a difference the bootstrap cannot distinguish from zero at p=0.907;
-Chronos-2 wins Favorita on cost outright, and fine-tuning puts it ahead of TimeGPT on
-both.)
+## Chronos-2 — `models/chronos2.py`
 
-Its answer (RESULTS.md finding 6) is **it depends, and we cannot yet say on what**:
-fine-tuning buys a real 9% over its own zero-shot on M5 (p<0.001) and nothing at all on
-Favorita (p=0.429), two datasets that are both intermittent and differ in several other
-ways at once. It also never turns a loss into a win — against the
-best model you could *build* (the global LSTM) the fine-tuned Chronos-2 is statistically
-indistinguishable on both datasets. Adapting recovers ground rather than winning it, for
-~26 minutes of CPU per dataset against seconds for zero-shot.
+`Chronos2Pipeline.fit` (chronos-forecasting 2.3.0) copies the model and returns a new
+fine-tuned pipeline. It draws random context/target windows from every series (context up to
+the full history, target 4 weeks) and trains on the quantile loss for 1,000 steps at batch
+256 with AdamW and linear decay, in bf16 on the GPU. These are library defaults, as is the
+LoRA configuration (rank 8 on the attention and output projections). Checkpoints go to a
+temporary directory.
 
-**An honest limit of stopping at one model.** Since adapting demonstrably helps on at
-least one dataset, whether tuning TimesFM or Lag-Llama would narrow their (large) gap to
-Chronos-2 is an open question. Nothing here answers it — future work, not a settled
-claim.
+| mode | learning rate |
+|---|---|
+| LoRA | 1e-5, 1e-4, 1e-3 |
+| full | 1e-6 (library default), 1e-5, 3e-5 |
 
-**No hyperparameter tuning, by design.** We use the library's default fine-tune config.
-This reflects realistic out-of-the-box adoption, which is the make-vs-buy premise — and
-it is why "fine-tuning does not always beat zero-shot" is an honest finding rather than
-a tuning failure.
+## Lag-Llama — `models/lag_llama.py`
 
-## chronos2 — Chronos-2
+The official recipe: `LagLlamaEstimator(ckpt_path=...).train(...)` with the architecture read
+from the checkpoint, augmentation off, batch 64 and 50 epochs of 50 batches (Adam). Lightning
+keeps the epoch with the lowest training loss. The maintainers ask benchmarkers to tune the
+context length and the learning rate. RoPE is scaled linearly by the official demo's factor,
+max(1, (context + horizon) / 32), where 32 is the pretraining context. Forecasts are quantiles
+of 100 sample paths, drawn 16 series at a time so the sampler fits beside a Chronos-2
+fine-tune on the same GPU.
 
-```
-pip install chronos-forecasting
-pip install peft          # for LoRA (the default; cheapest)
-```
+| regime | context | learning rate |
+|---|---|---|
+| zero-shot | 32, 64, 128, 256 | — |
+| fine-tune | 32, 64, 128 | 1e-4, 5e-4 |
 
-The fine-tune is **global**: it trains once on the training panel of *all* series in the
-dataset, then forecasts each series from its own history. `BaseChronosPipeline.fit(...)`
-returns a **new** fine-tuned pipeline rather than mutating the base one.
+## TimeGPT — `models/timegpt.py`
 
-Defaults (the official notebook config, untouched): `finetune_mode="lora"`,
-`num_steps=1000`, `batch_size=32`, `lr=1e-4`. Set `Chronos2.finetune_mode = "full"` for
-full fine-tuning (GPU). GPU strongly recommended; CPU works only for smoke tests.
+Fine-tuning runs on Nixtla's servers inside the forecast request (`finetune_steps`,
+`finetune_depth`, default loss). All 1,000 series of a dataset go in one request, so the model
+is adapted on all of them and then forecasts each. Depth 1 adapts only the last layers and
+depth 5 the whole model.
 
-Check the plumbing without a real training job:
+| finetune_steps | finetune_depth |
+|---|---|
+| 10, 30, 100, 300, 1000 | 1, 2, 3, 4, 5 |
 
-```
-python -m analysis.tsfm_inventory.run --run chronos2:fine_tune --smoke
-```
+Every configuration is one API request per validation window, so tuning costs 50 requests per
+dataset against the free tier's 10,000 a month. The client allows 15 minutes per request: a
+1,000-step fine-tune on 1,000 series takes about 2–3 minutes, and 3,000 steps time out on
+Nixtla's side (HTTP 504). Fine-tuned forecasts are not bit-reproducible, and the version Nixtla
+serves cannot be pinned.
 
-`--smoke` shrinks the run to 50 steps on tiny synthetic data — never a result.
+## Hardware
+
+Chronos-2 and Lag-Llama fine-tune on one NVIDIA L4 (24 GB). The wall time of every fit is in
+the result files (`seconds` for the final fit, per-configuration times under `tuning`).

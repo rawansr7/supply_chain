@@ -1,31 +1,33 @@
-from __future__ import annotations
-
 import numpy as np
-
-
-def quantiles_from_residuals(point, residuals, quantile_levels):
-    if len(residuals) < 2:
-        residuals = np.zeros(2)
-    return {q: np.clip(point + np.quantile(residuals, q), 0, None) for q in quantile_levels}
+from numpy.lib.stride_tricks import sliding_window_view
 
 
 class Forecaster:
-    name = "base"
-    supported_regimes = ["zero_shot"]
-    needs_gpu = False
+    grids = {}
 
-    def __init__(self, regime, horizon, quantile_levels, seasonality, smoke=False):
-        if regime not in self.supported_regimes:
-            raise ValueError(f"{self.name} does not support regime {regime!r}; "
-                             f"supported: {self.supported_regimes}")
+    def __init__(self, regime, horizon, levels, **params):
         self.regime = regime
         self.horizon = horizon
-        self.quantile_levels = quantile_levels
-        self.seasonality = seasonality
-        self.smoke = smoke
+        self.levels = levels
+        self.params = params
 
-    def fit(self, train_panel=None):
+    def fit(self, Y):
         return self
 
-    def predict_quantiles(self, history):
+    def predict(self, Y):
         raise NotImplementedError
+
+
+def listed(Y):
+    return [y[~np.isnan(y)] for y in Y.to_numpy(np.float32)]
+
+
+def empirical_quantiles(point, errors, levels):
+    return np.clip(point[..., None] + np.moveaxis(np.nanquantile(errors, levels, axis=1), 0, -1), 0, None)
+
+
+def scaled_windows(Y, context, horizon):
+    W = sliding_window_view(Y, context + horizon, axis=1).reshape(-1, context + horizon)
+    W = W[~np.isnan(W).any(1)]
+    scale = 1 + W[:, :context].mean(1, keepdims=True)
+    return W[:, :context] / scale, W[:, context:] / scale

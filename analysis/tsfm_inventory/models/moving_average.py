@@ -1,21 +1,14 @@
-from __future__ import annotations
-
 import numpy as np
+from numpy.lib.stride_tricks import sliding_window_view
 
-from .base import Forecaster, quantiles_from_residuals
+from .base import Forecaster, empirical_quantiles
 
 
 class MovingAverage(Forecaster):
-    name = "moving_average"
-    supported_regimes = ["statistical"]
-    window = 8
+    grids = {"statistical": [{"window": w} for w in (2, 4, 6, 8, 13, 26, 52)]}
 
-    def predict_quantiles(self, history):
-        w = min(self.window, len(history)) or 1
-        point = np.full(self.horizon, float(np.mean(history[-w:])))
-        if len(history) > w:
-            preds = np.array([history[i - w:i].mean() for i in range(w, len(history))])
-            resid = history[w:] - preds
-        else:
-            resid = np.zeros(2)
-        return quantiles_from_residuals(point, resid, self.quantile_levels)
+    def predict(self, Y):
+        Y, w, h = Y.to_numpy(), self.params["window"], self.horizon
+        means = sliding_window_view(Y, w, axis=1).mean(2)
+        errors = sliding_window_view(Y[:, w:], h, axis=1) - means[:, :-h, None]
+        return empirical_quantiles(np.repeat(means[:, -1:], h, 1), errors, self.levels)

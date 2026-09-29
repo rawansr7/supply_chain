@@ -1,125 +1,107 @@
-# tsfm_inventory — decision-centric TSFM benchmark for inventory
+# tsfm_inventory
 
-Benchmarks off-the-shelf time-series foundation models (TSFMs) against classical/ML
-baselines, scoring them on **both** forecast accuracy **and** the inventory decisions
-their forecasts drive. Companion to `../../plan.md` and `../../NOVELTY.md`.
+Decision-centric, make-vs-buy benchmark. Three off-the-shelf time-series foundation models
+(Chronos-2, Lag-Llama, TimeGPT), each zero-shot and fine-tuned, against four models a
+retailer could build (seasonal naive, moving average, global LightGBM, global LSTM). Every
+model is scored on forecast accuracy and on the cost of the newsvendor orders its forecasts
+drive. Numbers are in `RESULTS.md`, fine-tuning recipes in `FINETUNING.md`.
 
-## Install
+## Environments
+
+| models | conda env | extra |
+|---|---|---|
+| all except `lag_llama` | `tsfm` | torch 2.12 (CUDA 13.0), chronos-forecasting 2.3.0, peft, lightgbm, nixtla |
+| `lag_llama` | `tsfm_lag` | `external/lag-llama` on `PYTHONPATH`, `lag-llama.ckpt` in `supply_chain/` |
 
 ```bash
-# baselines need only numpy/pandas/pyarrow/scipy/lightgbm, plus torch for lstm_global.
-# TSFMs are imported lazily — install only the ones you run (one env per model is easiest):
-pip install chronos-forecasting        # chronos2 (fine-tune also needs: pip install peft)
-pip install "timesfm[torch]==1.3.0"    # timesfm
-pip install nixtla                     # timegpt (also: export NIXTLA_API_KEY=...)
-# lag_llama: not on PyPI —
-#   git clone https://github.com/time-series-foundation-models/lag-llama
-#   pip install -r lag-llama/requirements.txt
-#   huggingface-cli download time-series-foundation-models/Lag-Llama lag-llama.ckpt --local-dir .
-#   run with that clone on PYTHONPATH and lag-llama.ckpt in the working dir
+pip install torch --index-url https://download.pytorch.org/whl/cu130
+pip install chronos-forecasting peft lightgbm nixtla scipy pyarrow
+git clone https://github.com/time-series-foundation-models/lag-llama external/lag-llama
+pip install -r external/lag-llama/requirements.txt
+huggingface-cli download time-series-foundation-models/Lag-Llama lag-llama.ckpt --local-dir .
 ```
 
-## Datasets
+Chronos-2, Lag-Llama and the LSTM train and predict on the GPU when one is visible (here an
+NVIDIA L4, driver 595). LightGBM and the classical baselines run on CPU. TimeGPT runs on
+Nixtla's servers and needs `NIXTLA_API_KEY`; all series of a dataset go in one request.
 
-Put raw Kaggle files under `raw/`:
+## Data
 
-```
-raw/m5/sales_train_evaluation.csv, calendar.csv
-raw/favorita/train.csv
-```
+`raw/m5/sales_train_evaluation.csv` and `raw/favorita/train.csv` (Kaggle). Each loader:
 
-Each loader builds a weekly panel (`series_id, t, y`) of **300 series drawn uniformly at
-random** (`config.SEED`) and caches it as `cache/<name>_panel.parquet`; delete that file
-to force a rebuild. You need no download to develop: the `synthetic` dataset and
-`--smoke` generate data in memory.
+- sums daily unit sales into whole weeks: 277 Walmart Saturday–Friday weeks for M5,
+  241 Tuesday–Monday weeks from 2013-01-01 for Favorita. The partial final week is dropped;
+- marks the weeks before a series' first sale as missing, not zero: the product was not yet
+  on the shelf. Later weeks without a sale are zero demand;
+- keeps established, active series: at least 104 weeks of history before the test window
+  and at least one sale in the 13 weeks before the first validation window (88% of M5 and
+  65% of Favorita store-item series);
+- draws 1,000 of them uniformly at random (seed 51) and caches the panel as
+  `cache/<dataset>.parquet`. Delete the file to rebuild it.
 
-Three properties of that panel are worth knowing before reading any result:
+## Protocol
 
-- **Random, not top-N.** Ranking by volume would keep only the fast movers and discard
-  the intermittency these catalogues are made of — the median M5 and Favorita series
-  record no sale in 40% and 47% of weeks. The sample is the catalogue, warts included.
-- **Whole weeks only.** Both datasets end mid-week, and such a bucket sums a day or two
-  rather than seven. It would land inside the four-week test window and hand every model
-  an unforecastable drop, so partial weeks are dropped in the loader: M5 loses its 2-day
-  tail and Favorita its 1-day tail.
-- **One shared calendar.** `t` counts weeks along the dataset's own calendar, not along
-  each series' own rows. A week in which a series sold nothing is zero demand, not a
-  missing row to be closed up — so every series is aligned and the test window is the
-  same four weeks for all of them.
+The horizon is 4 weeks. The last 4 weeks are the test window; the two 4-week windows before
+it are validation windows. For every model and regime:
+
+1. each configuration in the model's grid is fit on the history before each validation
+   window and forecasts it; its score is the cost per unit pooled over both windows;
+2. the best configuration is refit on all history before the test window;
+3. it forecasts the test window once. The median gives MASE; the critical-ratio quantile
+   is the newsvendor order.
+
+| model | regime | grid |
+|---|---|---|
+| moving_average | statistical | window 2, 4, 6, 8, 13, 26, 52 |
+| lightgbm_global | statistical | num_leaves 15, 63, 255 × learning_rate 0.02, 0.05, 0.1 (500 trees, quantile loss) |
+| lstm_global | statistical | hidden 32, 64, 128, 256 × lr 3e-4, 1e-3, 3e-3, 1e-2 (5,000 steps, pinball loss) |
+| chronos2 | fine_tune | LoRA lr 1e-5, 1e-4, 1e-3; full lr 1e-6, 1e-5, 3e-5 |
+| lag_llama | zero_shot | context 32, 64, 128, 256 |
+| lag_llama | fine_tune | context 32, 64, 128 × lr 1e-4, 5e-4 |
+| timegpt | fine_tune | finetune_steps 10, 30, 100, 300, 1000 × finetune_depth 1–5 |
+
+Seasonal naive, Chronos-2 zero-shot and TimeGPT zero-shot have nothing to tune: Chronos-2
+reads the full history and TimeGPT chooses its own input window.
+
+Costs are a property of the goods, one ratio per dataset: M5 (shelf-stable packaged goods)
+stockout:holding 4:1, critical ratio 0.80; Favorita (fresh, perishable grocery) 2:1,
+critical ratio 0.67.
 
 ## Running
 
 ```bash
-# FULL thesis run — every model x dataset x supported regime (18 cells)
-python -m analysis.tsfm_inventory.run --full
-
-# SELECTED
-python -m analysis.tsfm_inventory.run --run chronos2:zero_shot --datasets m5
-python -m analysis.tsfm_inventory.run --models seasonal_naive chronos2 --datasets m5 favorita
-
-# SMOKE — tiny synthetic data, just checks the code runs (no GPU/network)
-python -m analysis.tsfm_inventory.run --models seasonal_naive chronos2 --smoke
-
-# write elsewhere instead of overwriting the committed thesis results
-python -m analysis.tsfm_inventory.run --full --results-dir /tmp/rerun
-
-# rebuild the RESULTS.md tables from the saved cells — runs no model
-python -m analysis.tsfm_inventory.run --report
-
-python -m analysis.tsfm_inventory.run --list
+cd supply_chain
+export PYTHONPATH=$PWD HF_HUB_OFFLINE=1 NIXTLA_API_KEY=$(cat ../nixtla.key)
+CELLS="seasonal_naive:statistical moving_average:statistical lightgbm_global:statistical lstm_global:statistical
+       chronos2:zero_shot chronos2:fine_tune timegpt:zero_shot timegpt:fine_tune"
+conda run -n tsfm python -m analysis.tsfm_inventory.run --run $CELLS
+PYTHONPATH=$PWD:$PWD/external/lag-llama conda run -n tsfm_lag \
+    python -m analysis.tsfm_inventory.run --run lag_llama:zero_shot lag_llama:fine_tune
+python -m analysis.tsfm_inventory.run --run chronos2:fine_tune --datasets m5
+python -m analysis.tsfm_inventory.run
 ```
 
-A failing cell (missing library, unsupported regime) is reported and skipped — it never
-aborts the rest of the run. Each cell writes `<results-dir>/<dataset>__<model>__<regime>.json`.
+`--full` runs every cell in one environment. With no cells, `run` only prints the report
+tables from `results/`. Each cell writes `results/<dataset>__<model>__<regime>.json` with
+the chosen parameters, every validation trial, the wall time and per-series cost, demand
+and MASE. A failing cell is reported and skipped.
 
-## Regimes
+## Metrics
 
-- `statistical` — the "make" side: a model you build and train on your own data
-  (seasonal_naive, moving_average, lightgbm_global, lstm_global).
-- `zero_shot` — foundation model used out of the box, on the series' own history.
-- `fine_tune` — **chronos2 only** (LoRA, the library's default config). The other three
-  foundation models are evaluated off the shelf; see FINETUNING.md for why.
-
-## Cost asymmetry
-
-The newsvendor orders the `Cu/(Cu+Co)` quantile, so the cost ratio *is* the decision.
-It is a property of the goods rather than a knob to sweep, and each dataset gets the one
-ratio that fits its catalogue (`config.COSTS` carries the reasoning):
-
-| dataset | Cu:Co | critical ratio | why |
-|---|---|---|---|
-| M5 | 4:1 | 0.80 | shelf-stable packaged goods; cheap to hold, a stockout costs the margin |
-| Favorita | 2:1 | 0.67 | heavy on fresh/perishable lines — unsold stock is written off, not carried |
-
-Sweeping several ratios on one dataset would only re-answer "does a higher critical
-ratio order more?", which needs no experiment.
+- MASE: seasonal (m = 52) scale over the series' own history, reported as mean and median.
+- Cost per unit: pooled newsvendor cost divided by pooled demand.
+- Fill rate: pooled units served from the order divided by pooled demand.
+- Significance: series-level paired bootstrap of cost per unit (10,000 resamples) and a
+  paired t-test (Diebold–Mariano) on per-series cost.
 
 ## Layout
 
 ```
-config.py              paths, seed, horizon, quantiles, per-dataset costs, smoke sizes
-data/<name>.py         one loader per dataset (m5, favorita, synthetic)
-data/base.py           panel columns, parquet cache, random sample, weekly grid, split
-models/<name>.py       one model per file; all share models/base.Forecaster
-metrics/accuracy.py    MASE
-metrics/inventory.py   newsvendor order, cost, fill rate
-metrics/significance.py paired Diebold-Mariano test, series-level bootstrap
-experiment.py          run one cell: forecast -> decision -> metrics -> json
-report.py              leaderboard + pairwise significance
-run.py                 CLI
+config.py        paths, seed, horizon, sample rules, costs
+data/            m5.py, favorita.py, base.py (sampling, cache)
+models/          one file per model on models/base.Forecaster: fit(Y) and predict(Y) -> (series, horizon, levels)
+metrics/         accuracy, inventory, significance
+experiment.py    tune on validation, refit, evaluate on test, write json
+report.py        markdown tables and pairwise tests
+run.py           CLI
 ```
-
-## Adding things
-
-- **A dataset:** write `data/foo.py` with `load(smoke=False) -> Dataset`, register it in `data/__init__.py`.
-- **A model:** write `models/foo.py` subclassing `Forecaster`, register it in `models/__init__.py`.
-
-## Evaluation in one line
-
-Forecast → order the **critical-ratio quantile** for that dataset → score by three
-metrics: **MASE** (accuracy, reported as both mean and median), **cost per unit** and
-**fill rate** (inventory). Significance comes from a paired Diebold-Mariano test on per-series cost
-and a series-level bootstrap of the headline cost per unit — the bootstrap is the one to
-quote, since a uniform sample of series spans four orders of magnitude of demand and a
-paired test over raw costs is decided by the largest few. See `RESULTS.md` for the
-numbers and `../../NOVELTY.md` for the why.

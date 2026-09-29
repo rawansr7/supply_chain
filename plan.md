@@ -89,7 +89,7 @@ runs unless you select it. The mechanism:
 5. Fine-tuning (most expensive) — last, model-by-model.
 
 **Full model roster** (all buildable, selectable at run time):
-**Chronos-2, TimesFM-2.0 (+2.5), Lag-Llama, TimeGPT.**
+**Chronos-2, Lag-Llama, TimeGPT** (TimesFM dropped 2026-09-28).
 Baselines: Seasonal-Naive, moving average, Global LightGBM (ML), Global LSTM (DL —
 multi-quantile head trained on pinball loss, so the built model is not handicapped on
 the probabilistic axis the newsvendor depends on).
@@ -100,7 +100,7 @@ the probabilistic axis the newsvendor depends on).
 
 | Dataset | Grain | Why | Source | Notes |
 |---|---|---|---|---|
-| **M5** | item×store daily, 30k+ series | standard, intermittent, has price+calendar covariates | Kaggle `m5-forecasting-accuracy` | aggregate to chosen freq; rich covariates for Chronos-2/TimesFM |
+| **M5** | item×store daily, 30k+ series | standard, intermittent, has price+calendar covariates | Kaggle `m5-forecasting-accuracy` | aggregate to chosen freq; rich covariates for Chronos-2 |
 | **Favorita** | item×store daily | large, promotions/oil/holidays covariates | Kaggle `favorita-grocery-sales-forecasting` | huge — subsample SKUs for tractability |
 
 Loader contract (one per dataset, same as `data.py`): raw → cleaned long panel
@@ -118,7 +118,7 @@ analysis/tsfm_inventory/
     m5.py  favorita.py                   # loaders -> panel + series_meta
   tsfm/
     base.py            # Forecaster ABC: .fit(optional) / .predict_quantiles()
-    chronos2.py  timesfm.py  lag_llama.py  timegpt.py
+    chronos2.py  lag_llama.py  timegpt.py
   baselines/
     stats.py           # SeasonalNaive, ETS/AutoARIMA, Croston/ADIDA (statsforecast)
     ml.py              # Global LightGBM (mlforecast)
@@ -156,11 +156,9 @@ class Forecaster(ABC):
 
 | Model | Package / source | Regime support | Cost note |
 |---|---|---|---|
-| Chronos-2 | HF `amazon/chronos-2`, `chronos-forecasting` | zero/few-shot, covariates | GPU; ~300 series/s on A10G |
-| TimesFM-2.0 | `timesfm` / HF (Google) | zero-shot (+covariate variant) | GPU; **prefer 2.0 over 2.5** |
+| Chronos-2 | HF `amazon/chronos-2`, `chronos-forecasting` | zero-shot + fine-tune (LoRA/full) | GPU |
 | TimeGPT | `nixtla` SDK | zero-shot + fine-tune | **paid API**, network, data leaves premises (governance!) |
 | Lag-Llama | GitHub `lag-llama` | zero-shot + fine-tune | fiddly install |
-| TimesFM-2.5 | `timesfm` / HF | zero-shot | run alongside 2.0; report both (2.0 often stronger) |
 
 All produce **quantile** forecasts (needed for the newsvendor/(s,S) order quantile).
 
@@ -258,7 +256,7 @@ what's worth it.
 | Fine-tuning cost | run last and selectively; estimates surfaced before launch; Chronos-Bolt first |
 | Favorita too large | seeded uniform sample of 300 series, same rule as M5 |
 | TimeGPT cost/availability | budget the API spend; if dropped, it becomes the "no closed API" governance finding |
-| Model SDK/version churn (TimesFM 2.5<2.0) | pin versions in `config.py`; record exact model IDs for repro |
+| Model SDK/version churn | pin versions in `config.py`; record exact model IDs for repro |
 | Leakage (FMs pretrained on M5?) | report which benchmarks each model's authors used in pretraining; treat as a caveat, prefer Favorita for clean claims |
 
 ---
@@ -278,7 +276,6 @@ what's worth it.
 ## 14. Verified facts behind this plan (June 2026)
 
 - Chronos-2: open, released Oct 2025, HF `amazon/chronos-2`, supports covariates. ✔
-- TimesFM 2.5 exists but benchmarks **below** TimesFM 2.0 in independent tests — use 2.0. ✔
 - Lag-Llama: open. TimeGPT: closed paid API. ✔ (Moirai-MoE dropped — no official fine-tuning in uni2ts.)
 - Citations verified real: Maichle/Stein/Pibernik 2025 (SSRN 4950340);
   Puvvada & Chaudhuri 2024 (OpenReview TS42sRKINd). ✔

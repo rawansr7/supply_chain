@@ -30,7 +30,7 @@ combination.
 | Term | What it means |
 |---|---|
 | **Demand forecasting** | Predicting how much of a product will sell in the future, so you know how much to stock. |
-| **Time-Series Foundation Model (TSFM)** | A large model *pre-trained once* on enormous amounts of historical data from many domains, which can then forecast a brand-new series it has never seen. The same idea as a large language model (LLM), but the input/output is numbers over time instead of text. Examples: Chronos, TimesFM, TimeGPT. |
+| **Time-Series Foundation Model (TSFM)** | A large model *pre-trained once* on enormous amounts of historical data from many domains, which can then forecast a brand-new series it has never seen. The same idea as a large language model (LLM), but the input/output is numbers over time instead of text. Examples: Chronos, Lag-Llama, TimeGPT. |
 | **Off-the-shelf** | Ready to use as-is — you download or call it; you do **not** build or train it yourself. The opposite of *bespoke / custom-built*. |
 | **Bespoke (custom) model** | A model built and trained specifically for your own data and problem (the traditional approach). |
 | **Zero-shot / few-shot / fine-tuning** | Three levels of effort when using a pre-trained model. **Zero-shot** = use it straight out of the box, no training on your data. **Few-shot** = show it a small amount of your data as context. **Fine-tuning** = further train it on your data (most effort, usually best accuracy). |
@@ -188,8 +188,6 @@ landscape we extend:
 
 - **Chronos / Chronos-2 (Amazon, 2024 / Oct 2025)** — Chronos-2 (open, on Hugging Face)
   adds support for related variables (price, promotions, calendar).
-- **TimesFM (Google, 2024–25)** — note: independent tests find version **2.0** often
-  beats the newer **2.5**, so both will be reported.
 - **Lag-Llama (2024)** — open foundation model for probabilistic forecasting.
 - **TimeGPT (Nixtla)** — a **commercial, paid online API**; included as the
   "buy a service" option and as the data-governance case study (your data leaves your

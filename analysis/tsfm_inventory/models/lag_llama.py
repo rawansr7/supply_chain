@@ -1,62 +1,55 @@
-from __future__ import annotations
+import functools
+import tempfile
 
 import numpy as np
+import torch
+from gluonts.dataset.common import ListDataset
+from lag_llama.gluon.estimator import LagLlamaEstimator
 
+from .. import config as C
 from .base import Forecaster
 
-CKPT_PATH = "lag-llama.ckpt"
-CONTEXT_LENGTH = 32
-FREQ = "W"
-START = "2020-01-06"
+torch.load = functools.partial(torch.load, weights_only=False)
+ARGS = torch.load(C.LAG_LLAMA_CKPT, map_location="cpu")["hyper_parameters"]["model_kwargs"]
+SAMPLES = 100
+EPOCHS = 50
+PREDICTION_BATCH = 16
 
 
-def _allow_full_unpickle(torch):
-    if getattr(torch.load, "_patched", False):
-        return
-    original = torch.load
-
-    def load(*args, **kwargs):
-        # the checkpoint holds gluonts objects, so weights_only=True rejects it
-        kwargs.setdefault("weights_only", False)
-        return original(*args, **kwargs)
-
-    load._patched = True
-    torch.load = load
+def dataset(Y):
+    return ListDataset([{"start": start, "target": y[~np.isnan(y)]}
+                        for start, y in zip(Y.notna().idxmax(axis=1), Y.to_numpy(np.float32))], freq="W")
 
 
 class LagLlama(Forecaster):
-    name = "lag_llama"
-    supported_regimes = ["zero_shot"]
-    needs_gpu = True
+    grids = {"zero_shot": [{"context_length": c} for c in (32, 64, 128, 256)],
+             "fine_tune": [{"context_length": c, "lr": r} for c in (32, 64, 128) for r in (1e-4, 5e-4)]}
 
-    def fit(self, train_panel=None):
-        import torch
-        from lag_llama.gluon.estimator import LagLlamaEstimator
+    def estimator(self, **kwargs):
+        factor = max(1.0, (self.params["context_length"] + self.horizon) / ARGS["context_length"])
+        return LagLlamaEstimator(ckpt_path=str(C.LAG_LLAMA_CKPT), prediction_length=self.horizon,
+                                 input_size=ARGS["input_size"], n_layer=ARGS["n_layer"],
+                                 n_embd_per_head=ARGS["n_embd_per_head"], n_head=ARGS["n_head"],
+                                 scaling=ARGS["scaling"], time_feat=ARGS["time_feat"],
+                                 rope_scaling={"type": "linear", "factor": factor}, nonnegative_pred_samples=True,
+                                 num_parallel_samples=SAMPLES, batch_size=64, **self.params, **kwargs)
 
-        _allow_full_unpickle(torch)
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        args = torch.load(CKPT_PATH, map_location=device)["hyper_parameters"]["model_kwargs"]
-
-        estimator = LagLlamaEstimator(
-            ckpt_path=CKPT_PATH, prediction_length=self.horizon,
-            context_length=CONTEXT_LENGTH, input_size=args["input_size"],
-            n_layer=args["n_layer"], n_embd_per_head=args["n_embd_per_head"],
-            n_head=args["n_head"], scaling=args["scaling"], time_feat=args["time_feat"],
-            nonnegative_pred_samples=True, num_parallel_samples=100, device=device)
-        self.predictor = estimator.create_predictor(estimator.create_transformation(),
-                                                    estimator.create_lightning_module())
+    def fit(self, Y):
+        torch.manual_seed(C.SEED)
+        np.random.seed(C.SEED)
+        if self.regime == "zero_shot":
+            estimator = self.estimator()
+            self.predictor = estimator.create_predictor(estimator.create_transformation(),
+                                                        estimator.create_lightning_module())
+        else:
+            with tempfile.TemporaryDirectory() as out:
+                trainer = {"max_epochs": EPOCHS, "default_root_dir": out, "logger": False,
+                           "enable_progress_bar": False}
+                self.predictor = self.estimator(aug_prob=0.0, trainer_kwargs=trainer).train(
+                    dataset(Y), cache_data=True, shuffle_buffer_length=1000)
+        self.predictor.batch_size = PREDICTION_BATCH
         return self
 
-    def predict_quantiles(self, history):
-        from gluonts.dataset.common import ListDataset
-        from gluonts.evaluation import make_evaluation_predictions
-
-        # make_evaluation_predictions forecasts the LAST horizon steps, so pad the history
-        padded = np.concatenate([np.asarray(history, dtype="float32"),
-                                 np.zeros(self.horizon, dtype="float32")])
-        ds = ListDataset([{"start": START, "target": padded, "item_id": "0"}], freq=FREQ)
-        forecast_it, _ = make_evaluation_predictions(dataset=ds, predictor=self.predictor,
-                                                     num_samples=100)
-        forecast = next(iter(forecast_it))
-        return {q: np.clip(np.asarray(forecast.quantile(q), dtype="float64"), 0, None)
-                for q in self.quantile_levels}
+    def predict(self, Y):
+        torch.manual_seed(C.SEED)
+        return np.stack([np.stack([f.quantile(q) for q in self.levels], -1) for f in self.predictor.predict(dataset(Y))])

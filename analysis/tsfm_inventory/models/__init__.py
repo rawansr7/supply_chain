@@ -1,19 +1,15 @@
-from __future__ import annotations
+from importlib import import_module
 
-from .chronos2 import Chronos2
-from .lag_llama import LagLlama
-from .lightgbm_global import LightGBMGlobal
-from .lstm_global import LSTMGlobal
-from .moving_average import MovingAverage
-from .seasonal_naive import SeasonalNaive
-from .timegpt import TimeGPT
-from .timesfm import TimesFM
+MODELS = {"seasonal_naive": "SeasonalNaive", "moving_average": "MovingAverage",
+          "lightgbm_global": "LightGBMGlobal", "lstm_global": "LSTMGlobal",
+          "chronos2": "Chronos2", "lag_llama": "LagLlama", "timegpt": "TimeGPT"}
 
-MODELS = {cls.name: cls for cls in [SeasonalNaive, MovingAverage, LightGBMGlobal,
-                                    LSTMGlobal, Chronos2, TimesFM, LagLlama, TimeGPT]}
+CELLS = [("seasonal_naive", "statistical"), ("moving_average", "statistical"),
+         ("lightgbm_global", "statistical"), ("lstm_global", "statistical"),
+         ("chronos2", "zero_shot"), ("chronos2", "fine_tune"),
+         ("lag_llama", "zero_shot"), ("lag_llama", "fine_tune"),
+         ("timegpt", "zero_shot"), ("timegpt", "fine_tune")]
 
 
 def get_model(name):
-    if name not in MODELS:
-        raise KeyError(f"unknown model {name!r}; choose from {list(MODELS)}")
-    return MODELS[name]
+    return getattr(import_module(f".{name}", __name__), MODELS[name])

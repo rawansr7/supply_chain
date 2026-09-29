@@ -1,53 +1,18 @@
-from __future__ import annotations
-
 import numpy as np
+from scipy import stats
 
 from .. import config as C
 
-N_RESAMPLES = 10_000
+RESAMPLES = 10_000
 
 
-def diebold_mariano(loss_a, loss_b):
-    a = np.asarray(loss_a, dtype=float)
-    b = np.asarray(loss_b, dtype=float)
-    d = a - b
-    out = {"mean_diff": float(np.mean(d)), "t_stat": float("nan"),
-           "p_value": float("nan"), "n": len(d)}
-    if len(d) >= 2 and not np.allclose(d, 0):
-        from scipy import stats
-        t, p = stats.ttest_rel(a, b)
-        out["t_stat"], out["p_value"] = float(t), float(p)
-    return out
+def diebold_mariano(cost_a, cost_b):
+    return float(stats.ttest_rel(cost_a, cost_b).pvalue)
 
 
-def paired_bootstrap(cost_a, cost_b, demand, n_resamples=N_RESAMPLES, seed=None):
-    """Resample series to put an interval on the difference in pooled cost per unit.
-
-    The headline metric divides total cost by total demand, so a paired test over
-    per-series costs answers a different question from the one the table reports — and
-    on a uniform sample of series, where demand spans four orders of magnitude, it is
-    effectively decided by the few largest. Drawing whole series with replacement asks
-    the question the table asks: would another 300 series from this catalogue rank these
-    two models the same way?
-    """
-    a = np.asarray(cost_a, dtype=float)
-    b = np.asarray(cost_b, dtype=float)
-    d = np.asarray(demand, dtype=float)
-    empty = {"diff": float("nan"), "ci_lo": float("nan"), "ci_hi": float("nan"),
-             "p_value": float("nan"), "n": len(a)}
-    if len(a) == 0 or d.sum() <= 0:  # nothing in common to compare (e.g. two panels)
-        return empty
-    observed = float((a.sum() - b.sum()) / d.sum())
-
-    rng = np.random.default_rng(C.SEED if seed is None else seed)
-    idx = rng.integers(0, len(a), size=(n_resamples, len(a)))
-    total = d[idx].sum(axis=1)
-    diff = (a[idx].sum(axis=1) - b[idx].sum(axis=1)) / np.where(total > 0, total, np.nan)
-    diff = diff[~np.isnan(diff)]
-    if len(diff) == 0:
-        return empty
-
+def paired_bootstrap(cost_a, cost_b, demand):
+    idx = np.random.default_rng(C.SEED).integers(0, len(demand), (RESAMPLES, len(demand)))
+    diff = (cost_a[idx].sum(1) - cost_b[idx].sum(1)) / demand[idx].sum(1)
     lo, hi = np.percentile(diff, [2.5, 97.5])
-    return {"diff": observed, "ci_lo": float(lo), "ci_hi": float(hi),
-            "p_value": float(2 * min((diff <= 0).mean(), (diff >= 0).mean())),
-            "n": len(a)}
+    return {"diff": float((cost_a.sum() - cost_b.sum()) / demand.sum()), "ci_lo": float(lo), "ci_hi": float(hi),
+            "p_value": float(2 * min((diff <= 0).mean(), (diff >= 0).mean()))}

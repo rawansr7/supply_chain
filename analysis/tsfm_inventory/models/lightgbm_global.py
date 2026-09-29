@@ -1,49 +1,29 @@
-from __future__ import annotations
-
+import lightgbm as lgb
 import numpy as np
-import pandas as pd
 
 from .. import config as C
-from .base import Forecaster, quantiles_from_residuals
+from .base import Forecaster, scaled_windows
+
+CONTEXT = 52
+TREES = 500
 
 
 class LightGBMGlobal(Forecaster):
-    name = "lightgbm_global"
-    supported_regimes = ["statistical"]
+    grids = {"statistical": [{"num_leaves": n, "learning_rate": r} for n in (15, 63, 255) for r in (0.02, 0.05, 0.1)]}
 
-    def _lags(self):
-        return sorted({1, 2, 3, 4, self.seasonality})
+    def rows(self, X):
+        return np.hstack([np.tile(X, (self.horizon, 1)), np.repeat(np.arange(self.horizon), len(X))[:, None]])
 
-    def _design(self, df):
-        g = df.groupby("series_id")["y"]
-        feats = {f"lag_{lag}": g.shift(lag) for lag in self._lags()}
-        feats["roll4"] = g.transform(lambda s: s.shift(1).rolling(4).mean())
-        return pd.DataFrame(feats, index=df.index)
-
-    def fit(self, train_panel=None):
-        import lightgbm as lgb
-
-        df = train_panel.sort_values(["series_id", "t"])
-        X = self._design(df)
-        keep = X.dropna().index
-        X, y = X.loc[keep], df["y"].loc[keep]
-
-        self.feat_cols = list(X.columns)
-        self.model = lgb.LGBMRegressor(n_estimators=200, learning_rate=0.05,
-                                       num_leaves=31, random_state=C.SEED, verbose=-1)
-        self.model.fit(X, y)
-        self.residuals = (y - self.model.predict(X)).to_numpy()
+    def fit(self, Y):
+        X, F = scaled_windows(Y.to_numpy(), CONTEXT, self.horizon)
+        self.models = [lgb.LGBMRegressor(objective="quantile", alpha=q, n_estimators=TREES, random_state=C.SEED,
+                                         verbose=-1, **self.params).fit(self.rows(X), F.T.ravel())
+                       for q in self.levels]
         return self
 
-    def predict_quantiles(self, history):
-        buf = list(history.astype(float))
-        lags = self._lags()
-        point = []
-        for _ in range(self.horizon):
-            row = {f"lag_{lag}": (buf[-lag] if len(buf) >= lag else buf[0]) for lag in lags}
-            row["roll4"] = float(np.mean(buf[-4:]))
-            x = pd.DataFrame([row])[self.feat_cols]
-            yhat = max(float(self.model.predict(x)[0]), 0.0)
-            point.append(yhat)
-            buf.append(yhat)
-        return quantiles_from_residuals(np.array(point), self.residuals, self.quantile_levels)
+    def predict(self, Y):
+        context = Y.to_numpy()[:, -CONTEXT:]
+        scale = 1 + context.mean(1, keepdims=True)
+        rows = self.rows(context / scale)
+        Q = np.stack([m.predict(rows).reshape(self.horizon, -1).T for m in self.models], -1)
+        return np.clip(np.sort(Q, -1) * scale[..., None], 0, None)

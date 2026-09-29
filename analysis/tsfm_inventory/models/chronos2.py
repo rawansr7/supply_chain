@@ -1,53 +1,29 @@
-from __future__ import annotations
+import tempfile
 
 import numpy as np
+import torch
+from chronos import BaseChronosPipeline
 
-from .base import Forecaster
+from .. import config as C
+from .base import Forecaster, listed
 
-REPO_ID = "amazon/chronos-2"
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 class Chronos2(Forecaster):
-    name = "chronos2"
-    supported_regimes = ["zero_shot", "fine_tune"]
-    needs_gpu = True
-    finetune_mode = "lora"
-    num_steps = 1000
-    batch_size = 32
+    grids = {"zero_shot": [{}],
+             "fine_tune": [{"finetune_mode": "lora", "learning_rate": r} for r in (1e-5, 1e-4, 1e-3)]
+                          + [{"finetune_mode": "full", "learning_rate": r} for r in (1e-6, 1e-5, 3e-5)]}
 
-    def fit(self, train_panel=None):
-        import torch
-        from chronos import BaseChronosPipeline
-
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-        pipeline = BaseChronosPipeline.from_pretrained(REPO_ID, device_map=device)
-
-        if self.regime == "zero_shot":
-            self._pipeline = pipeline
-            return self
-
-        inputs = [g.sort_values("t")["y"].to_numpy(dtype=np.float32)
-                  for _, g in train_panel.groupby("series_id", sort=False)]
-        inputs = [series for series in inputs if len(series) > self.horizon]
-        if not inputs:
-            raise ValueError("chronos2 fine-tune: no series longer than the horizon.")
-
-        # fit() returns a NEW fine-tuned pipeline; it does not mutate the base one.
-        self._pipeline = pipeline.fit(
-            inputs=inputs,
-            prediction_length=self.horizon,
-            finetune_mode=self.finetune_mode,
-            learning_rate=1e-4 if self.finetune_mode == "lora" else 1e-5,
-            num_steps=50 if self.smoke else self.num_steps,
-            batch_size=self.batch_size,
-            logging_steps=100)
+    def fit(self, Y):
+        self.pipeline = BaseChronosPipeline.from_pretrained("amazon/chronos-2", device_map=DEVICE)
+        if self.regime == "fine_tune":
+            with tempfile.TemporaryDirectory() as out:
+                self.pipeline = self.pipeline.fit(listed(Y), self.horizon, output_dir=out, seed=C.SEED,
+                                                  disable_tqdm=True, remove_printer_callback=True, **self.params)
         return self
 
-    def predict_quantiles(self, history):
-        quantiles, _mean = self._pipeline.predict_quantiles(
-            inputs=[np.asarray(history, dtype=np.float32)],
-            prediction_length=self.horizon,
-            quantile_levels=self.quantile_levels)
-        forecast = quantiles[0].squeeze(0).cpu().numpy()
-        return {q: np.clip(forecast[:, i], 0, None)
-                for i, q in enumerate(self.quantile_levels)}
+    def predict(self, Y):
+        quantiles, _ = self.pipeline.predict_quantiles(listed(Y), prediction_length=self.horizon,
+                                                       quantile_levels=self.levels)
+        return np.clip(torch.stack(quantiles)[:, 0].float().cpu().numpy(), 0, None)
