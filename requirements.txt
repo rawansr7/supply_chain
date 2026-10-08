@@ -2,5 +2,4 @@ Django==3.2.16
 django-google-maps==0.13.0
 pandas==2.2.3
 numpy==2.0.2
-lightgbm==4.5.0
 chronos-forecasting==2.3.0

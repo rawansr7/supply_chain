@@ -3,12 +3,10 @@ import argparse
 from . import report
 from .data import LOADERS
 from .experiment import run_cell
-from .models import CELLS
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--full", action="store_true")
     parser.add_argument("--run", nargs="+", default=[], metavar="MODEL:REGIME")
     parser.add_argument("--datasets", nargs="+", default=list(LOADERS))
     parser.add_argument("--compute-significance", action="store_true")
@@ -19,10 +17,7 @@ def main():
         print(f"{n_tests} test(s) -> {path}")
         return
 
-    if args.full:
-        cells = CELLS
-    else:
-        cells = [tuple(token.split(":")) for token in args.run]
+    cells = [tuple(token.split(":")) for token in args.run]
 
     for dataset in args.datasets:
         for model, regime in cells:

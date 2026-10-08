@@ -93,7 +93,7 @@ def print_markdown(results):
         built = [r for r in rows if r["model"] in MAKE_MODELS]
         best_make = min(built, key=by_cost, default=None)
 
-        print("\n| A | B | cost/unit A vs B | A − B (95% CI) | bootstrap p |")
+        print("\n| A | B | cost/unit A vs B | A − B | bootstrap p |")
         print("|---|---|---|---|---|")
         for model in BUY_MODELS:
             zero = cells.get((model, "zero_shot"))
@@ -104,7 +104,7 @@ def print_markdown(results):
                 boot = compare(a, b, "cost_per_unit")
                 print(f"| {label(a)} | {label(b)} "
                       f"| {boot['a']:.3f} vs {boot['b']:.3f} "
-                      f"| {boot['diff']:+.3f} ({boot['ci_lo']:+.3f}, {boot['ci_hi']:+.3f}) "
+                      f"| {boot['diff']:+.3f} "
                       f"| {p_value(boot['p_value'])} |")
 
 

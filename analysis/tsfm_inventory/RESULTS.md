@@ -9,24 +9,6 @@ scored once on the last 4 weeks. The newsvendor orders each dataset's critical-r
 quantile. Tables are ranked by **cost per unit** (lower is better) and regenerate with
 `python -m analysis.tsfm_inventory.run`.
 
-## What changed since the 300-series run
-
-The earlier numbers in git history are not comparable with these:
-
-- **TimesFM is out** of the benchmark.
-- **All three foundation models are fine-tuned**, not only Chronos-2.
-- **Every model is tuned** on validation windows that precede the test window. Before, each
-  model ran one fixed configuration.
-- **1,000 series** per dataset instead of 300, drawn afresh.
-- **Weeks before a product's first sale are missing, not zero demand.** The old panel filled
-  them with zeros: half of the sampled series first sold after week 52, so models were fed
-  months of fake zeros and the MASE scale was deflated.
-- **Only established, active series are sampled** (below). Favorita otherwise includes items
-  that the store had already delisted.
-- **LightGBM predicts quantiles directly** on per-series scaled windows. Before, it added one
-  pooled residual distribution on the raw scale to every series, the same offset for a
-  1-unit and a 500-unit series.
-
 ## The sample
 
 | | M5 | Favorita |
@@ -38,15 +20,11 @@ The earlier numbers in git history are not comparable with these:
 | median weeks since first sale | 266 | 220 |
 | median weekly demand | 4.7 | 18.9 |
 | median share of zero weeks | 18% | 6% |
-| smooth / intermittent / erratic / lumpy (SBC) | 53 / 31 / 8 / 8% | 68 / 13 / 12 / 8% |
 | stockout : holding cost | 4 : 1 | 2 : 1 |
 | critical ratio | 0.80 | 0.67 |
 
-(SBC quadrants: ADI > 1.32 and/or CV² > 0.49, computed on history since the first sale.)
-Counting weeks only from a product's first sale, and sampling only established, active
-items, removes most of the apparent intermittency of the old sample (40% and 47% zero weeks
-there). The population is established SKUs; products launched within the last two years are
-a cold-start problem and out of scope.
+The population is established SKUs; products launched within the last two years are a
+cold-start problem and out of scope.
 
 Cost ratios are a property of the goods, one per dataset. M5 is shelf-stable packaged goods:
 holding is cheap and a stockout costs the margin. Favorita is fresh grocery, where unsold stock
@@ -102,30 +80,29 @@ a few barely-moving series, so read the median as well.
 
 ## Significance
 
-Differences in cost per unit (A − B, negative = A is cheaper) with a 95% interval from a
-series-level bootstrap (10,000 resamples, whole series resampled) and its p-value. Every pair
-of cells on mean MASE, median MASE and cost per unit is in
-`run --compute-significance` (→ `results/significance.csv`). LightGBM is the best built model
-on both datasets.
+Differences in cost per unit (A − B, negative = A is cheaper) and their p-values from a paired
+series-level bootstrap (10,000 resamples, whole series resampled). `run --compute-significance`
+tests every pair of cells on mean MASE, median MASE and cost per unit and writes
+`results/significance.csv`. LightGBM is the best built model on both datasets.
 
 | comparison | M5 | Favorita |
 |---|---|---|
 | **buy vs build**: zero-shot − LightGBM | | |
-| Chronos-2 | +0.063 (+0.033, +0.098), p<0.001 | −0.001 (−0.011, +0.008), p=0.80 |
-| Lag-Llama | +0.134 (+0.088, +0.191), p<0.001 | +0.016 (−0.003, +0.033), p=0.10 |
-| TimeGPT | +0.096 (+0.053, +0.155), p<0.001 | +0.014 (−0.003, +0.030), p=0.10 |
+| Chronos-2 | +0.063, p<0.001 | −0.001, p=0.80 |
+| Lag-Llama | +0.134, p<0.001 | +0.016, p=0.10 |
+| TimeGPT | +0.096, p<0.001 | +0.014, p=0.10 |
 | **adapt**: fine-tuned − zero-shot | | |
-| Chronos-2 | −0.067 (−0.106, −0.035), p<0.001 | −0.011 (−0.020, −0.003), p=0.005 |
-| Lag-Llama | −0.055 (−0.109, −0.007), p=0.022 | −0.015 (−0.028, −0.001), p=0.042 |
-| TimeGPT | −0.068 (−0.105, −0.036), p<0.001 | +0.011 (−0.007, +0.033), p=0.25 |
+| Chronos-2 | −0.067, p<0.001 | −0.011, p=0.005 |
+| Lag-Llama | −0.055, p=0.022 | −0.015, p=0.042 |
+| TimeGPT | −0.068, p<0.001 | +0.011, p=0.25 |
 | **adapted vs build**: fine-tuned − LightGBM | | |
-| Chronos-2 | −0.004 (−0.024, +0.015), p=0.69 | −0.013 (−0.021, −0.005), p=0.001 |
-| Lag-Llama | +0.079 (+0.046, +0.116), p<0.001 | +0.001 (−0.017, +0.017), p=0.86 |
-| TimeGPT | +0.028 (+0.004, +0.057), p=0.022 | +0.025 (+0.001, +0.050), p=0.044 |
+| Chronos-2 | −0.004, p=0.69 | −0.013, p=0.001 |
+| Lag-Llama | +0.079, p<0.001 | +0.001, p=0.86 |
+| TimeGPT | +0.028, p=0.022 | +0.025, p=0.044 |
 | **service vs download**: TimeGPT − Chronos-2 | | |
-| zero-shot | +0.033 (−0.006, +0.077), p=0.11 | +0.015 (−0.001, +0.030), p=0.057 |
-| fine-tuned | +0.032 (+0.001, +0.066), p=0.039 | +0.038 (+0.015, +0.062), p=0.002 |
-| **built vs built**: LSTM − LightGBM | +0.007 (−0.005, +0.019), p=0.24 | +0.020 (+0.009, +0.031), p<0.001 * |
+| zero-shot | +0.033, p=0.11 | +0.015, p=0.057 |
+| fine-tuned | +0.032, p=0.039 | +0.038, p=0.002 |
+| **built vs built**: LSTM − LightGBM | +0.007, p=0.24 | +0.020, p<0.001 * |
 
 \* The Favorita LSTM is seed-sensitive (see Robustness): with the two other seeds it costs
 0.420–0.422 and ties LightGBM.
@@ -188,35 +165,34 @@ because cuDNN picks kernels by free memory. M5 reproduced exactly.
 
 ## Findings
 
-1. **Off the shelf, no foundation model beats a well-tuned model you can build.** Zero-shot,
-   all three are significantly dearer than global LightGBM on M5 (+0.063 to +0.134 per unit
-   of demand, p<0.001). On Favorita the best of them, Chronos-2, ties it (−0.001, p=0.80) and
-   the other two are 3–4% dearer (p≈0.10).
-2. **Adapting is what makes buying competitive.** Fine-tuning cuts cost for Chronos-2 and
-   Lag-Llama on both datasets and for TimeGPT on M5. Fine-tuned Chronos-2 is the cheapest model
-   on both datasets: it ties LightGBM on M5 (−0.004, p=0.69; 0.684–0.690 across seeds against
-   0.694) and beats it on Favorita (−0.013, p=0.001, about 3%). It is the only bought option
-   that ever beats building.
-3. **What fine-tuning buys depends on the data, and this study cannot say why.** The gain is
-   7–9% on M5 for all three models and 3% on Favorita for Chronos-2 and Lag-Llama. For TimeGPT
-   it is nothing on Favorita: none of 25 configurations beat zero-shot even on validation. The
-   two datasets differ in volume, intermittency, cost ratio, country and perishability at
-   once, so this is an observation, not a mechanism.
-4. **Paying for the service buys nothing over the free download.** In the same regime TimeGPT
-   is never cheaper than Chronos-2. Zero-shot the gap is not significant (p=0.11, p=0.057);
-   fine-tuned it is, on both datasets (+0.032, p=0.039; +0.038, p=0.002). The service's other
-   costs — per-call pricing, a model version that cannot be pinned, fine-tuning that is not
-   reproducible, demand data leaving the premises — come on top.
-5. **Which foundation model you buy matters as much as whether you buy.** On M5 the zero-shot
-   spread between the best and worst foundation model (0.071) exceeds Chronos-2's gap to
-   LightGBM (0.063). Fine-tuned, the spread is 0.083 on M5 and 0.038 on Favorita.
-6. **A four-week moving average is a real bar on M5.** It beats zero-shot TimeGPT and
-   Lag-Llama there (0.778 against 0.790 and 0.828), while on Favorita every foundation model
-   clears it. The seasonal naive is last everywhere.
-7. **Accuracy and cost now rank models much the same way** (Spearman 0.92 between median MASE
-   and cost per unit on both datasets). The sharp disagreement in the previous version came
-   mostly from TimesFM and the zero-filled pre-launch weeks. Close competitors still swap
-   places: the LSTM has the best MASE on M5 but ranks third on cost.
+1. H1 is not supported: off the shelf, no foundation model is cheaper than a tuned global
+   LightGBM. On M5 all three zero-shot models cost significantly more (Chronos-2 +0.063,
+   TimeGPT +0.096, Lag-Llama +0.134 per unit of demand, all p<0.001). On Favorita zero-shot
+   Chronos-2 ties LightGBM (−0.001, p=0.80) and the other two cost 3–4% more, which is not
+   significant (p=0.10).
+2. H2 is supported in five of six cases: fine-tuning lowers the cost significantly for Chronos-2
+   and Lag-Llama on both datasets and for TimeGPT on M5. The gain is about 7–9% on M5 and about
+   3% on Favorita. For TimeGPT on Favorita, none of the 25 fine-tuning settings beat zero-shot,
+   even on the validation windows (0.431 vs 0.428). The two datasets differ in volume,
+   intermittency, cost ratio, country and type of goods at once, so the study cannot say why
+   the gain differs.
+3. Fine-tuned Chronos-2 is the cheapest option on both datasets. It ties LightGBM on M5 (−0.004,
+   p=0.69; 0.684–0.690 across seeds against 0.694) and is about 3% cheaper on Favorita (−0.013,
+   p=0.001). It is the only bought option that is significantly cheaper than the best built
+   model. Fine-tuned Lag-Llama and fine-tuned TimeGPT stay behind LightGBM on M5.
+4. H3 is not supported: in the same regime TimeGPT is never cheaper than Chronos-2. Zero-shot
+   the difference is not significant (p=0.11 on M5, p=0.057 on Favorita). Fine-tuned it is
+   significant on both datasets (+0.032, p=0.039; +0.038, p=0.002). The service also brings
+   fees, a model version that cannot be pinned, forecasts that are not identical across
+   requests, and sales data sent to a third party.
+5. H4 is supported: accuracy and cost rank the models differently. On M5 the LSTM has the best
+   median MASE but is third on cost, and fine-tuned Chronos-2 has the cheapest orders. On
+   Favorita both rankings put fine-tuned Chronos-2 first, but the middle of the ranking
+   changes. Eight of the ten options change places between the two rankings on M5, three on
+   Favorita.
+6. The four-week moving average: on M5, zero-shot TimeGPT and Lag-Llama cost more than it (0.790
+   and 0.828 against 0.778), but the differences are not significant. On Favorita every
+   foundation model is cheaper than it. The seasonal naive rule is last on both datasets.
 
 ## What each option costs to run
 
@@ -236,22 +212,20 @@ fine-tune takes about 5 minutes and an LSTM fit about 20 seconds.
 | TimeGPT zero-shot | Nixtla API | 2 s / 2 s | — | 1 per forecast |
 | TimeGPT fine-tuned | Nixtla API | 29 s / 89 s | 22 / 20 min | 1 per forecast, 50 per tuning |
 
-Every TimeGPT call sends all 1,000 series in one request, so the whole rework — tests,
-re-runs and timed-out retries included — used about 220 requests of the free tier's 10,000 a
-month. The earlier one-request-per-series design needed 1,000 per forecast.
+Every TimeGPT call sends all 1,000 series in one request, so the whole study, including tests,
+reruns and timed-out retries, used about 220 requests of the free tier's 10,000 a month.
 
-## Scope and limitations
+## Limitations
 
-- **One test window**: four weeks, one origin. The p-values describe uncertainty across
-  series, not across time.
-- **Censored demand**: sales are observed, demand is not.
-- **Established SKUs only**: at least two years of history and recent sales. New products are
-  a different problem and are out of scope.
-- **History only**: no calendar, price or promotion covariates, although Chronos-2 and TimeGPT
-  accept them.
-- **Possible pre-training leakage**: M5 and Favorita are public and may be in a foundation
-  model's training corpus. That would flatter the bought models: finding 1 would be
-  conservative, and fine-tuned Chronos-2's win over building in finding 2 optimistic.
-- **TimeGPT cannot be pinned**: its numbers are whatever Nixtla served on 2026-09-28/29, and
-  its fine-tuning is not bit-reproducible.
-- **Two datasets**, both grocery and mass retail in the Americas.
+- **Only one test window**: four weeks, one forecast origin. The p-values describe uncertainty
+  across series, not across time. The LSTM on Favorita, best on validation and seventh on test,
+  shows how much a single period can mislead.
+- **Two datasets, both from the Americas**: grocery and mass retail in the United States and
+  Ecuador. They differ in many ways at once, so a difference between them, such as the size of
+  the fine-tuning gain, cannot be traced to one cause.
+- **Excluded new products**: only established series are sampled. New products, where a
+  pretrained model might help most, are a separate problem.
+- **Sales history only**: no prices, promotions, holidays or other covariates, although
+  Chronos-2, TimeGPT and LightGBM can use them.
+- **Sales, not demand**: stockouts are not recorded, so a week without sales can mean no demand
+  or an empty shelf.

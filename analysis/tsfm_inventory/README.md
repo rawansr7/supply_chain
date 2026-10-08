@@ -71,18 +71,17 @@ critical ratio 0.67.
 
 ```bash
 cd supply_chain
-export PYTHONPATH=$PWD HF_HUB_OFFLINE=1 NIXTLA_API_KEY=$(cat ../nixtla.key)
+export PYTHONPATH=$PWD NIXTLA_API_KEY=<key>
 CELLS="seasonal_naive:statistical moving_average:statistical lightgbm_global:statistical lstm_global:statistical
        chronos2:zero_shot chronos2:fine_tune timegpt:zero_shot timegpt:fine_tune"
 conda run -n tsfm python -m analysis.tsfm_inventory.run --run $CELLS
 PYTHONPATH=$PWD:$PWD/external/lag-llama conda run -n tsfm_lag \
     python -m analysis.tsfm_inventory.run --run lag_llama:zero_shot lag_llama:fine_tune
-python -m analysis.tsfm_inventory.run --run chronos2:fine_tune --datasets m5
 python -m analysis.tsfm_inventory.run
 python -m analysis.tsfm_inventory.run --compute-significance
 ```
 
-`--full` runs every cell in one environment. `--compute-significance` bootstraps every pair of saved cells within a dataset on all three
+`--datasets m5` or `--datasets favorita` limits a run to one dataset. `--compute-significance` bootstraps every pair of saved cells within a dataset on all three
 metrics into `results/significance.csv`. With no cells, `run` only prints the report
 tables from `results/`. Each cell writes `results/<dataset>__<model>__<regime>.json` with
 the chosen parameters, every validation trial, the wall time and per-series cost, demand
@@ -93,9 +92,9 @@ and MASE. A failing cell is reported and skipped.
 - MASE: seasonal (m = 52) scale over the series' own history, reported as mean and median.
 - Cost per unit: pooled newsvendor cost divided by pooled demand.
 - Fill rate: pooled units served from the order divided by pooled demand.
-- Significance: series-level paired bootstrap (10,000 resamples, percentile intervals) of the
-  difference in mean MASE, median MASE and cost per unit. Whole series are resampled because
-  demand spans orders of magnitude across series.
+- Significance: series-level paired bootstrap (10,000 resamples) of the difference in mean
+  MASE, median MASE and cost per unit, with a two-sided p-value. Whole series are resampled,
+  so the four weeks of a series stay together.
 
 ## Layout
 

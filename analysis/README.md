@@ -13,8 +13,8 @@ accuracy and on the inventory decisions those forecasts drive. It has its own en
 and expects raw Kaggle files under `tsfm_inventory/raw/`.
 
 ```bash
-python -m analysis.tsfm_inventory.run --full    # every model x dataset x regime
-python -m analysis.tsfm_inventory.run           # rebuild the report tables from results/
+python -m analysis.tsfm_inventory.run --run MODEL:REGIME ...   # run cells, e.g. --run lightgbm_global:statistical
+python -m analysis.tsfm_inventory.run                          # rebuild the report tables from results/
 ```
 
 See [`tsfm_inventory/README.md`](tsfm_inventory/README.md) for environments, data, protocol
